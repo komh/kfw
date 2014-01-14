@@ -3,6 +3,7 @@
 #include "ftpsync.h"
 #include "ftpfileengineiterator.h"
 #include "ftpfileinfocache.h"
+#include "fileoperation.h"
 
 #include "ftpfileengine.h"
 
@@ -42,12 +43,7 @@ FtpFileEngine::~FtpFileEngine()
 
 void FtpFileEngine::initFromFileName(const QString& file)
 {
-    _fileName = file;
-
-    // QFileSystemModel uses xxx:/path style
-    int index = _fileName.indexOf(":/");
-    if (index > 1 && _fileName.at(index + QString(":/").length()) != '/')
-        _fileName.replace(index, QString(":/").length(), "://");
+    _fileName = FileOperation::fixUrl(file);
 
     _url.setUrl(_fileName);
 

@@ -6,6 +6,7 @@
 #include "filesystemsortfilterproxymodel.h"
 #include "entrylistmodel.h"
 #include "entrytreeview.h"
+#include "fileoperation.h"
 
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
@@ -139,22 +140,9 @@ void KFileWizard::setLocationText(const QString& text, bool force)
 
 QString KFileWizard::canonicalize(const QString& path)
 {
-    QString result(path);
-
-    if (result.startsWith("ftp:"))
-    {
-        result = QDir::fromNativeSeparators(result);
-
-        // QFileSystemModel does not recognize URL correctly.
-        // Always use xxx:/yyy style for a URL as well as a local path
-        int index = result.indexOf(":/");
-        if (index > 1 && result.at(index + QString(":/").length()) != '/')
-            result.replace(index, QString(":/").length(), "://");
-    }
-    else
-        result = QDir::toNativeSeparators(result);
-
-    return result;
+    return path.indexOf(':') > 1 ?
+                FileOperation::fixUrl(QDir::fromNativeSeparators(path)) :
+                QDir::toNativeSeparators(path);
 }
 
 void KFileWizard::locationReturnPressed()
