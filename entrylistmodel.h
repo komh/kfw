@@ -5,6 +5,7 @@
 
 class EntryListModel : public QFileSystemModel
 {
+    Q_OBJECT
 public:
     explicit EntryListModel(QObject* parent = 0);
 
