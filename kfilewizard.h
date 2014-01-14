@@ -49,6 +49,7 @@ private:
     void initEntryTree();
 
     void setLocationText(const QString& text, bool force = false);
+    QString canonicalize(const QString& path);
     void setEntryRoot();
 };
 

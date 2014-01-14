@@ -126,14 +126,34 @@ void KFileWizard::entryCdUp(const QModelIndex& index)
 
 void KFileWizard::setLocationText(const QString& text, bool force)
 {
-    QString nativePath(QDir::toNativeSeparators(QDir(text).canonicalPath()));
+    QString canonicalPath = canonicalize(text);
 
-    if (force || nativePath != ui->locationLine->text())
+    if (force || canonicalPath != ui->locationLine->text())
     {
-        ui->locationLine->setText(nativePath);
+        ui->locationLine->setText(canonicalPath);
 
         locationReturnPressed();
     }
+}
+
+QString KFileWizard::canonicalize(const QString& path)
+{
+    QString result(path);
+
+    if (result.startsWith("ftp:"))
+    {
+        result = QDir::fromNativeSeparators(result);
+
+        // QFileSystemModel does not recognize URL correctly.
+        // Always use xxx:/yyy style for a URL as well as a local path
+        int index = result.indexOf(":/");
+        if (index > 1 && result.at(index + QString(":/").length()) != '/')
+            result.replace(index, QString(":/").length(), "://");
+    }
+    else
+        result = QDir::toNativeSeparators(result);
+
+    return result;
 }
 
 void KFileWizard::locationReturnPressed()

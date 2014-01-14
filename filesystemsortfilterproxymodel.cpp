@@ -30,5 +30,13 @@ bool FileSystemSortFilterProxyModel::lessThan(const QModelIndex &left, const QMo
         return model->lastModified(left) < model->lastModified(right);
 
     // Name column and the same sorting index
+
+    // Place ftp: to the end
+    if (model->fileName(left) == "ftp:")
+        return false;
+
+    if (model->fileName(right) == "ftp:")
+        return true;
+
     return model->fileName(left).toUpper() < model->fileName(right).toUpper();
 }
