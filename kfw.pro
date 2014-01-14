@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     ftpfileengine/ftpfileinfocache.cpp \
     ftpfileengine/ftpfileengineiterator.cpp \
     ftpfileengine/ftpfileenginehandler.cpp \
-    ftpfileengine/ftpfileengine.cpp
+    ftpfileengine/ftpfileengine.cpp \
+    fileoperation.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -31,6 +32,7 @@ HEADERS  += kfilewizard.h \
     ftpfileengine/ftpfileinfocache.h \
     ftpfileengine/ftpfileengineiterator.h \
     ftpfileengine/ftpfileenginehandler.h \
-    ftpfileengine/ftpfileengine.h
+    ftpfileengine/ftpfileengine.h \
+    fileoperation.h
 
 FORMS    += kfilewizard.ui
