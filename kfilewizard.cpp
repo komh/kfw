@@ -94,6 +94,7 @@ void KFileWizard::initEntryTree()
             this, SLOT(entryActivated(QModelIndex)));
 
     connect(ui->entryTree, SIGNAL(cdUp(QModelIndex)), this, SLOT(entryCdUp(QModelIndex)));
+    connect(ui->entryTree, SIGNAL(paste(QList<QUrl>)), this, SLOT(entryPaste(QList<QUrl>)));
 
     setEntryRoot();
 }
@@ -124,6 +125,129 @@ void KFileWizard::entryCdUp(const QModelIndex& index)
     if (entryModel->parent(entryProxyModel->mapToSource(index)).isValid())
         setLocationText(entryModel->filePath(
                             entryModel->parent(entryProxyModel->mapToSource(index))));
+}
+
+void KFileWizard::entryPaste(const QList<QUrl>& urlList)
+{
+    QProgressDialog progress(this);
+    progress.setLabelText(tr("Copying files..."));
+    progress.setRange(0, 100);
+    progress.setModal(true);
+    progress.setAutoClose(false);
+    progress.show();
+
+    FileOperation fileOp;
+
+    foreach(QUrl url, urlList)
+    {
+        QString source(FileOperation::fixUrl(url.toString()));
+        QString dest(FileOperation::fixUrl(
+                         currentDir.absoluteFilePath(
+                             QFileInfo(url.path()).fileName())));
+
+        QString canonicalSource(canonicalize(source));
+        QString canonicalDest(canonicalize(dest));
+
+        if (canonicalSource == canonicalDest)
+        {
+            dest = getNameOfCopy(source);
+            canonicalDest = canonicalize(dest);
+        }
+
+        progress.setLabelText(tr("Copying %1 of %2\n\n"
+                                 "%3\n\n"
+                                 "to\n\n"
+                                 "%4")
+                              .arg(urlList.indexOf(url) + 1)
+                              .arg(urlList.size())
+                              .arg(canonicalSource)
+                              .arg(canonicalDest));
+
+        QMessageBox::StandardButton answer = checkOverwrite(dest);
+
+        if (answer == QMessageBox::Cancel)
+            break;
+
+        if (answer == QMessageBox::No)
+            continue;
+
+        fileOp.setSource(source);
+        fileOp.setDest(dest);
+
+        if (fileOp.open())
+        {
+            qint64 copied;
+            qint64 totalCopied = 0;
+            qint64 totalSize = fileOp.size();
+
+            forever
+            {
+                copied = fileOp.copy();
+                if (copied <= 0)
+                    break;
+
+                totalCopied += copied;
+
+                progress.setValue(totalCopied * 100 / totalSize);
+
+                qApp->processEvents();
+            }
+
+            fileOp.close();
+
+            if (copied == -1)
+                critical(tr("Failed to copy\n\n"
+                            "%1\n\n"
+                            "to\n\n"
+                            "%2")
+                         .arg(canonicalSource)
+                         .arg(canonicalDest));
+        }
+    }
+}
+
+QString KFileWizard::getNameOfCopy(const QString& source)
+{
+    QString result;
+
+    int lastDot = source.lastIndexOf(".");
+
+    if (lastDot == -1)
+        lastDot = source.length();
+
+    QString pathBaseName(source.mid(0, lastDot));
+    QString suffix(source.mid(lastDot + 1 ));
+
+    for (int i = 1;; ++i)
+    {
+        result = pathBaseName;
+        result.append(tr(" - Copy"));
+        if (i > 1)
+            result.append(QString(" (%1)").arg(i));
+        if (!suffix.isEmpty())
+            result.append(".");
+        result.append(suffix);
+
+        if (!QFile(result).exists())
+            break;
+    }
+
+    return result;
+}
+
+QMessageBox::StandardButton KFileWizard::checkOverwrite(const QString& dest)
+{
+    if (QFile(dest).exists())
+    {
+        return question(tr("%1\n\n"
+                           "This file already exists. "
+                           "Are you sure to overwrite it?")
+                            .arg(canonicalize(dest)),
+                           QMessageBox::Yes | QMessageBox::No |
+                            QMessageBox::Cancel);
+    }
+
+    return QMessageBox::Yes;
 }
 
 void KFileWizard::setLocationText(const QString& text, bool force)

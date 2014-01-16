@@ -25,6 +25,7 @@ private slots:
     void dirActivated(const QModelIndex& index);
     void entryActivated(const QModelIndex& index);
     void entryCdUp(const QModelIndex &index);
+    void entryPaste(const QList<QUrl>& urlList);
     void locationReturnPressed();
 
 private:
@@ -59,6 +60,8 @@ private:
 
     void setLocationText(const QString& text, bool force = false);
     QString canonicalize(const QString& path);
+    QString getNameOfCopy(const QString& source);
+    QMessageBox::StandardButton checkOverwrite(const QString& dest);
     void setEntryRoot();
 };
 
