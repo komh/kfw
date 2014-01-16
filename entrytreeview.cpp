@@ -47,29 +47,10 @@ void EntryTreeView::copyToClipboard()
 {
     qDebug() << "copyToClipboard()";
 
-    QList<QUrl> urlList;
+    QList<QUrl> urlList(selectedUrlList());
 
-    QModelIndexList selected(selectedIndexes());
-
-    if (selected.size() == 0)
+    if (urlList.size() == 0)
         return;
-
-    foreach (QModelIndex proxyIndex, selected)
-    {
-        FileSystemSortFilterProxyModel* proxyModel =
-                qobject_cast<FileSystemSortFilterProxyModel*>(model());
-        EntryListModel* sourceModel =
-                qobject_cast<EntryListModel*>(proxyModel->sourceModel());
-
-        QModelIndex index = proxyModel->mapToSource(proxyIndex);
-
-        if (sourceModel->headerData(index.column(), Qt::Horizontal)
-                == tr("Name"))
-            urlList.append(FileOperation::fixUrl(
-                               sourceModel->filePath(index)));
-    }
-
-    qDebug() << "\t" << urlList;
 
     QMimeData *mime = new QMimeData;
     mime->setUrls(urlList);
@@ -97,12 +78,21 @@ void EntryTreeView::deletePressed()
 {
     qDebug() << "deletePressed()";
 
+    QList<QUrl> urlList(selectedUrlList());
+
+    if (urlList.size() == 0)
+        return;
+
+    emit remove(urlList);
+}
+
+QList<QUrl> EntryTreeView::selectedUrlList()
+{
+    qDebug() << "selectedUrlList()";
+
     QList<QUrl> urlList;
 
     QModelIndexList selected(selectedIndexes());
-
-    if (selected.size() == 0)
-        return;
 
     foreach (QModelIndex proxyIndex, selected)
     {
@@ -121,5 +111,5 @@ void EntryTreeView::deletePressed()
 
     qDebug() << "\t" << urlList;
 
-    emit remove(urlList);
+    return urlList;
 }

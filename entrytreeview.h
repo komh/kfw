@@ -25,6 +25,8 @@ private:
     void copyToClipboard();
     void pasteFromClipboard();
     void deletePressed();
+
+    QList<QUrl> selectedUrlList();
 };
 
 #endif // ENTRYTREEVIEW_H
