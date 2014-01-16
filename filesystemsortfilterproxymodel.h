@@ -11,7 +11,8 @@ public:
     ~FileSystemSortFilterProxyModel();
 
 protected:
-    virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
+    virtual bool lessThan(const QModelIndex &left,
+                          const QModelIndex &right) const;
 };
 
 #endif // FILESYSTEMSORTFILTERPROXYMODEL_H

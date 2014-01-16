@@ -15,7 +15,8 @@ void FtpFileInfoCache::addFileInfo(const QString& dir, const QUrlInfo& urlInfo)
     _dirMultiMap.insert(getCacheKey(dir, urlInfo.name()), urlInfo);
 }
 
-QUrlInfo FtpFileInfoCache::findFileInfo(const QString& dir, const QString& name)
+QUrlInfo FtpFileInfoCache::findFileInfo(const QString& dir,
+                                        const QString& name)
 {
     QString cacheKey = getCacheKey(dir, name);
 
@@ -48,7 +49,8 @@ QUrlInfo FtpFileInfoCache::findFileInfo(const QString& path)
     return findFileInfo(dir, name);
 }
 
-FtpFileInfoCache::QUrlInfoList FtpFileInfoCache::findDirInfo(const QString& dir)
+FtpFileInfoCache::QUrlInfoList
+FtpFileInfoCache::findDirInfo(const QString& dir)
 {
     QString cacheKey = getCacheKey(dir, "");
 

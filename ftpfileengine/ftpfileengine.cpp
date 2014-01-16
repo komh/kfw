@@ -68,7 +68,8 @@ void FtpFileEngine::initFromFileName(const QString& file)
 void FtpFileEngine::initFtp()
 {
     _ftp = new QFtp;
-    connect(_ftp, SIGNAL(listInfo(QUrlInfo)), this, SLOT(ftpListInfo(QUrlInfo)));
+    connect(_ftp, SIGNAL(listInfo(QUrlInfo)),
+            this, SLOT(ftpListInfo(QUrlInfo)));
 
     _ftpSync.setFtp(_ftp);
 
@@ -97,7 +98,8 @@ void FtpFileEngine::initFtp()
 
     if (_path == "/")
     {
-        _fileFlags = QAbstractFileEngine::RootFlag | QAbstractFileEngine::ExistsFlag |
+        _fileFlags = QAbstractFileEngine::RootFlag |
+                     QAbstractFileEngine::ExistsFlag |
                      QAbstractFileEngine::DirectoryType;
 
         urlInfo.setName(_path);
@@ -127,8 +129,9 @@ void FtpFileEngine::initFtp()
         {
             _fileFlags |= QAbstractFileEngine::ExistsFlag;
 
-            _fileFlags |= _urlInfo.isDir() ? QAbstractFileEngine::DirectoryType :
-                                             QAbstractFileEngine::FileType;
+            _fileFlags |= _urlInfo.isDir() ?
+                            QAbstractFileEngine::DirectoryType :
+                            QAbstractFileEngine::FileType;
         }
         else
             _fileFlags |= QAbstractFileEngine::FileType;
@@ -146,14 +149,17 @@ bool FtpFileEngine::atEnd() const
     return QAbstractFileEngine::atEnd();
 }
 
-QAbstractFileEngine::Iterator* FtpFileEngine::beginEntryList(QDir::Filters filters, const QStringList &filterNames)
+QAbstractFileEngine::Iterator*
+FtpFileEngine::beginEntryList(QDir::Filters filters,
+                              const QStringList &filterNames)
 {
     qDebug() << "beginEntryList() : " << _fileName << _fileFlags;
 
     _entries.clear();
     _entriesMap.clear();
 
-    FtpFileInfoCache::QUrlInfoList list = _ftpCache->findDirInfo(getCachePath(_path));
+    FtpFileInfoCache::QUrlInfoList list =
+            _ftpCache->findDirInfo(getCachePath(_path));
     if (list.size() > 0)
     {
         FtpFileInfoCache::QUrlInfoListIterator it(list);
@@ -207,7 +213,8 @@ bool FtpFileEngine::copy(const QString &newName)
     return QAbstractFileEngine::copy(newName);
 }
 
-QStringList FtpFileEngine::entryList(QDir::Filters filters, const QStringList &filterNames) const
+QStringList FtpFileEngine::entryList(QDir::Filters filters,
+                                     const QStringList &filterNames) const
 {
     qDebug() << "entryList()" << _fileName;
 
@@ -228,7 +235,9 @@ QString FtpFileEngine::errorString() const
     return QAbstractFileEngine::errorString();
 }
 
-bool FtpFileEngine::extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output)
+bool FtpFileEngine::extension(Extension extension,
+                              const ExtensionOption *option,
+                              ExtensionReturn *output)
 {
     qDebug() << "extension()" << _fileName;
 
@@ -259,7 +268,8 @@ QString FtpFileEngine::fileName(FileName file) const
         break;
 
     case QAbstractFileEngine::PathName:
-        result = _url.scheme().append("://").append(_url.host()).append(QFileInfo(_path).path());
+        result = _url.scheme().append("://").append(_url.host())
+                    .append(QFileInfo(_path).path());
         break;
 
     case QAbstractFileEngine::AbsoluteName:
@@ -269,9 +279,8 @@ QString FtpFileEngine::fileName(FileName file) const
 
     case QAbstractFileEngine::AbsolutePathName:
     case QAbstractFileEngine::CanonicalPathName:
-        result = _url.scheme().append("://").append(_url.host()).append(QFileInfo(_path).path());
-        break;
-
+        result = _url.scheme().append("://").append(_url.host())
+                    .append(QFileInfo(_path).path());
         break;
 
     case QAbstractFileEngine::LinkName:
@@ -341,14 +350,16 @@ bool FtpFileEngine::link(const QString &newName)
     return false;
 }
 
-uchar* FtpFileEngine::map(qint64 offset, qint64 size, QFile::MemoryMapFlags flags)
+uchar* FtpFileEngine::map(qint64 offset, qint64 size,
+                          QFile::MemoryMapFlags flags)
 {
     qDebug() << "map()" << _fileName;
 
     return QAbstractFileEngine::map(offset, size, flags);
 }
 
-bool FtpFileEngine::mkdir(const QString &dirName, bool createParentDirectories) const
+bool FtpFileEngine::mkdir(const QString &dirName,
+                          bool createParentDirectories) const
 {
     qDebug() << "mkdir()" << _fileName;
 
@@ -412,7 +423,8 @@ bool FtpFileEngine::rename(const QString &newName)
     return QAbstractFileEngine::rename(newName);
 }
 
-bool FtpFileEngine::rmdir(const QString &dirName, bool recurseParentDirectories) const
+bool FtpFileEngine::rmdir(const QString &dirName,
+                          bool recurseParentDirectories) const
 {
     qDebug() << "rmdir()" << _fileName;
 

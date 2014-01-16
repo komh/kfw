@@ -56,13 +56,17 @@ void EntryTreeView::copyToClipboard()
 
     foreach (QModelIndex proxyIndex, selected)
     {
-        FileSystemSortFilterProxyModel* proxyModel = qobject_cast<FileSystemSortFilterProxyModel*>(model());
-        EntryListModel* sourceModel = qobject_cast<EntryListModel*>(proxyModel->sourceModel());
+        FileSystemSortFilterProxyModel* proxyModel =
+                qobject_cast<FileSystemSortFilterProxyModel*>(model());
+        EntryListModel* sourceModel =
+                qobject_cast<EntryListModel*>(proxyModel->sourceModel());
 
         QModelIndex index = proxyModel->mapToSource(proxyIndex);
 
-        if (sourceModel->headerData(index.column(), Qt::Horizontal) == tr("Name"))
-            urlList.append(FileOperation::fixUrl(sourceModel->filePath(index)));
+        if (sourceModel->headerData(index.column(), Qt::Horizontal)
+                == tr("Name"))
+            urlList.append(FileOperation::fixUrl(
+                               sourceModel->filePath(index)));
     }
 
     qDebug() << "\t" << urlList;

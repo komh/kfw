@@ -2,7 +2,8 @@
 
 #include "fileoperation.h"
 
-FileOperation::FileOperation(const QString &source, const QString &dest, QObject *parent)
+FileOperation::FileOperation(const QString &source, const QString &dest,
+                             QObject *parent)
     : QObject(parent)
     , _source(source)
     , _dest(dest)

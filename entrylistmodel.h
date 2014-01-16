@@ -18,7 +18,8 @@ public:
     {
         Qt::ItemFlags itemFlags = QFileSystemModel::flags(index);
 
-        if (headerData(index.column(), Qt::Horizontal).toString() == tr("Name"))
+        if (headerData(index.column(), Qt::Horizontal).toString()
+                == tr("Name"))
             itemFlags |= Qt::ItemIsEditable;
 
         return itemFlags;

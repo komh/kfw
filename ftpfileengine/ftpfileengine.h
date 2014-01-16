@@ -17,14 +17,17 @@ public:
     ~FtpFileEngine();
 
     bool atEnd() const;
-    Iterator* beginEntryList(QDir::Filters filters, const QStringList &filterNames);
+    Iterator* beginEntryList(QDir::Filters filters,
+                             const QStringList &filterNames);
     bool caseSensitive() const;
     bool close();
     bool copy(const QString &newName);
-    QStringList entryList(QDir::Filters filters, const QStringList &filterNames) const;
+    QStringList entryList(QDir::Filters filters,
+                          const QStringList &filterNames) const;
     QFile::FileError error() const;
     QString errorString() const;
-    bool extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output);
+    bool extension(Extension extension, const ExtensionOption *option,
+                   ExtensionReturn *output);
     FileFlags fileFlags(FileFlags type) const;
     QString fileName(FileName file) const;
     QDateTime fileTime(FileTime time) const;

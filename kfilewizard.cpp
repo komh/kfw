@@ -93,8 +93,10 @@ void KFileWizard::initEntryTree()
     connect(ui->entryTree, SIGNAL(activated(QModelIndex)),
             this, SLOT(entryActivated(QModelIndex)));
 
-    connect(ui->entryTree, SIGNAL(cdUp(QModelIndex)), this, SLOT(entryCdUp(QModelIndex)));
-    connect(ui->entryTree, SIGNAL(paste(QList<QUrl>)), this, SLOT(entryPaste(QList<QUrl>)));
+    connect(ui->entryTree, SIGNAL(cdUp(QModelIndex)),
+            this, SLOT(entryCdUp(QModelIndex)));
+    connect(ui->entryTree, SIGNAL(paste(QList<QUrl>)),
+            this, SLOT(entryPaste(QList<QUrl>)));
     connect(ui->entryTree, SIGNAL(remove(QList<QUrl>)),
             this, SLOT(entryRemove(QList<QUrl>)));
 
@@ -105,14 +107,16 @@ void KFileWizard::dirLoaded(const QString& dir)
 {
     Q_UNUSED(dir);
 
-    QModelIndex current = dirProxyModel->mapFromSource(dirModel->index(currentDir.path()));
+    QModelIndex current =
+            dirProxyModel->mapFromSource(dirModel->index(currentDir.path()));
 
     dirActivated(current);
 }
 
 void KFileWizard::dirActivated(const QModelIndex &index)
 {
-    setLocationText(dirModel->filePath(dirProxyModel->mapToSource(index)), true);
+    setLocationText(dirModel->filePath(dirProxyModel->mapToSource(index)),
+                    true);
 }
 
 void KFileWizard::entryActivated(const QModelIndex &index)
@@ -126,7 +130,8 @@ void KFileWizard::entryCdUp(const QModelIndex& index)
 {
     if (entryModel->parent(entryProxyModel->mapToSource(index)).isValid())
         setLocationText(entryModel->filePath(
-                            entryModel->parent(entryProxyModel->mapToSource(index))));
+                            entryModel->parent(
+                                entryProxyModel->mapToSource(index))));
 }
 
 void KFileWizard::entryPaste(const QList<QUrl>& urlList)
@@ -297,7 +302,6 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
                         .arg(canonicalSource));
 
         progress.setValue(urlList.indexOf(url));
-        question("continue?");
     }
 }
 
@@ -322,7 +326,9 @@ QString KFileWizard::canonicalize(const QString& path)
 
 void KFileWizard::locationReturnPressed()
 {
-    QModelIndex current = dirProxyModel->mapFromSource(dirModel->index(ui->locationLine->text()));
+    QModelIndex current =
+            dirProxyModel->mapFromSource(
+                dirModel->index(ui->locationLine->text()));
 
     if (current.isValid())
     {
