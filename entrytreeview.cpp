@@ -33,6 +33,13 @@ void EntryTreeView::keyPressEvent(QKeyEvent *event)
         return;
     }
 
+    if (event->matches(QKeySequence::Delete))
+    {
+        deletePressed();
+
+        return;
+    }
+
     QTreeView::keyPressEvent(event);
 }
 
@@ -80,4 +87,35 @@ void EntryTreeView::pasteFromClipboard()
 
         emit paste(mime->urls());
     }
+}
+
+void EntryTreeView::deletePressed()
+{
+    qDebug() << "deletePressed()";
+
+    QList<QUrl> urlList;
+
+    QModelIndexList selected(selectedIndexes());
+
+    if (selected.size() == 0)
+        return;
+
+    foreach (QModelIndex proxyIndex, selected)
+    {
+        FileSystemSortFilterProxyModel* proxyModel =
+                qobject_cast<FileSystemSortFilterProxyModel*>(model());
+        EntryListModel* sourceModel =
+                qobject_cast<EntryListModel*>(proxyModel->sourceModel());
+
+        QModelIndex index = proxyModel->mapToSource(proxyIndex);
+
+        if (sourceModel->headerData(index.column(), Qt::Horizontal)
+                == tr("Name"))
+            urlList.append(FileOperation::fixUrl(
+                               sourceModel->filePath(index)));
+    }
+
+    qDebug() << "\t" << urlList;
+
+    emit remove(urlList);
 }

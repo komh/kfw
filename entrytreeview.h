@@ -14,6 +14,7 @@ public:
 signals:
     void cdUp(const QModelIndex& index);
     void paste(const QList<QUrl>&);
+    void remove(const QList<QUrl>&);
 
 public slots:
 
@@ -23,6 +24,7 @@ protected:
 private:
     void copyToClipboard();
     void pasteFromClipboard();
+    void deletePressed();
 };
 
 #endif // ENTRYTREEVIEW_H

@@ -26,6 +26,7 @@ private slots:
     void entryActivated(const QModelIndex& index);
     void entryCdUp(const QModelIndex &index);
     void entryPaste(const QList<QUrl>& urlList);
+    void entryRemove(const QList<QUrl>& urlList);
     void locationReturnPressed();
 
 private:

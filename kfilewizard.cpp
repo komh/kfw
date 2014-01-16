@@ -95,6 +95,8 @@ void KFileWizard::initEntryTree()
 
     connect(ui->entryTree, SIGNAL(cdUp(QModelIndex)), this, SLOT(entryCdUp(QModelIndex)));
     connect(ui->entryTree, SIGNAL(paste(QList<QUrl>)), this, SLOT(entryPaste(QList<QUrl>)));
+    connect(ui->entryTree, SIGNAL(remove(QList<QUrl>)),
+            this, SLOT(entryRemove(QList<QUrl>)));
 
     setEntryRoot();
 }
@@ -249,6 +251,54 @@ QMessageBox::StandardButton KFileWizard::checkOverwrite(const QString& dest)
     }
 
     return QMessageBox::Yes;
+}
+
+void KFileWizard::entryRemove(const QList<QUrl>& urlList)
+{
+    QString msg(urlList.size() == 1 ?
+                    tr("Are you sure to delete this file?\n\n"
+                       "%1")
+                       .arg(canonicalize(urlList.first().toString())) :
+                    tr("Are you sure to delete these %1 entries?")
+                       .arg(urlList.size()));
+
+
+    if (question(msg, QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
+        return;
+
+    QProgressDialog progress(this);
+    progress.setWindowTitle(tr("K File Wizard"));
+    progress.setLabelText(tr("Deleting files..."));
+    progress.setRange(0, urlList.size());
+    progress.setModal(true);
+    progress.setAutoClose(false);
+    progress.show();
+
+    FileOperation fileOp;
+
+    foreach(QUrl url, urlList)
+    {
+        QString source(FileOperation::fixUrl(url.toString()));
+
+        QString canonicalSource(canonicalize(source));
+
+        progress.setLabelText(tr("Deleting %1 of %2\n\n"
+                                 "%3\n\n")
+                              .arg(urlList.indexOf(url) + 1)
+                              .arg(urlList.size())
+                              .arg(canonicalSource));
+
+        fileOp.setSource(source);
+        fileOp.open();
+
+        if (!fileOp.remove())
+            critical(tr("Failed to delete\n\n"
+                        "%1")
+                        .arg(canonicalSource));
+
+        progress.setValue(urlList.indexOf(url));
+        question("continue?");
+    }
 }
 
 void KFileWizard::setLocationText(const QString& text, bool force)

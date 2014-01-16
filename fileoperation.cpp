@@ -11,24 +11,22 @@ FileOperation::FileOperation(const QString &source, const QString &dest, QObject
 
 bool FileOperation::open()
 {
-    if (source().isEmpty() || dest().isEmpty())
+    close();
+
+    if (source().isEmpty())
         return false;
 
-    _sourceFile.close();
     _sourceFile.setFileName(source());
+
     if (!_sourceFile.open(QIODevice::ReadOnly))
         return false;
 
-    _destFile.close();
+    if (dest().isEmpty())
+        return true;
+
     _destFile.setFileName(dest());
-    if (!_destFile.open(QIODevice::WriteOnly))
-    {
-        _sourceFile.close();
 
-        return false;
-    }
-
-    return true;
+    return _destFile.open(QIODevice::WriteOnly);
 }
 
 void FileOperation::close()
@@ -56,6 +54,11 @@ qint64 FileOperation::copy(qint64 chunkSize)
         return -1;
 
     return sourceData.size();
+}
+
+bool FileOperation::remove()
+{
+    return _sourceFile.remove();
 }
 
 QString FileOperation::fixUrl(const QString &url)
