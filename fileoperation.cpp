@@ -1,9 +1,61 @@
+#include <QFile>
+
 #include "fileoperation.h"
 
-FileOperation::FileOperation(const QString &source, const QString &dest)
-    : _source(source)
+FileOperation::FileOperation(const QString &source, const QString &dest, QObject *parent)
+    : QObject(parent)
+    , _source(source)
     , _dest(dest)
 {
+}
+
+bool FileOperation::open()
+{
+    if (source().isEmpty() || dest().isEmpty())
+        return false;
+
+    _sourceFile.close();
+    _sourceFile.setFileName(source());
+    if (!_sourceFile.open(QIODevice::ReadOnly))
+        return false;
+
+    _destFile.close();
+    _destFile.setFileName(dest());
+    if (!_destFile.open(QIODevice::WriteOnly))
+    {
+        _sourceFile.close();
+
+        return false;
+    }
+
+    return true;
+}
+
+void FileOperation::close()
+{
+    _sourceFile.close();
+    _destFile.close();
+}
+
+qint64 FileOperation::size() const
+{
+    return _sourceFile.isOpen() ? _sourceFile.size() : -1;
+}
+
+qint64 FileOperation::copy(qint64 chunkSize)
+{
+    if (!_sourceFile.isOpen() || !_destFile.isOpen())
+        return -1;
+
+    QByteArray sourceData(_sourceFile.read(chunkSize));
+
+    if (sourceData.isEmpty())
+        return _sourceFile.atEnd() ? 0 : -1;
+
+    if (_destFile.write(sourceData) != sourceData.size())
+        return -1;
+
+    return sourceData.size();
 }
 
 QString FileOperation::fixUrl(const QString &url)
