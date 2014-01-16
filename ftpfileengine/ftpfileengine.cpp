@@ -264,7 +264,7 @@ QString FtpFileEngine::fileName(FileName file) const
         break;
 
     case QAbstractFileEngine::BaseName:
-        result = QFileInfo(_path).baseName();
+        result = QFileInfo(_path).fileName();
         break;
 
     case QAbstractFileEngine::PathName:
