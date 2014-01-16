@@ -43,6 +43,15 @@ private:
         QMessageBox::critical(this, tr("K File Wizard"), text, QMessageBox::Ok);
     }
 
+    inline QMessageBox::StandardButton question(
+                const QString& text,
+                QMessageBox::StandardButtons buttons  =
+                    QMessageBox::Ok)
+    {
+        return QMessageBox::question(this, tr("K File Wizard"), text,
+                                     buttons);
+    }
+
     void initLocationLine();
     void initSplitter();
     void initDirTree();
