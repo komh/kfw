@@ -130,6 +130,7 @@ void KFileWizard::entryCdUp(const QModelIndex& index)
 void KFileWizard::entryPaste(const QList<QUrl>& urlList)
 {
     QProgressDialog progress(this);
+    progress.setWindowTitle(tr("K File Wizard"));
     progress.setLabelText(tr("Copying files..."));
     progress.setRange(0, 100);
     progress.setModal(true);
