@@ -149,6 +149,9 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
 
     foreach(QUrl url, urlList)
     {
+        if (progress.wasCanceled())
+            break;
+
         QString source(FileOperation::fixUrl(url.toString()));
         QString dest(FileOperation::fixUrl(
                          currentDir.absoluteFilePath(
@@ -189,7 +192,7 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
             qint64 totalCopied = 0;
             qint64 totalSize = fileOp.size();
 
-            while (totalCopied < totalSize)
+            while (totalCopied < totalSize && !progress.wasCanceled())
             {
                 copied = fileOp.copy();
                 if (copied == -1)
@@ -287,6 +290,9 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
 
     foreach(QUrl url, urlList)
     {
+        if (progress.wasCanceled())
+            break;
+
         QString source(FileOperation::fixUrl(url.toString()));
 
         QString canonicalSource(canonicalize(source));
