@@ -39,9 +39,13 @@ private:
     EntryListModel* entryModel;
     FileSystemSortFilterProxyModel* entryProxyModel;
 
-    inline void critical(const QString& text)
+    inline QMessageBox::StandardButton critical(
+                const QString& text,
+                QMessageBox::StandardButton buttons =
+                    QMessageBox::Ok)
     {
-        QMessageBox::critical(this, tr("K File Wizard"), text, QMessageBox::Ok);
+        return QMessageBox::critical(this, tr("K File Wizard"), text,
+                                     buttons);
     }
 
     inline QMessageBox::StandardButton question(
