@@ -7,6 +7,7 @@
 #include "entrylistmodel.h"
 #include "entrytreeview.h"
 #include "fileoperation.h"
+#include "msleep.h"
 
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
@@ -188,11 +189,14 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
             qint64 totalCopied = 0;
             qint64 totalSize = fileOp.size();
 
-            forever
+            while (totalCopied < totalSize)
             {
                 copied = fileOp.copy();
-                if (copied <= 0)
+                if (copied == -1)
                     break;
+
+                if (copied == 0)
+                    MSleep::msleep(10);
 
                 totalCopied += copied;
 
