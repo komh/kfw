@@ -13,11 +13,16 @@ public:
 
 signals:
     void cdUp(const QModelIndex& index);
+    void paste(const QList<QUrl>&);
 
 public slots:
 
 protected:
     void keyPressEvent(QKeyEvent *event);
+
+private:
+    void copyToClipboard();
+    void pasteFromClipboard();
 };
 
 #endif // ENTRYTREEVIEW_H
