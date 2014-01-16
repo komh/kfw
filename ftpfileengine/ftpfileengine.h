@@ -65,6 +65,8 @@ private:
     QString _fileName;
     QAbstractFileEngine::FileFlags _fileFlags;
     QUrlInfo _urlInfo;
+    QBuffer _fileBuffer;
+    qint64 _filePos;
 
     QUrl _url;
     QString _userName;

@@ -12,6 +12,7 @@ FtpFileEngine::FtpFileEngine(QObject* parent)
     , QAbstractFileEngine()
     , _ftp(0)
     , _fileFlags(0)
+    , _filePos(0)
     , _ftpCache(0)
 {
     qDebug() << "FtpFileEngine()";
@@ -24,6 +25,7 @@ FtpFileEngine::FtpFileEngine(const QString &fileName, QObject *parent)
     , QAbstractFileEngine()
     , _ftp(0)
     , _fileFlags(0)
+    , _filePos(0)
     , _ftpCache(0)
 {
     qDebug() << "FtpFileEngine(fileName) : " << fileName;
@@ -146,7 +148,7 @@ bool FtpFileEngine::atEnd() const
 {
     qDebug() << "atEnd()" << _fileName;
 
-    return QAbstractFileEngine::atEnd();
+    return pos() >= size();
 }
 
 QAbstractFileEngine::Iterator*
@@ -203,14 +205,19 @@ bool FtpFileEngine::close()
 {
     qDebug() << "close()" << _fileName;
 
-    return QAbstractFileEngine::close();
+    _ftp->close();
+    _ftpSync.wait();
+
+    _fileBuffer.close();
+
+    return true;
 }
 
 bool FtpFileEngine::copy(const QString &newName)
 {
     qDebug() << "copy()" << _fileName;
 
-    return QAbstractFileEngine::copy(newName);
+    return false;
 }
 
 QStringList FtpFileEngine::entryList(QDir::Filters filters,
@@ -368,9 +375,33 @@ bool FtpFileEngine::mkdir(const QString &dirName,
 
 bool FtpFileEngine::open(QIODevice::OpenMode openMode)
 {
-    qDebug() << "open()" << _fileName;
+    qDebug() << "open()" << _fileName << openMode;
 
-    return QAbstractFileEngine::open(openMode);
+    if (!(openMode & (QIODevice::ReadOnly | QIODevice::WriteOnly)))
+        return false;
+
+    if ((openMode & QIODevice::ReadOnly)
+            && (!(_fileFlags & QAbstractFileEngine::ExistsFlag)
+                    || _fileFlags & QAbstractFileEngine::DirectoryType))
+        return false;
+
+    if ((openMode == QIODevice::WriteOnly)
+            && (_fileFlags & QAbstractFileEngine::DirectoryType))
+        return false;
+
+    _ftp->connectToHost(_url.host(), _url.port(21));
+    _ftp->login(_userName, _password);
+    _ftpSync.wait();
+
+    if (openMode & QIODevice::ReadOnly)
+    {
+        _fileBuffer.close();
+        _fileBuffer.open(QIODevice::ReadWrite);
+
+        _ftp->get(_path, &_fileBuffer);
+    }
+
+    return true;
 }
 
 QString FtpFileEngine::owner(FileOwner owner) const
@@ -392,14 +423,24 @@ qint64 FtpFileEngine::pos() const
 {
     qDebug() << "pos()" << _fileName;
 
-    return QAbstractFileEngine::pos();
+    return _filePos;
 }
 
 qint64 FtpFileEngine::read(char *data, qint64 maxlen)
 {
-    qDebug() << "read()" << _fileName;
+    qDebug() << "read()" << _fileName
+                         << _filePos << _fileBuffer.size();
 
-    return QAbstractFileEngine::read(data, maxlen);
+    qint64 len = qMin(maxlen, _fileBuffer.size() - _filePos);
+
+    if (len > 0)
+    {
+        memcpy(data, _fileBuffer.buffer().data() + _filePos, len);
+
+        _filePos += len;
+    }
+
+    return len;
 }
 
 qint64 FtpFileEngine::readLine(char *data, qint64 maxlen)
@@ -435,7 +476,7 @@ bool FtpFileEngine::seek(qint64 pos)
 {
     qDebug() << "seek()" << _fileName;
 
-    return QAbstractFileEngine::seek(pos);
+    return false;
 }
 
 void FtpFileEngine::setFileName(const QString &file)
