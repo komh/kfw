@@ -46,15 +46,18 @@ qint64 FileOperation::copy(qint64 chunkSize)
     if (!_sourceFile.isOpen() || !_destFile.isOpen())
         return -1;
 
-    QByteArray sourceData(_sourceFile.read(chunkSize));
+    QByteArray sourceData(chunkSize, 0);
 
-    if (sourceData.isEmpty())
-        return _sourceFile.atEnd() ? 0 : -1;
+    int len = _sourceFile.read(sourceData.data(), chunkSize);
 
-    if (_destFile.write(sourceData) != sourceData.size())
+    // -1 for error, 0 for nothing read
+    if (len <= 0)
+        return len;
+
+    if (_destFile.write(sourceData.data(), len) != len)
         return -1;
 
-    return sourceData.size();
+    return len;
 }
 
 bool FileOperation::remove()
