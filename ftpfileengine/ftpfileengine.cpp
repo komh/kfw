@@ -4,6 +4,7 @@
 #include "ftpfileengineiterator.h"
 #include "ftpfileinfocache.h"
 #include "fileoperation.h"
+#include "ftpbuffer.h"
 
 #include "ftpfileengine.h"
 
@@ -12,7 +13,6 @@ FtpFileEngine::FtpFileEngine(QObject* parent)
     , QAbstractFileEngine()
     , _ftp(0)
     , _fileFlags(0)
-    , _filePos(0)
     , _ftpCache(0)
 {
     qDebug() << "FtpFileEngine()";
@@ -25,7 +25,6 @@ FtpFileEngine::FtpFileEngine(const QString &fileName, QObject *parent)
     , QAbstractFileEngine()
     , _ftp(0)
     , _fileFlags(0)
-    , _filePos(0)
     , _ftpCache(0)
 {
     qDebug() << "FtpFileEngine(fileName) : " << fileName;
@@ -148,7 +147,7 @@ bool FtpFileEngine::atEnd() const
 {
     qDebug() << "atEnd()" << _fileName;
 
-    return pos() >= size();
+    return _fileBuffer.readPos() >= size();
 }
 
 QAbstractFileEngine::Iterator*
@@ -423,24 +422,14 @@ qint64 FtpFileEngine::pos() const
 {
     qDebug() << "pos()" << _fileName;
 
-    return _filePos;
+    return _fileBuffer.pos();
 }
 
 qint64 FtpFileEngine::read(char *data, qint64 maxlen)
 {
-    qDebug() << "read()" << _fileName
-                         << _filePos << _fileBuffer.size();
+    qDebug() << "read()" << _fileName;
 
-    qint64 len = qMin(maxlen, _fileBuffer.size() - _filePos);
-
-    if (len > 0)
-    {
-        memcpy(data, _fileBuffer.buffer().data() + _filePos, len);
-
-        _filePos += len;
-    }
-
-    return len;
+    return _fileBuffer.read(data, maxlen);
 }
 
 qint64 FtpFileEngine::readLine(char *data, qint64 maxlen)

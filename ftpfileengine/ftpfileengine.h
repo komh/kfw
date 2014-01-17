@@ -6,6 +6,7 @@
 
 #include "ftpsync.h"
 #include "ftpfileinfocache.h"
+#include "ftpbuffer.h"
 
 class FtpFileEngine : public QObject, public QAbstractFileEngine
 {
@@ -65,8 +66,7 @@ private:
     QString _fileName;
     QAbstractFileEngine::FileFlags _fileFlags;
     QUrlInfo _urlInfo;
-    QBuffer _fileBuffer;
-    qint64 _filePos;
+    FtpBuffer _fileBuffer;
 
     QUrl _url;
     QString _userName;
