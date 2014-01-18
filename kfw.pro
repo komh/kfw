@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     ftpfileengine/ftpfileengine.cpp \
     fileoperation.cpp \
     msleep.cpp \
-    ftpfileengine/ftpbuffer.cpp
+    ftpfileengine/ftpbuffer.cpp \
+    ftpfileengine/ftptransferthread.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -37,6 +38,7 @@ HEADERS  += kfilewizard.h \
     ftpfileengine/ftpfileengine.h \
     fileoperation.h \
     msleep.h \
-    ftpfileengine/ftpbuffer.h
+    ftpfileengine/ftpbuffer.h \
+    ftpfileengine/ftptransferthread.h
 
 FORMS    += kfilewizard.ui

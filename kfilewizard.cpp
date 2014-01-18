@@ -194,7 +194,12 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
 
             while (totalCopied < totalSize && !progress.wasCanceled())
             {
+                qDebug() << "totalCopied =" << totalCopied
+                         << "totalSize =" << totalSize;
+
                 copied = fileOp.copy();
+                qDebug() << "copied =" << copied;
+
                 if (copied == -1)
                     break;
 
@@ -205,7 +210,7 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
 
                 progress.setValue(totalCopied * 100 / totalSize);
 
-                qApp->processEvents();
+                qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
             }
 
             fileOp.close();
