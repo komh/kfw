@@ -27,6 +27,10 @@ bool FileOperation::open()
 
     _destFile.setFileName(dest());
 
+    // Set the size of a file on FTP to help it to determine EOF
+    if (dest().startsWith("ftp://"))
+        _destFile.resize(_sourceFile.size());
+
     return _destFile.open(QIODevice::WriteOnly);
 }
 

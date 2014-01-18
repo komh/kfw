@@ -1,32 +1,37 @@
-#include <QDebug>
+#include <QtCore>
 
 #include "ftpbuffer.h"
 
 FtpBuffer::FtpBuffer(QObject *parent) :
     QIODevice(parent)
+  , _basePos(0)
   , _readPos(0)
+  , _mutex(QMutex::Recursive)
+  , _size(-1)
 {
 }
 
 bool FtpBuffer::atEnd() const
 {
-    qDebug() << "atEnd()";
+    qDebug() << "atEnd()" << readPos() << size();
 
-    return readPos() >= _buffer.size();
+    return isEnd();
 }
 
 qint64 FtpBuffer::bytesAvailable() const
 {
     qDebug() << "bytesAvailable()";
+    qDebug() << "\t" << dataLength();
 
-    return _buffer.size() - readPos();
+    return dataLength();
 }
 
 qint64 FtpBuffer::bytesToWrite() const
 {
     qDebug() << "bytesToWrite()";
+    qDebug() << "\t" << dataLength();
 
-    return bytesAvailable();
+    return dataLength();
 }
 
 bool FtpBuffer::canReadLine() const
@@ -49,7 +54,10 @@ bool FtpBuffer::isSequential() const
 {
     qDebug() << "isSequential()";
 
-    return _buffer.isSequential();
+    // QFtp::put() checks atEnd() when it reaches EOF, but only on
+    // non-sequential device. So without this, QFtp::put() does not call
+    // atEnd() and waits infinitely.
+    return !isEnd();
 }
 
 bool FtpBuffer::open(OpenMode mode)
@@ -63,28 +71,30 @@ qint64 FtpBuffer::pos() const
 {
     qDebug() << "pos()";
 
-    return _buffer.pos();
+    QMutexLocker locker(&_mutex);
+
+    return _basePos + _buffer.pos();
 }
 
 bool FtpBuffer::reset()
 {
     qDebug() << "reset()";
 
-    return QIODevice::reset() && _buffer.reset();
+    return false;
 }
 
 bool FtpBuffer::seek(qint64 pos)
 {
     qDebug() << "seek()" << pos;
 
-    return _buffer.seek(pos);
+    return false;
 }
 
 qint64 FtpBuffer::size() const
 {
     qDebug() << "size()";
 
-    return _buffer.size();
+    return totalSize();
 }
 
 bool FtpBuffer::waitForBytesWritten(int msecs)
@@ -103,23 +113,107 @@ bool FtpBuffer::waitForReadyRead(int msecs)
 
 qint64 FtpBuffer::readData(char *data, qint64 maxlen)
 {
-    qDebug() << "readData()" << maxlen;
+    qDebug() << "readData()" << maxlen << dataLength()
+                             << QThread::currentThreadId();
 
-    qint64 len = qMin(maxlen, bytesAvailable());
+    _bufferLengthMutex.lock();
+
+    while (!isEnd() && dataLength() == 0)
+    {
+        qDebug() << "readData() data empty";
+        qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+        _bufferLengthCond.wait(&_bufferLengthMutex, 10);
+    }
+
+    _bufferLengthMutex.unlock();
+
+    QMutexLocker locker(&_mutex);
+
+    qint64 len = qMin(maxlen, dataLength());
 
     if (len > 0)
     {
-        memcpy(data, _buffer.buffer().data() + readPos(), len);
+        memcpy(data, _buffer.buffer().data() + _readPos, len);
+
+        QMutexLocker locker(&_bufferLengthMutex);
 
         _readPos += len;
+
+        if (dataLength() == 0)
+        {
+            _buffer.reset();
+
+            _basePos += _readPos;
+            _readPos = 0;
+        }
+
+        _bufferLengthCond.wakeAll();
     }
 
+    qDebug() << "readData() =" << len;
     return len;
 }
 
 qint64 FtpBuffer::writeData(const char *data, qint64 len)
 {
-    qDebug() << "writeData()" << len;
+    qDebug() << "writeData()" << len << _buffer.size()
+                              << QThread::currentThreadId();
 
-    return _buffer.write(data, len);
+    QMutexLocker locker(&_bufferLengthMutex);
+
+    _mutex.lock();
+
+    qint64 result = _buffer.write(data, len);
+
+    _mutex.unlock();
+
+    _bufferLengthCond.wakeAll();
+
+    qDebug() << "writeData() =" << result;
+
+    return result;
+}
+
+bool FtpBuffer::flush()
+{
+    qDebug() << "flush()" << "waiting...";
+
+    QMutexLocker locker(&_bufferLengthMutex);
+
+    while (dataLength() > 0)
+    {
+        qDebug() << "flush() data not empty";
+        qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+        _bufferLengthCond.wait(&_bufferLengthMutex, 10);
+    }
+
+    qDebug() << "flush()" << "completed!!!";
+
+    return true;
+}
+
+qint64 FtpBuffer::readPos() const
+{
+    QMutexLocker locker(&_mutex);
+
+    return _basePos + _readPos;
+}
+
+qint64 FtpBuffer::dataLength() const
+{
+    QMutexLocker locker(&_mutex);
+
+    return _buffer.pos() - _readPos;
+}
+
+bool FtpBuffer::isEnd() const
+{
+    return readPos() >= totalSize();
+}
+
+qint64 FtpBuffer::totalSize() const
+{
+    QMutexLocker locker(&_mutex);
+
+    return (_size == -1 ? (_basePos + _buffer.pos()) : _size);
 }

@@ -5,6 +5,8 @@
 #include "ftpfileinfocache.h"
 #include "fileoperation.h"
 #include "ftpbuffer.h"
+#include "ftptransferthread.h"
+#include "msleep.h"
 
 #include "ftpfileengine.h"
 
@@ -14,6 +16,7 @@ FtpFileEngine::FtpFileEngine(QObject* parent)
     , _ftp(0)
     , _fileFlags(0)
     , _ftpCache(0)
+    , _ftpTransfer(0)
 {
     qDebug() << "FtpFileEngine()";
 
@@ -26,6 +29,7 @@ FtpFileEngine::FtpFileEngine(const QString &fileName, QObject *parent)
     , _ftp(0)
     , _fileFlags(0)
     , _ftpCache(0)
+    , _ftpTransfer(0)
 {
     qDebug() << "FtpFileEngine(fileName) : " << fileName;
 
@@ -37,6 +41,13 @@ FtpFileEngine::FtpFileEngine(const QString &fileName, QObject *parent)
 FtpFileEngine::~FtpFileEngine()
 {
     qDebug() << "~FtpFileEngine()" << _fileName;
+
+    if( _ftpTransfer)
+    {
+        _ftpTransfer->wait();
+
+        delete _ftpTransfer;
+    }
 
     // delete causes ASSERT to be failed on Windows debug build
     _ftp->deleteLater();
@@ -204,8 +215,13 @@ bool FtpFileEngine::close()
 {
     qDebug() << "close()" << _fileName;
 
-    _ftp->close();
-    _ftpSync.wait();
+    if (_ftpTransfer)
+    {
+        _ftpTransfer->wait();
+
+        delete _ftpTransfer;
+        _ftpTransfer = 0;
+    }
 
     _fileBuffer.close();
 
@@ -323,7 +339,7 @@ bool FtpFileEngine::flush()
 {
     qDebug() << "flush()" << _fileName;
 
-    return QAbstractFileEngine::flush();
+    return _fileBuffer.flush();
 }
 
 int FtpFileEngine::handle() const
@@ -388,17 +404,17 @@ bool FtpFileEngine::open(QIODevice::OpenMode openMode)
             && (_fileFlags & QAbstractFileEngine::DirectoryType))
         return false;
 
-    _ftp->connectToHost(_url.host(), _url.port(21));
-    _ftp->login(_userName, _password);
-    _ftpSync.wait();
+    _fileBuffer.close();
+    _fileBuffer.open(QIODevice::ReadWrite);
 
     if (openMode & QIODevice::ReadOnly)
-    {
-        _fileBuffer.close();
-        _fileBuffer.open(QIODevice::ReadWrite);
+        _fileBuffer.setSize(_urlInfo.size());
 
-        _ftp->get(_path, &_fileBuffer);
-    }
+    delete _ftpTransfer;
+    _ftpTransfer = new FtpTransferThread(this, openMode);
+
+    qDebug() << "Thread id = " << QThread::currentThreadId();
+    _ftpTransfer->start();
 
     return true;
 }
@@ -482,11 +498,16 @@ bool FtpFileEngine::setPermissions(uint perms)
     return QAbstractFileEngine::setPermissions(perms);
 }
 
+// Set nothing but size. That is, the actual file size does not change.
+// So the file is not truncated, and not enrlarged.
 bool FtpFileEngine::setSize(qint64 size)
 {
-    qDebug() << "setSize()" << _fileName;
+    qDebug() << "setSize()" << _fileName << size;
 
-    return QAbstractFileEngine::setSize(size);
+    _fileBuffer.setSize(size);
+    _urlInfo.setSize(size);
+
+    return true;
 }
 
 qint64 FtpFileEngine::size() const
@@ -513,9 +534,9 @@ bool FtpFileEngine::unmap(uchar *ptr)
 
 qint64 FtpFileEngine::write(const char *data, qint64 len)
 {
-    qDebug() << "write()" << _fileName;
+    qDebug() << "write()" << _fileName << len;
 
-    return QAbstractFileEngine::write(data, len);
+    return _fileBuffer.write(data, len);
 }
 
 void FtpFileEngine::ftpListInfo(const QUrlInfo &urlInfo)

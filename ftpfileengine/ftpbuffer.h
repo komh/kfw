@@ -3,6 +3,8 @@
 
 #include <QIODevice>
 #include <QBuffer>
+#include <QMutex>
+#include <QWaitCondition>
 
 class FtpBuffer : public QIODevice
 {
@@ -18,12 +20,15 @@ public:
     bool isSequential() const;
     bool open(OpenMode mode);
     qint64 pos() const;
-    qint64 readPos() const { return _readPos; }
     bool reset();
     bool seek(qint64 pos);
     qint64 size() const;
     bool waitForBytesWritten(int msecs);
     bool waitForReadyRead(int msecs);
+
+    bool  flush();
+    qint64 readPos() const;
+    void setSize(qint64 size) { _size = size; }
 
 protected:
     virtual qint64 readData(char *data, qint64 maxlen);
@@ -31,8 +36,17 @@ protected:
 
 private:
     QBuffer _buffer;
-
+    qint64 _basePos;
     qint64 _readPos;
+    mutable QMutex _mutex;
+    mutable QMutex _bufferLengthMutex;
+    mutable QWaitCondition _bufferLengthCond;
+
+    qint64 _size;
+
+    qint64 dataLength() const;
+    bool isEnd() const;
+    qint64 totalSize() const;
 };
 
 #endif // FTPBUFFER_H

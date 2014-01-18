@@ -8,6 +8,8 @@
 #include "ftpfileinfocache.h"
 #include "ftpbuffer.h"
 
+class FtpTransferThread;
+
 class FtpFileEngine : public QObject, public QAbstractFileEngine
 {
     Q_OBJECT
@@ -61,6 +63,8 @@ private slots:
     void ftpListInfo(const QUrlInfo& urlInfo);
 
 private:
+    friend class FtpTransferThread;
+
     QFtp* _ftp;
 
     QString _fileName;
@@ -81,6 +85,8 @@ private:
     FtpSync _ftpSync;
 
     FtpFileInfoCache* _ftpCache;
+
+    FtpTransferThread* _ftpTransfer;
 
     void initFromFileName(const QString& file = QString());
     void initFtp();
