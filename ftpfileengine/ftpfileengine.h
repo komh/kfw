@@ -75,6 +75,7 @@ private:
     QUrl _url;
     QString _userName;
     QString _password;
+    int _port;
     QString _path;
 
     QString _cacheDir;

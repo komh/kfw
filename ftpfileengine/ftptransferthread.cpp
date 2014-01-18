@@ -23,7 +23,7 @@ void FtpTransferThread::run()
 
     connect(&ftp, SIGNAL(done(bool)), &loop, SLOT(quit()));
 
-    ftp.connectToHost(_engine->_url.host(), _engine->_url.port(21));
+    ftp.connectToHost(_engine->_url.host(), _engine->_port);
     ftp.login(_engine->_userName, _engine->_password);
 
     if (_openMode & QIODevice::ReadOnly)

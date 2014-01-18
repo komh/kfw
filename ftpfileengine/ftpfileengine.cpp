@@ -6,6 +6,7 @@
 #include "fileoperation.h"
 #include "ftpbuffer.h"
 #include "ftptransferthread.h"
+#include "ftphostinfocache.h"
 
 #include "ftpfileengine.h"
 
@@ -58,13 +59,25 @@ void FtpFileEngine::initFromFileName(const QString& file)
 
     _url.setUrl(_fileName);
 
+    FtpHostInfoCache hostCache;
+
     _userName = _url.userName();
     if (_userName.isEmpty())
-        _userName = "anonymous";
+        _userName = hostCache.userName(_url.host());
 
     _password = _url.password();
     if (_password.isEmpty())
-        _password = "anonymous";
+        _password = hostCache.password(_url.host());
+
+    _port = _url.port();
+    if (_port == -1)
+        _port = hostCache.port(_url.host());
+
+    _url.setUserName(_userName);
+    _url.setPassword(_password);
+    _url.setPort(_port);
+
+    hostCache.addHostInfo(_url.host(), _userName, _password, _port);
 
     _path = _url.path();
     if (_path.isEmpty())
@@ -104,7 +117,7 @@ void FtpFileEngine::initFtp()
         return;
     }
 
-    _ftp->connectToHost(_url.host(), _url.port(21));
+    _ftp->connectToHost(_url.host(), _port);
     _ftp->login(_userName, _password);
 
     if (_path == "/")
@@ -185,7 +198,7 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
         return new FtpFileEngineIterator(filters, filterNames, _entries);
     }
 
-    _ftp->connectToHost(_url.host(), _url.port(21));
+    _ftp->connectToHost(_url.host(), _port);
     _ftp->login(_userName, _password);
 
     if (_fileFlags & QAbstractFileEngine::DirectoryType)
@@ -281,7 +294,7 @@ QString FtpFileEngine::fileName(FileName file) const
     switch (file)
     {
     case QAbstractFileEngine::DefaultName:
-        result = _url.toString();
+        result = _url.toString(QUrl::RemoveUserInfo | QUrl::RemovePort);
         break;
 
     case QAbstractFileEngine::BaseName:
