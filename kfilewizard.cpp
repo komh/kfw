@@ -90,6 +90,7 @@ void KFileWizard::initEntryTree()
     ui->entryTree->setModel(entryProxyModel);
     ui->entryTree->setEditTriggers(QAbstractItemView::SelectedClicked);
     ui->entryTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    ui->entryTree->setAllColumnsShowFocus(true);
 
     connect(ui->entryTree, SIGNAL(activated(QModelIndex)),
             this, SLOT(entryActivated(QModelIndex)));
