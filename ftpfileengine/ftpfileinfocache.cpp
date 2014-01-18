@@ -12,6 +12,10 @@ FtpFileInfoCache::~FtpFileInfoCache()
 
 void FtpFileInfoCache::addFileInfo(const QString& dir, const QUrlInfo& urlInfo)
 {
+    // if there is already an item, replace it by removing and inserting
+    if (findFileInfo(dir, urlInfo.name()).isValid())
+        _dirMultiMap.remove(getCacheKey(dir, urlInfo.name()), urlInfo);
+
     _dirMultiMap.insert(getCacheKey(dir, urlInfo.name()), urlInfo);
 }
 
