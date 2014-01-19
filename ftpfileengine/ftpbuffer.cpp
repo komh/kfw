@@ -142,6 +142,7 @@ qint64 FtpBuffer::readData(char *data, qint64 maxlen)
         if (dataLength() == 0)
         {
             _buffer.reset();
+            _buffer.buffer().clear();
 
             _basePos += _readPos;
             _readPos = 0;
