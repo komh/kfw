@@ -473,9 +473,8 @@ bool FtpFileEngine::remove()
     _ftp->login(_userName, _password);
     _ftp->remove(_path);
     _ftp->close();
-    _ftpSync.wait();
 
-    return true;
+    return _ftpSync.wait();
 }
 
 bool FtpFileEngine::rename(const QString &newName)
