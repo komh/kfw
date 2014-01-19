@@ -42,12 +42,7 @@ FtpFileEngine::~FtpFileEngine()
 {
     qDebug() << "~FtpFileEngine()" << _fileName;
 
-    if( _ftpTransfer)
-    {
-        _ftpTransfer->wait();
-
-        delete _ftpTransfer;
-    }
+    close();
 
     // delete causes ASSERT to be failed on Windows debug build
     _ftp->deleteLater();
