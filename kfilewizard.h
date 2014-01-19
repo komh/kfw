@@ -27,7 +27,7 @@ private slots:
     void entryCdUp(const QModelIndex &index);
     void entryPaste(const QList<QUrl>& urlList);
     void entryRemove(const QList<QUrl>& urlList);
-    void locationReturnPressed();
+    void locationReturnPressed(bool moveFocusToEntryView = true);
 
 private:
     Ui::KFileWizard *ui;

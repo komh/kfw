@@ -330,7 +330,7 @@ void KFileWizard::setLocationText(const QString& text, bool force)
     {
         ui->locationLine->setText(canonicalPath);
 
-        locationReturnPressed();
+        locationReturnPressed(false);
     }
 }
 
@@ -341,7 +341,7 @@ QString KFileWizard::canonicalize(const QString& path)
                 QDir::toNativeSeparators(path);
 }
 
-void KFileWizard::locationReturnPressed()
+void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
 {
     QModelIndex current =
             dirProxyModel->mapFromSource(
@@ -359,6 +359,9 @@ void KFileWizard::locationReturnPressed()
         ui->dirTree->scrollTo(current);
 
         setEntryRoot();
+
+        if (moveFocusToEntryView)
+            ui->entryTree->setFocus();
     }
     else
     {
