@@ -5,6 +5,7 @@
 FtpSync::FtpSync(QObject *parent)
     : QThread(parent)
     , _ftpDone(false)
+    , _ftpError(false)
 {
 }
 
@@ -24,7 +25,7 @@ void FtpSync::setFtp(QFtp* ftp)
     connect(ftp, SIGNAL(done(bool)), this, SLOT(ftpDone(bool)));
 }
 
-void FtpSync::wait()
+bool FtpSync::wait()
 {
     while(!_ftpDone)
     {
@@ -32,12 +33,17 @@ void FtpSync::wait()
         qApp->processEvents();
     }
 
+    bool error = _ftpError;
+
     _ftpDone = false;
+    _ftpError = false;
+
+    return !error;
 }
 
 void FtpSync::ftpDone(bool error)
 {
-    Q_UNUSED(error);
+    _ftpError = error;
 
     _ftpDone = true;
 }

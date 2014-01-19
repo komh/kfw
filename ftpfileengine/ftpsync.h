@@ -14,13 +14,14 @@ public:
     ~FtpSync();
 
     void setFtp(QFtp *ftp);
-    void wait();
+    bool wait();
 
 private slots:
     void ftpDone(bool error);
 
 private:
     bool _ftpDone;
+    bool _ftpError;
 };
 
 #endif // FTPSYNC_H
