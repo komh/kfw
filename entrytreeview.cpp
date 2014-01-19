@@ -4,6 +4,7 @@
 #include "entrylistmodel.h"
 #include "filesystemsortfilterproxymodel.h"
 #include "fileoperation.h"
+#include "urllistmimedata.h"
 
 EntryTreeView::EntryTreeView(QWidget *parent) :
     QTreeView(parent)
@@ -52,7 +53,7 @@ void EntryTreeView::copyToClipboard()
     if (urlList.size() == 0)
         return;
 
-    QMimeData *mime = new QMimeData;
+    QMimeData *mime = new UrlListMimeData();
     mime->setUrls(urlList);
 
     QClipboard* clipboard = QApplication::clipboard();
@@ -66,7 +67,7 @@ void EntryTreeView::pasteFromClipboard()
     QClipboard* clipboard = QApplication::clipboard();
     const QMimeData* mime = clipboard->mimeData();
 
-    if (mime->hasUrls())
+    if (mime->hasFormat("text/kfw-copy-url-list"))
     {
         qDebug() << "\t" << mime->urls();
 

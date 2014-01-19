@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     msleep.cpp \
     ftpfileengine/ftpbuffer.cpp \
     ftpfileengine/ftptransferthread.cpp \
-    ftpfileengine/ftphostinfocache.cpp
+    ftpfileengine/ftphostinfocache.cpp \
+    urllistmimedata.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -41,6 +42,7 @@ HEADERS  += kfilewizard.h \
     msleep.h \
     ftpfileengine/ftpbuffer.h \
     ftpfileengine/ftptransferthread.h \
-    ftpfileengine/ftphostinfocache.h
+    ftpfileengine/ftphostinfocache.h \
+    urllistmimedata.h
 
 FORMS    += kfilewizard.ui
