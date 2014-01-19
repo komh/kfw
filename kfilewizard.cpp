@@ -190,7 +190,7 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
 
         if (fileOp.open())
         {
-            qint64 copied;
+            qint64 copied = 0;
             qint64 totalCopied = 0;
             qint64 totalSize = fileOp.size();
 
