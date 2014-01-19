@@ -411,17 +411,12 @@ bool FtpFileEngine::open(QIODevice::OpenMode openMode)
             && (_fileFlags & QAbstractFileEngine::DirectoryType))
         return false;
 
-    _fileBuffer.close();
+    close();
+
     _fileBuffer.open(QIODevice::ReadWrite);
 
     if (openMode & QIODevice::ReadOnly)
         _fileBuffer.setSize(_urlInfo.size());
-
-    delete _ftpTransfer;
-    _ftpTransfer = new FtpTransferThread(this, openMode);
-
-    qDebug() << "Thread id = " << QThread::currentThreadId();
-    _ftpTransfer->start();
 
     return true;
 }
@@ -451,6 +446,14 @@ qint64 FtpFileEngine::pos() const
 qint64 FtpFileEngine::read(char *data, qint64 maxlen)
 {
     qDebug() << "read()" << _fileName;
+
+    if (!_ftpTransfer)
+    {
+        _ftpTransfer = new FtpTransferThread(this, QIODevice::ReadOnly);
+
+        qDebug() << "Thread id for read = " << QThread::currentThreadId();
+        _ftpTransfer->start();
+    }
 
     return _fileBuffer.read(data, maxlen);
 }
@@ -548,6 +551,14 @@ bool FtpFileEngine::unmap(uchar *ptr)
 qint64 FtpFileEngine::write(const char *data, qint64 len)
 {
     qDebug() << "write()" << _fileName << len;
+
+    if (!_ftpTransfer)
+    {
+        _ftpTransfer = new FtpTransferThread(this, QIODevice::WriteOnly);
+
+        qDebug() << "Thread id for write = " << QThread::currentThreadId();
+        _ftpTransfer->start();
+    }
 
     return _fileBuffer.write(data, len);
 }
