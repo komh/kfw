@@ -72,6 +72,8 @@ bool KFileWizard::eventFilter(QObject* target, QEvent *event)
             break;
         }
     }
+    else if (event->type() == QEvent::FocusIn)  // dirTree or entryTree
+        setLocationText(currentDir.path());
 
     return QMainWindow::eventFilter(target, event);
 }
@@ -92,6 +94,8 @@ void KFileWizard::initSplitter()
 
 void KFileWizard::initDirTree()
 {
+    ui->dirTree->installEventFilter(this);
+
     dirModel = new QFileSystemModel;
     dirModel->setRootPath(currentDir.path());
     dirModel->setFilter(QDir::AllDirs | QDir::Drives | QDir::NoDotAndDotDot);
@@ -123,6 +127,8 @@ void KFileWizard::initDirTree()
 
 void KFileWizard::initEntryTree()
 {
+    ui->entryTree->installEventFilter(this);
+
     entryModel = new EntryListModel;
     entryModel->setRootPath(currentDir.path());
     entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Files);
