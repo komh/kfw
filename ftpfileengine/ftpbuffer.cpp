@@ -127,15 +127,15 @@ qint64 FtpBuffer::readData(char *data, qint64 maxlen)
 
     _bufferLengthMutex.unlock();
 
-    QMutexLocker locker(&_mutex);
-
     qint64 len = qMin(maxlen, dataLength());
 
     if (len > 0)
     {
-        memcpy(data, _buffer.buffer().data() + _readPos, len);
-
         QMutexLocker locker(&_bufferLengthMutex);
+
+        _mutex.lock();
+
+        memcpy(data, _buffer.buffer().data() + _readPos, len);
 
         _readPos += len;
 
@@ -147,6 +147,8 @@ qint64 FtpBuffer::readData(char *data, qint64 maxlen)
             _basePos += _readPos;
             _readPos = 0;
         }
+
+        _mutex.unlock();
 
         _bufferLengthCond.wakeAll();
     }
