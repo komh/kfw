@@ -466,7 +466,13 @@ bool FtpFileEngine::remove()
 {
     qDebug() << "remove()" << _fileName;
 
-    return QAbstractFileEngine::remove();
+    _ftp->connectToHost(_url.host(), _port);
+    _ftp->login(_userName, _password);
+    _ftp->remove(_path);
+    _ftp->close();
+    _ftpSync.wait();
+
+    return true;
 }
 
 bool FtpFileEngine::rename(const QString &newName)
