@@ -20,6 +20,8 @@ public:
     explicit KFileWizard(QWidget *parent = 0);
     ~KFileWizard();
 
+    bool eventFilter(QObject* target, QEvent *event);
+
 private slots:
     void dirLoaded(const QString& dir);
     void dirActivated(const QModelIndex& index);
@@ -33,6 +35,8 @@ private:
     Ui::KFileWizard *ui;
 
     QDir currentDir;
+
+    bool locationMouseFocus;
 
     QFileSystemModel* dirModel;
     FileSystemSortFilterProxyModel* dirProxyModel;

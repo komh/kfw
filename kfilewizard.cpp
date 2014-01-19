@@ -12,6 +12,7 @@
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KFileWizard),
+    locationMouseFocus(false),
     dirModel(0), dirProxyModel(0), entryModel(0), entryProxyModel(0)
 {
     ui->setupUi(this);
@@ -32,10 +33,55 @@ KFileWizard::~KFileWizard()
     delete ui;
 }
 
+bool KFileWizard::eventFilter(QObject* target, QEvent *event)
+{
+    if (target == ui->locationLine)
+    {
+        // the event order
+        // 1. an user clicks
+        // 2. FocusIn event occurs
+        // 3. MouseButtonPress event ocuurs
+        switch (event->type())
+        {
+        case QEvent::FocusIn:
+        {
+            QFocusEvent* focusEvent = reinterpret_cast<QFocusEvent*>(event);
+
+            if (focusEvent->reason() == Qt::MouseFocusReason)
+                locationMouseFocus = true;
+
+            // pass to the parent
+            break;
+        }
+
+        case QEvent::MouseButtonPress:
+            if (locationMouseFocus)
+            {
+                ui->locationLine->selectAll();
+
+                locationMouseFocus = false;
+
+                // consume this event
+                return true;
+            }
+
+            // pass to the parent
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    return QMainWindow::eventFilter(target, event);
+}
+
 void KFileWizard::initLocationLine()
 {
     connect(ui->locationLine, SIGNAL(returnPressed()),
             this, SLOT(locationReturnPressed()));
+
+    ui->locationLine->installEventFilter(this);
 }
 
 void KFileWizard::initSplitter()
