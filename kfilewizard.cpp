@@ -6,8 +6,9 @@
 #include "filesystemsortfilterproxymodel.h"
 #include "entrylistmodel.h"
 #include "entrytreeview.h"
-#include "fileoperation.h"
-#include "msleep.h"
+#include "fileoperation/fileoperation.h"
+#include "fileoperation/copyfileworker.h"
+#include "fileoperation/removefileworker.h"
 
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
@@ -199,8 +200,6 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
     progress.setAutoClose(false);
     progress.show();
 
-    FileOperation fileOp;
-
     foreach(QUrl url, urlList)
     {
         if (progress.wasCanceled())
@@ -237,42 +236,13 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
         if (answer == QMessageBox::No)
             continue;
 
-        fileOp.setSource(source);
-        fileOp.setDest(dest);
-
-        if (fileOp.open())
-        {
-            qint64 copied = 0;
-            qint64 totalCopied = 0;
-            qint64 totalSize = fileOp.size();
-
-            while (totalCopied < totalSize && !progress.wasCanceled())
-            {
-                copied = fileOp.copy();
-
-                if (copied == -1)
-                    break;
-
-                if (copied == 0)
-                    MSleep::msleep(10);
-
-                totalCopied += copied;
-
-                progress.setValue(totalCopied * 100 / totalSize);
-
-                qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-            }
-
-            fileOp.close();
-
-            if (copied == -1)
-                critical(tr("Failed to copy\n\n"
-                            "%1\n\n"
-                            "to\n\n"
-                            "%2")
-                         .arg(canonicalSource)
-                         .arg(canonicalDest));
-        }
+        if (!fileWorker(new CopyFileWorker(source, dest), progress))
+            critical(tr("Failed to copy\n\n"
+                        "%1\n\n"
+                        "to\n\n"
+                        "%2")
+                     .arg(canonicalSource)
+                     .arg(canonicalDest));
     }
 }
 
@@ -341,8 +311,6 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
     progress.setAutoClose(false);
     progress.show();
 
-    FileOperation fileOp;
-
     foreach(QUrl url, urlList)
     {
         if (progress.wasCanceled())
@@ -358,16 +326,43 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
                               .arg(urlList.size())
                               .arg(canonicalSource));
 
-        fileOp.setSource(source);
-        fileOp.open();
-
-        if (!fileOp.remove())
+        if (!fileWorker(new RemoveFileWorker(source), progress))
             critical(tr("Failed to delete\n\n"
                         "%1")
                         .arg(canonicalSource));
 
         progress.setValue(urlList.indexOf(url));
     }
+}
+
+bool KFileWizard::fileWorker(AbstractFileWorker* worker,
+                             const QProgressDialog& progress)
+{
+    QEventLoop loop;
+
+    QThread workerThread;
+
+    worker->moveToThread(&workerThread);
+
+    connect(&workerThread, SIGNAL(started()), worker, SLOT(perform()));
+    connect(&workerThread, SIGNAL(finished()), &loop, SLOT(quit()));
+    connect(&progress, SIGNAL(canceled()), &loop, SLOT(quit()));
+    connect(worker, SIGNAL(valueChanged(int)), &progress, SLOT(setValue(int)));
+
+    workerThread.start();
+
+    loop.exec();
+
+    if (progress.wasCanceled())
+        worker->cancel();
+
+    workerThread.wait();
+
+    bool result = worker->result();
+
+    delete worker;
+
+    return result;
 }
 
 void KFileWizard::setLocationText(const QString& text, bool force)

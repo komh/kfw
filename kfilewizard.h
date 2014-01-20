@@ -7,6 +7,7 @@
 
 #include "entrylistmodel.h"
 #include "filesystemsortfilterproxymodel.h"
+#include "fileoperation/abstractfileworker.h"
 
 namespace Ui {
 class KFileWizard;
@@ -67,6 +68,8 @@ private:
     void initDirTree();
     void initEntryTree();
 
+    bool fileWorker(AbstractFileWorker* worker,
+                    const QProgressDialog &progress);
     void setLocationText(const QString& text, bool force = false);
     QString canonicalize(const QString& path);
     QString getNameOfCopy(const QString& source);

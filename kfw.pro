@@ -22,12 +22,15 @@ SOURCES += main.cpp\
     ftpfileengine/ftpfileengineiterator.cpp \
     ftpfileengine/ftpfileenginehandler.cpp \
     ftpfileengine/ftpfileengine.cpp \
-    fileoperation.cpp \
     msleep.cpp \
     ftpfileengine/ftpbuffer.cpp \
     ftpfileengine/ftptransferthread.cpp \
     ftpfileengine/ftphostinfocache.cpp \
-    urllistmimedata.cpp
+    urllistmimedata.cpp \
+    fileoperation/fileoperation.cpp \
+    fileoperation/abstractfileworker.cpp \
+    fileoperation/copyfileworker.cpp \
+    fileoperation/removefileworker.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -38,11 +41,14 @@ HEADERS  += kfilewizard.h \
     ftpfileengine/ftpfileengineiterator.h \
     ftpfileengine/ftpfileenginehandler.h \
     ftpfileengine/ftpfileengine.h \
-    fileoperation.h \
     msleep.h \
     ftpfileengine/ftpbuffer.h \
     ftpfileengine/ftptransferthread.h \
     ftpfileengine/ftphostinfocache.h \
-    urllistmimedata.h
+    urllistmimedata.h \
+    fileoperation/fileoperation.h \
+    fileoperation/abstractfileworker.h \
+    fileoperation/copyfileworker.h \
+    fileoperation/removefileworker.h
 
 FORMS    += kfilewizard.ui
