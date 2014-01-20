@@ -3,6 +3,7 @@
 
 #include <QThread>
 #include <QFtp>
+#include <QEventLoop>
 
 class FtpSync : public QThread
 {
@@ -22,6 +23,8 @@ private slots:
 private:
     bool _ftpDone;
     bool _ftpError;
+
+    QEventLoop _loop;
 };
 
 #endif // FTPSYNC_H

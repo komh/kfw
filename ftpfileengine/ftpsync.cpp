@@ -27,18 +27,13 @@ void FtpSync::setFtp(QFtp* ftp)
 
 bool FtpSync::wait()
 {
-    while(!_ftpDone)
-    {
-        QThread::msleep(10);
-        qApp->processEvents();
-    }
-
-    bool error = _ftpError;
+    // check if already done
+    if (!_ftpDone)
+        _loop.exec();
 
     _ftpDone = false;
-    _ftpError = false;
 
-    return !error;
+    return !_ftpError;
 }
 
 void FtpSync::ftpDone(bool error)
@@ -46,4 +41,6 @@ void FtpSync::ftpDone(bool error)
     _ftpError = error;
 
     _ftpDone = true;
+
+    _loop.quit();
 }
