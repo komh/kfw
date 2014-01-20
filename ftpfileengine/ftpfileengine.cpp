@@ -440,7 +440,7 @@ qint64 FtpFileEngine::pos() const
 {
     qDebug() << "pos()" << _fileName;
 
-    return _fileBuffer.pos();
+    return 0;
 }
 
 qint64 FtpFileEngine::read(char *data, qint64 maxlen)

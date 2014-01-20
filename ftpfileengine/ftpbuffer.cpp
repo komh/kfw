@@ -71,9 +71,7 @@ qint64 FtpBuffer::pos() const
 {
     qDebug() << "pos()";
 
-    QMutexLocker locker(&_mutex);
-
-    return _basePos + _buffer.pos();
+    return 0;
 }
 
 bool FtpBuffer::reset()
