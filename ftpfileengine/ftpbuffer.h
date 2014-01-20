@@ -39,8 +39,8 @@ private:
     qint64 _basePos;
     qint64 _readPos;
     mutable QMutex _mutex;
-    mutable QMutex _bufferLengthMutex;
-    mutable QWaitCondition _bufferLengthCond;
+    mutable QMutex _dataLengthMutex;
+    mutable QWaitCondition _dataLengthCond;
 
     qint64 _size;
 
