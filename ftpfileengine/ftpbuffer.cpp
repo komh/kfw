@@ -119,7 +119,6 @@ qint64 FtpBuffer::readData(char *data, qint64 maxlen)
     while (!isEnd() && dataLength() == 0)
     {
         qDebug() << "readData() data empty";
-        qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
         _bufferLengthCond.wait(&_bufferLengthMutex, 10);
     }
 
@@ -184,7 +183,6 @@ bool FtpBuffer::flush()
     while (dataLength() > 0)
     {
         qDebug() << "flush() data not empty";
-        qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
         _bufferLengthCond.wait(&_bufferLengthMutex, 10);
     }
 
