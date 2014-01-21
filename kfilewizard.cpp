@@ -198,10 +198,11 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
     progress.setRange(0, 100);
     progress.setModal(true);
     progress.setAutoClose(false);
-    progress.show();
 
     foreach(QUrl url, urlList)
     {
+        progress.show();
+
         if (progress.wasCanceled())
             break;
 
@@ -309,7 +310,6 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
     progress.setRange(0, urlList.size());
     progress.setModal(true);
     progress.setAutoClose(false);
-    progress.show();
 
     foreach(QUrl url, urlList)
     {
