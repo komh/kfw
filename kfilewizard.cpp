@@ -179,6 +179,8 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
     progress.setModal(true);
     progress.setAutoClose(false);
 
+    ui->entryTree->setUpdatesEnabled(false);
+
     foreach(QUrl url, urlList)
     {
         progress.show();
@@ -225,6 +227,8 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
                      .arg(canonicalSource)
                      .arg(canonicalDest));
     }
+
+    ui->entryTree->setUpdatesEnabled(true);
 }
 
 QString KFileWizard::getNameOfCopy(const QString& source)
@@ -291,6 +295,8 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
     progress.setModal(true);
     progress.setAutoClose(false);
 
+    ui->entryTree->setUpdatesEnabled(false);
+
     foreach(QUrl url, urlList)
     {
         if (progress.wasCanceled())
@@ -313,6 +319,8 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
 
         progress.setValue(urlList.indexOf(url) + 1);
     }
+
+    ui->entryTree->setUpdatesEnabled(true);
 }
 
 bool KFileWizard::fileWorker(AbstractFileWorker* worker,
