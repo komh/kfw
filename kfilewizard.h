@@ -50,8 +50,7 @@ private:
                 QMessageBox::StandardButton buttons =
                     QMessageBox::Ok)
     {
-        return QMessageBox::critical(this, tr("K File Wizard"), text,
-                                     buttons);
+        return QMessageBox::critical(this, title(), text, buttons);
     }
 
     inline QMessageBox::StandardButton question(
@@ -59,8 +58,7 @@ private:
                 QMessageBox::StandardButtons buttons  =
                     QMessageBox::Ok)
     {
-        return QMessageBox::question(this, tr("K File Wizard"), text,
-                                     buttons);
+        return QMessageBox::question(this, title(), text, buttons);
     }
 
     void initLocationLine();
@@ -75,6 +73,8 @@ private:
     QString getNameOfCopy(const QString& source);
     QMessageBox::StandardButton checkOverwrite(const QString& dest);
     void setEntryRoot();
+
+    QString title() const { return tr("K File Wizard"); }
 };
 
 #endif // KFILEWIZARD_H

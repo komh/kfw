@@ -193,7 +193,7 @@ void KFileWizard::entryCdUp(const QModelIndex& index)
 void KFileWizard::entryPaste(const QList<QUrl>& urlList)
 {
     QProgressDialog progress(this);
-    progress.setWindowTitle(tr("K File Wizard"));
+    progress.setWindowTitle(title());
     progress.setLabelText(tr("Copying files..."));
     progress.setRange(0, 100);
     progress.setModal(true);
@@ -305,7 +305,7 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
         return;
 
     QProgressDialog progress(this);
-    progress.setWindowTitle(tr("K File Wizard"));
+    progress.setWindowTitle(title());
     progress.setLabelText(tr("Deleting files..."));
     progress.setRange(0, urlList.size());
     progress.setModal(true);
@@ -357,7 +357,7 @@ bool KFileWizard::fileWorker(AbstractFileWorker* worker,
     {
         QMessageBox msgBox(this);
 
-        msgBox.setWindowTitle(tr("K File Wizard"));
+        msgBox.setWindowTitle(title());
         msgBox.setText("Canceling file operations, please wait...");
         msgBox.setStandardButtons(QMessageBox::NoButton);
 
