@@ -36,4 +36,7 @@ void CopyFileWorker::performWork()
 
         setResult(copied != -1);
     }
+
+    if (wasCanceled())
+        fileOp.abort();
 }

@@ -7,6 +7,7 @@ FtpBuffer::FtpBuffer(QObject *parent) :
   , _basePos(0)
   , _readPos(0)
   , _mutex(QMutex::Recursive)
+  , _abort(false)
   , _size(-1)
 {
 }
@@ -64,6 +65,8 @@ bool FtpBuffer::open(OpenMode mode)
 {
     qDebug() << "open()" << mode;
 
+    _abort = false;
+
     return QIODevice::open(mode) && _buffer.open(mode);
 }
 
@@ -114,15 +117,12 @@ qint64 FtpBuffer::readData(char *data, qint64 maxlen)
     qDebug() << "readData()" << maxlen << dataLength()
                              << QThread::currentThreadId();
 
-    _dataLengthMutex.lock();
-
     while (!isEnd() && dataLength() == 0)
     {
+        QMutexLocker locker(&_dataLengthMutex);
         qDebug() << "readData() data empty";
-        _dataLengthCond.wait(&_dataLengthMutex, 10);
+        _dataLengthCond.wait(&_dataLengthMutex);
     }
-
-    _dataLengthMutex.unlock();
 
     qint64 len = qMin(maxlen, dataLength());
 
@@ -150,8 +150,9 @@ qint64 FtpBuffer::readData(char *data, qint64 maxlen)
         _dataLengthCond.wakeAll();
     }
 
-    qDebug() << "readData() =" << len;
-    return len;
+    QMutexLocker locker(&_dataLengthMutex);
+
+    return _abort ? 0 : len;
 }
 
 qint64 FtpBuffer::writeData(const char *data, qint64 len)
@@ -161,6 +162,9 @@ qint64 FtpBuffer::writeData(const char *data, qint64 len)
 
     QMutexLocker locker(&_dataLengthMutex);
 
+    if (_abort)
+        return 0;
+
     _mutex.lock();
 
     qint64 result = _buffer.write(data, len);
@@ -169,9 +173,16 @@ qint64 FtpBuffer::writeData(const char *data, qint64 len)
 
     _dataLengthCond.wakeAll();
 
-    qDebug() << "writeData() =" << result;
-
     return result;
+}
+
+void FtpBuffer::abort()
+{
+    QMutexLocker locker(&_dataLengthMutex);
+
+    _abort = true;
+
+    _dataLengthCond.wakeAll();
 }
 
 bool FtpBuffer::flush()
@@ -180,10 +191,10 @@ bool FtpBuffer::flush()
 
     QMutexLocker locker(&_dataLengthMutex);
 
-    while (dataLength() > 0)
+    while (!_abort && dataLength() > 0)
     {
         qDebug() << "flush() data not empty";
-        _dataLengthCond.wait(&_dataLengthMutex, 10);
+        _dataLengthCond.wait(&_dataLengthMutex);
     }
 
     qDebug() << "flush()" << "completed!!!";
@@ -207,7 +218,9 @@ qint64 FtpBuffer::dataLength() const
 
 bool FtpBuffer::isEnd() const
 {
-    return readPos() >= totalSize();
+    QMutexLocker locker(&_dataLengthMutex);
+
+    return _abort || readPos() >= totalSize();
 }
 
 qint64 FtpBuffer::totalSize() const

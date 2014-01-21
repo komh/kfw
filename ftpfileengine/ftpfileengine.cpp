@@ -522,10 +522,18 @@ bool FtpFileEngine::setSize(qint64 size)
 {
     qDebug() << "setSize()" << _fileName << size;
 
-    _fileBuffer.setSize(size);
-    _urlInfo.setSize(size);
+    if (size == -1)
+    {
+        _fileBuffer.abort();
+        _ftpTransfer->abort();
+    }
+    else
+    {
+        _fileBuffer.setSize(size);
+        _urlInfo.setSize(size);
+    }
 
-    return true;
+    return false;
 }
 
 qint64 FtpFileEngine::size() const

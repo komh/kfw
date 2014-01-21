@@ -40,6 +40,16 @@ void FileOperation::close()
     _destFile.close();
 }
 
+void FileOperation::abort()
+{
+    // abort FTP transfer
+    if (source().startsWith("ftp://"))
+        _sourceFile.resize(-1);
+
+    if (dest().startsWith("ftp://"))
+        _destFile.resize(-1);
+}
+
 qint64 FileOperation::size() const
 {
     return _sourceFile.isOpen() ? _sourceFile.size() : -1;

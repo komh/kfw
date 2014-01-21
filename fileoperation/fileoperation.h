@@ -25,6 +25,8 @@ public:
     bool open();
     void close();
 
+    void abort();
+
     qint64 size() const;
 
     qint64 copy(qint64 chunkSize = DefaultChunkSize);

@@ -26,6 +26,7 @@ public:
     bool waitForBytesWritten(int msecs);
     bool waitForReadyRead(int msecs);
 
+    void abort();
     bool  flush();
     qint64 readPos() const;
     void setSize(qint64 size) { _size = size; }
@@ -42,6 +43,7 @@ private:
     mutable QMutex _dataLengthMutex;
     mutable QWaitCondition _dataLengthCond;
 
+    bool _abort;
     qint64 _size;
 
     qint64 dataLength() const;
