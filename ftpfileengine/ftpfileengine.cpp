@@ -112,6 +112,11 @@ void FtpFileEngine::initFtp()
         return;
     }
 
+    refreshFileInfoCache();
+}
+
+void FtpFileEngine::refreshFileInfoCache()
+{
     _ftp->connectToHost(_url.host(), _port);
     _ftp->login(_userName, _password);
 
@@ -120,6 +125,8 @@ void FtpFileEngine::initFtp()
         _fileFlags = QAbstractFileEngine::RootFlag |
                      QAbstractFileEngine::ExistsFlag |
                      QAbstractFileEngine::DirectoryType;
+
+        QUrlInfo urlInfo;
 
         urlInfo.setName(_path);
         urlInfo.setDir(true);
@@ -276,6 +283,9 @@ bool FtpFileEngine::extension(Extension extension,
 QAbstractFileEngine::FileFlags FtpFileEngine::fileFlags(FileFlags type) const
 {
     qDebug() << "fileFlags() : " << _fileName << type;
+
+    if (type & QAbstractFileEngine::Refresh)
+        const_cast<FtpFileEngine*>(this)->refreshFileInfoCache();
 
     return type & _fileFlags;
 }

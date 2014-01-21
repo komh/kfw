@@ -91,6 +91,7 @@ private:
 
     void initFromFileName(const QString& file = QString());
     void initFtp();
+    void refreshFileInfoCache();
     QString getCachePath(const QString& path, bool key = false);
 };
 #endif // FTPFILEENGINE_H
