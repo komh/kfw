@@ -486,6 +486,7 @@ bool FtpFileEngine::remove()
     bool result = _ftpSync.wait();
 
     _ftp->close();
+    _ftpSync.wait();
 
     return result;
 }
