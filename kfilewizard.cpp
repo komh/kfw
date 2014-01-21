@@ -331,7 +331,7 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
                         "%1")
                         .arg(canonicalSource));
 
-        progress.setValue(urlList.indexOf(url));
+        progress.setValue(urlList.indexOf(url) + 1);
     }
 }
 
