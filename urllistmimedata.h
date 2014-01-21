@@ -2,6 +2,7 @@
 #define URLLISTMIMEDATA_H
 
 #include <QMimeData>
+#include <QUrl>
 
 class UrlListMimeData : public QMimeData
 {
@@ -13,6 +14,13 @@ public:
                              QObject *parent = 0);
 
     QStringList formats() const;
+
+    void setList(const QList<QUrl>& urlList);
+
+    static QList<QUrl> listFrom(const QMimeData *mimeData,
+                                Action action = CopyAction);
+
+    static QString format(Action action = CopyAction);
 
 private:
     Action _action;

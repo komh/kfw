@@ -53,8 +53,8 @@ void EntryTreeView::copyToClipboard()
     if (urlList.size() == 0)
         return;
 
-    QMimeData *mime = new UrlListMimeData();
-    mime->setUrls(urlList);
+    UrlListMimeData* mime = new UrlListMimeData();
+    mime->setList(urlList);
 
     QClipboard* clipboard = QApplication::clipboard();
     clipboard->setMimeData(mime);
@@ -66,12 +66,11 @@ void EntryTreeView::pasteFromClipboard()
 
     QClipboard* clipboard = QApplication::clipboard();
     const QMimeData* mime = clipboard->mimeData();
-
-    if (mime->hasFormat("text/kfw-copy-url-list"))
+    if (mime->hasFormat(UrlListMimeData::format(UrlListMimeData::CopyAction)))
     {
-        qDebug() << "\t" << mime->urls();
+        qDebug() << "\t" << UrlListMimeData::listFrom(mime);
 
-        emit paste(mime->urls());
+        emit paste(UrlListMimeData::listFrom(mime));
     }
 }
 
