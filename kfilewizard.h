@@ -37,8 +37,6 @@ private:
 
     QDir currentDir;
 
-    bool locationMouseFocus;
-
     QFileSystemModel* dirModel;
     FileSystemSortFilterProxyModel* dirProxyModel;
 

@@ -13,7 +13,6 @@
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KFileWizard),
-    locationMouseFocus(false),
     dirModel(0), dirProxyModel(0), entryModel(0), entryProxyModel(0)
 {
     ui->setupUi(this);
@@ -42,35 +41,16 @@ bool KFileWizard::eventFilter(QObject* target, QEvent *event)
         // 1. an user clicks
         // 2. FocusIn event occurs
         // 3. MouseButtonPress event ocuurs
-        switch (event->type())
-        {
-        case QEvent::FocusIn:
+        if (event->type() == QEvent::FocusIn)
         {
             QFocusEvent* focusEvent = reinterpret_cast<QFocusEvent*>(event);
 
+            // so, post FocusIn event with TabFocusReason to select all
             if (focusEvent->reason() == Qt::MouseFocusReason)
-                locationMouseFocus = true;
-
-            // pass to the parent
-            break;
-        }
-
-        case QEvent::MouseButtonPress:
-            if (locationMouseFocus)
-            {
-                ui->locationLine->selectAll();
-
-                locationMouseFocus = false;
-
-                // consume this event
-                return true;
-            }
-
-            // pass to the parent
-            break;
-
-        default:
-            break;
+                QApplication::postEvent(
+                            ui->locationLine,
+                            new QFocusEvent(QEvent::FocusIn,
+                                            Qt::TabFocusReason));
         }
     }
     else if (event->type() == QEvent::FocusIn)  // dirTree or entryTree
