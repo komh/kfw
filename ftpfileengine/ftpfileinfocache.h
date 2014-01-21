@@ -9,6 +9,7 @@ class FtpFileInfoCache
 {
 public:
     void addFileInfo(const QString& dir, const QUrlInfo& urlInfo);
+    void removeDirInfo(const QString& dir);
 
     QUrlInfo findFileInfo(const QString& dir, const QString& name);
     QUrlInfo findFileInfo(const QString& path);
@@ -26,7 +27,7 @@ private:
 
     static QMultiMap<QString, QUrlInfo> _dirMultiMap;
 
-    QString getCacheKey(const QString& dir, const QString &name);
+    QString getCacheKey(const QString& dir, const QString &name = QString());
 };
 
 #endif // FTPFILEINFOCACHE_H

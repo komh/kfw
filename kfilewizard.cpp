@@ -323,6 +323,8 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
     }
 
     ui->entryTree->setUpdatesEnabled(true);
+
+    refreshEntry();
 }
 
 bool KFileWizard::fileWorker(AbstractFileWorker* worker,
@@ -431,6 +433,10 @@ void KFileWizard::refreshEntry()
 
     entryProxyModel->setSourceModel(0);
     delete entryModel;
+
+    // Trick to refresh entries on FTP server
+    if (currentDir.path().startsWith("ftp://"))
+        currentDir.exists(".");
 
     entryModel = new EntryListModel;
     entryModel->setRootPath(currentDir.path());

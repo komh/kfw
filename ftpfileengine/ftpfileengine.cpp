@@ -139,6 +139,8 @@ void FtpFileEngine::refreshFileInfoCache()
         QString dir = _path.left(lastIndex == 0 ? 1 : lastIndex);
         QString name = _path.mid(lastIndex + 1);
 
+        _ftpCache->removeDirInfo(getCachePath(dir));
+
         _cacheDir = getCachePath(dir, true);
 
         // get a file list from a parent directory
