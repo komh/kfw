@@ -336,7 +336,7 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
 }
 
 bool KFileWizard::fileWorker(AbstractFileWorker* worker,
-                             const QProgressDialog& progress)
+                             const QProgressDialog &progress)
 {
     QEventLoop loop;
 
@@ -354,7 +354,19 @@ bool KFileWizard::fileWorker(AbstractFileWorker* worker,
     loop.exec();
 
     if (progress.wasCanceled())
+    {
+        QMessageBox msgBox(this);
+
+        msgBox.setWindowTitle(tr("K File Wizard"));
+        msgBox.setText("Canceling file operations, please wait...");
+        msgBox.setStandardButtons(QMessageBox::NoButton);
+
+        connect(&workerThread, SIGNAL(finished()), &msgBox, SLOT(accept()));
+
         worker->cancel();
+
+        msgBox.exec();
+    }
 
     workerThread.wait();
 
