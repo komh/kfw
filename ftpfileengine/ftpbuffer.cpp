@@ -65,6 +65,8 @@ bool FtpBuffer::open(OpenMode mode)
 {
     qDebug() << "open()" << mode;
 
+    _basePos = 0;
+    _readPos = 0;
     _abort = false;
 
     return QIODevice::open(mode) && _buffer.open(mode);
