@@ -229,6 +229,8 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
     }
 
     ui->entryTree->setUpdatesEnabled(true);
+
+    refreshEntry();
 }
 
 QString KFileWizard::getNameOfCopy(const QString& source)
@@ -421,4 +423,24 @@ void KFileWizard::setEntryRoot()
 
     rootIndex = entryProxyModel->mapFromSource(rootIndex);
     ui->entryTree->setRootIndex(rootIndex);
+}
+
+void KFileWizard::refreshEntry()
+{
+    ui->entryTree->setUpdatesEnabled(false);
+
+    entryProxyModel->setSourceModel(0);
+    delete entryModel;
+
+    entryModel = new EntryListModel;
+    entryModel->setRootPath(currentDir.path());
+    entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot |
+                          QDir::Files);
+
+    entryProxyModel->setSourceModel(entryModel);
+    ui->entryTree->setModel(entryProxyModel);
+
+    setEntryRoot();
+
+    ui->entryTree->setUpdatesEnabled(true);
 }

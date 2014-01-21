@@ -71,6 +71,7 @@ private:
     QString getNameOfCopy(const QString& source);
     QMessageBox::StandardButton checkOverwrite(const QString& dest);
     void setEntryRoot();
+    void refreshEntry();
 
     QString title() const { return tr("K File Wizard"); }
 };
