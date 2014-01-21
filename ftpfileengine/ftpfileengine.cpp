@@ -3,7 +3,7 @@
 #include "ftpsync.h"
 #include "ftpfileengineiterator.h"
 #include "ftpfileinfocache.h"
-#include "fileoperation.h"
+#include "fileoperation/fileoperation.h"
 #include "ftpbuffer.h"
 #include "ftptransferthread.h"
 #include "ftphostinfocache.h"

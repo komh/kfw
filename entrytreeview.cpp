@@ -3,7 +3,7 @@
 #include "entrytreeview.h"
 #include "entrylistmodel.h"
 #include "filesystemsortfilterproxymodel.h"
-#include "fileoperation.h"
+#include "fileoperation/fileoperation.h"
 #include "urllistmimedata.h"
 
 EntryTreeView::EntryTreeView(QWidget *parent) :
