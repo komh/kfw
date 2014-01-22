@@ -463,6 +463,9 @@ qint64 FtpFileEngine::read(char *data, qint64 maxlen)
     {
         _ftpTransfer = new FtpTransferThread(this, QIODevice::ReadOnly);
 
+        connect(_ftpTransfer, SIGNAL(loopQuit()),
+                this, SLOT(abortBufferAccess()));
+
         qDebug() << "Thread id for read = " << QThread::currentThreadId();
         _ftpTransfer->start();
     }
@@ -607,6 +610,9 @@ qint64 FtpFileEngine::write(const char *data, qint64 len)
     {
         _ftpTransfer = new FtpTransferThread(this, QIODevice::WriteOnly);
 
+        connect(_ftpTransfer, SIGNAL(loopQuit()),
+                this, SLOT(abortBufferAccess()));
+
         qDebug() << "Thread id for write = " << QThread::currentThreadId();
         _ftpTransfer->start();
     }
@@ -638,4 +644,9 @@ QString FtpFileEngine::getCachePath(const QString& path, bool key)
         cachePath.append("/");
 
     return cachePath;
+}
+
+void FtpFileEngine::abortBufferAccess()
+{
+    _fileBuffer.abort();
 }

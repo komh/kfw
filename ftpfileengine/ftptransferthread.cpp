@@ -50,6 +50,7 @@ void FtpTransferThread::run()
 
 void FtpTransferThread::ftpCommandFinished(int id, bool error)
 {
-    if (_aborting)
+    // sometimes error is passed as true even if a command is aborted
+    if (_aborting || error)
         emit loopQuit();
 }

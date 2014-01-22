@@ -93,5 +93,8 @@ private:
     void initFtp();
     void refreshFileInfoCache();
     QString getCachePath(const QString& path, bool key = false);
+
+private slots:
+    void abortBufferAccess();
 };
 #endif // FTPFILEENGINE_H
