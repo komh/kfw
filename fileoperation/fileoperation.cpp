@@ -81,7 +81,14 @@ bool FileOperation::remove()
 
 bool FileOperation::rename(const QString &newName)
 {
-    return _sourceFile.rename(newName);
+    if ( _sourceFile.rename(newName))
+    {
+        setSource(newName);
+
+        return true;
+    }
+
+    return false;
 }
 
 QString FileOperation::fixUrl(const QString &url)
