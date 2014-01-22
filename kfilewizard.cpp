@@ -9,6 +9,7 @@
 #include "fileoperation/fileoperation.h"
 #include "fileoperation/copyfileworker.h"
 #include "fileoperation/removefileworker.h"
+#include "fileoperation/movefileworker.h"
 
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
@@ -131,8 +132,8 @@ void KFileWizard::initEntryTree()
 
     connect(ui->entryTree, SIGNAL(cdUp(QModelIndex)),
             this, SLOT(entryCdUp(QModelIndex)));
-    connect(ui->entryTree, SIGNAL(paste(QList<QUrl>)),
-            this, SLOT(entryPaste(QList<QUrl>)));
+    connect(ui->entryTree, SIGNAL(paste(QList<QUrl>, bool)),
+            this, SLOT(entryPaste(QList<QUrl>, bool)));
     connect(ui->entryTree, SIGNAL(remove(QList<QUrl>)),
             this, SLOT(entryRemove(QList<QUrl>)));
 
@@ -170,11 +171,12 @@ void KFileWizard::entryCdUp(const QModelIndex& index)
                                 entryProxyModel->mapToSource(index))));
 }
 
-void KFileWizard::entryPaste(const QList<QUrl>& urlList)
+void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
 {
     QProgressDialog progress(this);
     progress.setWindowTitle(title());
-    progress.setLabelText(tr("Preparing for copying files..."));
+    progress.setLabelText(copy ? tr("Preparing for copying files..."):
+                                 tr("Preparing for moving files..."));
     progress.setRange(0, 100);
     progress.setModal(true);
     progress.setAutoClose(false);
@@ -198,14 +200,28 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
 
         if (canonicalSource == canonicalDest)
         {
-            dest = getNameOfCopy(source);
-            canonicalDest = canonicalize(dest);
+            if (copy)
+            {
+                dest = getNameOfCopy(source);
+                canonicalDest = canonicalize(dest);
+            }
+            else
+            {
+                critical(tr("The target filename is "
+                            "the same as the source filename.\n\n"
+                            "%1").arg(canonicalDest));
+                continue;
+            }
         }
 
-        progress.setLabelText(tr("Copying %1 of %2\n\n"
-                                 "%3\n\n"
-                                 "to\n\n"
-                                 "%4")
+        progress.setLabelText((copy ? tr("Copying %1 of %2\n\n"
+                                         "%3\n\n"
+                                         "to\n\n"
+                                         "%4") :
+                                      tr("Moving %1 of %2\n\n"
+                                         "%3\n\n"
+                                         "to\n\n"
+                                         "%4"))
                               .arg(urlList.indexOf(url) + 1)
                               .arg(urlList.size())
                               .arg(canonicalSource)
@@ -219,11 +235,21 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
         if (answer == QMessageBox::No)
             continue;
 
-        if (!fileWorker(new CopyFileWorker(source, dest), progress))
-            critical(tr("Failed to copy\n\n"
-                        "%1\n\n"
-                        "to\n\n"
-                        "%2")
+        AbstractFileWorker* worker =
+                copy ? qobject_cast<AbstractFileWorker*>
+                            (new CopyFileWorker(source, dest)) :
+                       qobject_cast<AbstractFileWorker*>
+                            (new MoveFileWorker(source, dest));
+
+        if (!fileWorker(worker, progress))
+            critical((copy ? tr("Failed to copy\n\n"
+                                "%1\n\n"
+                                "to\n\n"
+                                "%2") :
+                             tr("Failed to move\n\n"
+                                "%1\n\n"
+                                "to\n\n"
+                                "%2"))
                      .arg(canonicalSource)
                      .arg(canonicalDest));
     }

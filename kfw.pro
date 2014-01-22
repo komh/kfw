@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     fileoperation/abstractfileworker.cpp \
     fileoperation/copyfileworker.cpp \
     fileoperation/removefileworker.cpp \
-    fileoperation/renamefileworker.cpp
+    fileoperation/renamefileworker.cpp \
+    fileoperation/movefileworker.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -51,6 +52,7 @@ HEADERS  += kfilewizard.h \
     fileoperation/abstractfileworker.h \
     fileoperation/copyfileworker.h \
     fileoperation/removefileworker.h \
-    fileoperation/renamefileworker.h
+    fileoperation/renamefileworker.h \
+    fileoperation/movefileworker.h
 
 FORMS    += kfilewizard.ui

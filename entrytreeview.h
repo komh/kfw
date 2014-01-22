@@ -13,7 +13,7 @@ public:
 
 signals:
     void cdUp(const QModelIndex& index);
-    void paste(const QList<QUrl>&);
+    void paste(const QList<QUrl>&, bool copy = true);
     void remove(const QList<QUrl>&);
 
 public slots:
@@ -22,7 +22,7 @@ protected:
     void keyPressEvent(QKeyEvent *event);
 
 private:
-    void copyToClipboard();
+    void copyToClipboard(bool copy = true);
     void pasteFromClipboard();
     void deletePressed();
 

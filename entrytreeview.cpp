@@ -27,6 +27,13 @@ void EntryTreeView::keyPressEvent(QKeyEvent *event)
         return;
     }
 
+    if (event->matches(QKeySequence::Cut))
+    {
+        copyToClipboard(false);
+
+        return;
+    }
+
     if (event->matches(QKeySequence::Paste))
     {
         pasteFromClipboard();
@@ -44,7 +51,7 @@ void EntryTreeView::keyPressEvent(QKeyEvent *event)
     QTreeView::keyPressEvent(event);
 }
 
-void EntryTreeView::copyToClipboard()
+void EntryTreeView::copyToClipboard(bool copy)
 {
     qDebug() << "copyToClipboard()";
 
@@ -53,7 +60,9 @@ void EntryTreeView::copyToClipboard()
     if (urlList.size() == 0)
         return;
 
-    UrlListMimeData* mime = new UrlListMimeData();
+    UrlListMimeData* mime =
+            new UrlListMimeData(copy ? UrlListMimeData::CopyAction :
+                                       UrlListMimeData::CutAction);
     mime->setList(urlList);
 
     QClipboard* clipboard = QApplication::clipboard();
@@ -68,10 +77,26 @@ void EntryTreeView::pasteFromClipboard()
     const QMimeData* mime = clipboard->mimeData();
     if (mime->hasFormat(UrlListMimeData::format(UrlListMimeData::CopyAction)))
     {
-        qDebug() << "\t" << UrlListMimeData::listFrom(mime);
+        qDebug() << "pasteFromClipboard()"
+                 << "Copy list" << UrlListMimeData::listFrom(mime);
 
         emit paste(UrlListMimeData::listFrom(mime));
     }
+    else
+    if (mime->hasFormat(UrlListMimeData::format(UrlListMimeData::CutAction)))
+    {
+        qDebug() << "pasteFromClipboard()"
+                 << "Cut list"
+                 << UrlListMimeData::listFrom(mime,
+                                              UrlListMimeData::CutAction);
+
+        emit paste(UrlListMimeData::listFrom(mime,
+                                             UrlListMimeData::CutAction),
+                   false);
+
+        clipboard->clear();
+    }
+
 }
 
 void EntryTreeView::deletePressed()

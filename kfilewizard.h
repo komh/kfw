@@ -28,7 +28,7 @@ private slots:
     void dirActivated(const QModelIndex& index);
     void entryActivated(const QModelIndex& index);
     void entryCdUp(const QModelIndex &index);
-    void entryPaste(const QList<QUrl>& urlList);
+    void entryPaste(const QList<QUrl>& urlList, bool copy);
     void entryRemove(const QList<QUrl>& urlList);
     void locationReturnPressed(bool moveFocusToEntryView = true);
 
