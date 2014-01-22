@@ -9,6 +9,8 @@ class FtpFileInfoCache
 {
 public:
     void addFileInfo(const QString& dir, const QUrlInfo& urlInfo);
+    void removeFileInfo(const QString& dir, const QString& name);
+    void removeFileInfo(const QString& path);
     void removeDirInfo(const QString& dir);
 
     QUrlInfo findFileInfo(const QString& dir, const QString& name);

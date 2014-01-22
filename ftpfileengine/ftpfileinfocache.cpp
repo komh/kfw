@@ -19,6 +19,40 @@ void FtpFileInfoCache::addFileInfo(const QString& dir, const QUrlInfo& urlInfo)
     _dirMultiMap.insert(getCacheKey(dir, urlInfo.name()), urlInfo);
 }
 
+void FtpFileInfoCache::removeFileInfo(const QString& dir, const QString& name)
+{
+    QString cacheKey = getCacheKey(dir, name);
+
+    if (_dirMultiMap.contains(cacheKey))
+    {
+        QUrlInfoListIterator it(_dirMultiMap.values(cacheKey));
+
+        while (it.hasNext())
+        {
+            QUrlInfo info = it.next();
+
+            if (name == info.name())
+            {
+                _dirMultiMap.remove(cacheKey, info);
+                break;
+            }
+        }
+    }
+}
+
+void FtpFileInfoCache::removeFileInfo(const QString& path)
+{
+    int lastSlashIndex = path.lastIndexOf("/");
+    QString dir(path.left(lastSlashIndex));
+    QString name(path.mid(lastSlashIndex + 1));
+
+    // Treat root like a file entry
+    if (name.isEmpty())
+        name = "/";
+
+    removeFileInfo(dir, name);
+}
+
 void FtpFileInfoCache::removeDirInfo(const QString& dir)
 {
     _dirMultiMap.remove(getCacheKey(dir));

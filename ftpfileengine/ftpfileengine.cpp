@@ -495,9 +495,30 @@ bool FtpFileEngine::remove()
 
 bool FtpFileEngine::rename(const QString &newName)
 {
-    qDebug() << "rename()" << _fileName;
+    qDebug() << "rename()" << _fileName << _path << newName;
 
-    return QAbstractFileEngine::rename(newName);
+    QString newPath(QUrl(newName).path());
+
+    _ftp->connectToHost(_url.host(), _port);
+    _ftp->login(_userName, _password);
+    _ftp->rename(_path, newPath);
+
+    bool result = _ftpSync.wait();
+
+    _ftp->close();
+    _ftpSync.wait();
+
+    if (result)
+    {
+        _ftpCache->removeFileInfo(getCachePath(_path));
+
+        _urlInfo.setName(QFileInfo(newPath).fileName());
+        _ftpCache->addFileInfo(
+                    getCachePath(QFileInfo(newPath).dir().path(), true),
+                    _urlInfo);
+    }
+
+    return result;
 }
 
 bool FtpFileEngine::rmdir(const QString &dirName,
