@@ -174,7 +174,7 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList)
 {
     QProgressDialog progress(this);
     progress.setWindowTitle(title());
-    progress.setLabelText(tr("Copying files..."));
+    progress.setLabelText(tr("Preparing for copying files..."));
     progress.setRange(0, 100);
     progress.setModal(true);
     progress.setAutoClose(false);
@@ -292,7 +292,7 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
 
     QProgressDialog progress(this);
     progress.setWindowTitle(title());
-    progress.setLabelText(tr("Deleting files..."));
+    progress.setLabelText(tr("Preparing for deleting files..."));
     progress.setRange(0, urlList.size());
     progress.setModal(true);
     progress.setAutoClose(false);
