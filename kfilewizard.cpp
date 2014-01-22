@@ -462,10 +462,6 @@ void KFileWizard::refreshEntry()
     entryProxyModel->setSourceModel(0);
     delete entryModel;
 
-    // Trick to refresh entries on FTP server
-    if (currentDir.path().startsWith("ftp://"))
-        currentDir.exists(".");
-
     entryModel = new EntryListModel;
     entryModel->setRootPath(currentDir.path());
     entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot |

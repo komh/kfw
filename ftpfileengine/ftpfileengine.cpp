@@ -237,6 +237,8 @@ bool FtpFileEngine::close()
 
         delete _ftpTransfer;
         _ftpTransfer = 0;
+
+        refreshFileInfoCache();
     }
 
     _fileBuffer.close();
