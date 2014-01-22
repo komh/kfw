@@ -79,6 +79,11 @@ bool FileOperation::remove()
     return _sourceFile.remove();
 }
 
+bool FileOperation::rename(const QString &newName)
+{
+    return _sourceFile.rename(newName);
+}
+
 QString FileOperation::fixUrl(const QString &url)
 {
     static int colonSlashLength = QString(":/").length();

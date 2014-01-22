@@ -31,6 +31,7 @@ public:
 
     qint64 copy(qint64 chunkSize = DefaultChunkSize);
     bool remove();
+    bool rename(const QString& newName);
 
     static QString fixUrl(const QString& url);
 
