@@ -180,11 +180,13 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
     progress.setRange(0, 100);
     progress.setModal(true);
     progress.setAutoClose(false);
+    progress.setAutoReset(false);
 
     ui->entryTree->setUpdatesEnabled(false);
 
     foreach(QUrl url, urlList)
     {
+        progress.setValue(0);
         progress.show();
 
         if (progress.wasCanceled())
