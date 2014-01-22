@@ -12,6 +12,11 @@ AbstractFileWorker::AbstractFileWorker(const QString &source,
 {
 }
 
+AbstractFileWorker::~AbstractFileWorker()
+{
+
+}
+
 void AbstractFileWorker::perform()
 {
     performWork();

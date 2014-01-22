@@ -10,6 +10,8 @@ public:
     explicit AbstractFileWorker(const QString& source, const QString& dest,
                                 QObject *parent = 0);
 
+    virtual ~AbstractFileWorker();
+
     void cancel() { _canceled = true; }
     bool wasCanceled() const { return _canceled; }
 
