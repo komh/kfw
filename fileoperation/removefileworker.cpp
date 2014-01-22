@@ -11,7 +11,5 @@ void RemoveFileWorker::performWork()
 {
     FileOperation fileOp(source());
 
-    fileOp.open();
-
-    setResult(fileOp.remove());
+    setResult(fileOp.open() && fileOp.remove());
 }
