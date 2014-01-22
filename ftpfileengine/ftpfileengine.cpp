@@ -490,6 +490,13 @@ bool FtpFileEngine::remove()
     _ftp->close();
     _ftpSync.wait();
 
+    if (result)
+    {
+        // remove cache entry
+        _ftpCache->removeFileInfo(getCachePath(_path));
+        _fileFlags &= ~QAbstractFileEngine::ExistsFlag;
+    }
+
     return result;
 }
 
