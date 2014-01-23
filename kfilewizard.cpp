@@ -352,7 +352,10 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
 
     ui->entryTree->setUpdatesEnabled(true);
 
-    refreshEntry();
+    // Refresh entry only in case of FTP
+    // QFileSystemModel works fine with a local remove operation
+    if (urlList.first().scheme() == "ftp")
+        refreshEntry();
 }
 
 bool KFileWizard::fileWorker(AbstractFileWorker* worker,
