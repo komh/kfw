@@ -196,24 +196,21 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
             _entries.append(urlInfo.name());
             _entriesMap.insert(urlInfo.name(), urlInfo);
         }
-
-        return new FtpFileEngineIterator(filters, filterNames, _entries);
     }
-
-    _ftp->connectToHost(_url.host(), _port);
-    _ftp->login(_userName, _password);
-
-    if (_fileFlags & QAbstractFileEngine::DirectoryType)
+    else if (_fileFlags & QAbstractFileEngine::DirectoryType)
     {
+        _ftp->connectToHost(_url.host(), _port);
+        _ftp->login(_userName, _password);
+
         _cacheDir = getCachePath(_path, true);
 
         _ftp->cd(_path);
         _ftp->list();
+
+        _ftp->close();
+
+        _ftpSync.wait();
     }
-
-    _ftp->close();
-
-    _ftpSync.wait();
 
     return new FtpFileEngineIterator(filters, filterNames, _entries);
 }
