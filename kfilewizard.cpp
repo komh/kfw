@@ -27,6 +27,8 @@ KFileWizard::KFileWizard(QWidget *parent) :
     initDirTree();
 
     initEntryTree();
+
+    loadSettings();
 }
 
 KFileWizard::~KFileWizard()
@@ -58,6 +60,13 @@ bool KFileWizard::eventFilter(QObject* target, QEvent *event)
         setLocationText(currentDir.path());
 
     return QMainWindow::eventFilter(target, event);
+}
+
+void KFileWizard::closeEvent(QCloseEvent *event)
+{
+    saveSettings();
+
+    QMainWindow::closeEvent(event);
 }
 
 void KFileWizard::initLocationLine()
@@ -478,4 +487,41 @@ void KFileWizard::refreshEntry()
     setEntryRoot();
 
     ui->entryTree->setUpdatesEnabled(true);
+}
+
+void KFileWizard::saveSettings()
+{
+    QSettings settings(organization(), title());
+
+    settings.beginGroup("mainwindow");
+    settings.setValue("geometry", saveGeometry());
+
+    settings.beginGroup("splitter");
+    settings.setValue("state", ui->splitter->saveState());
+
+    settings.beginGroup("entrytree");
+    settings.setValue("headerstate", ui->entryTree->header()->saveState());
+
+    settings.endGroup(); // entrytree
+    settings.endGroup(); // splitter
+    settings.endGroup(); // mainwindow
+}
+
+void KFileWizard::loadSettings()
+{
+    QSettings settings(organization(), title());
+
+    settings.beginGroup("mainwindow");
+    restoreGeometry(settings.value("geometry").toByteArray());
+
+    settings.beginGroup("splitter");
+    ui->splitter->restoreState(settings.value("state").toByteArray());
+
+    settings.beginGroup("entrytree");
+    ui->entryTree->header()->restoreState(
+                settings.value("headerstate").toByteArray());
+
+    settings.endGroup(); // entrytree
+    settings.endGroup(); // splitter
+    settings.endGroup(); // mainwindow
 }

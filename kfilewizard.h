@@ -23,6 +23,9 @@ public:
 
     bool eventFilter(QObject* target, QEvent *event);
 
+protected:
+    void closeEvent(QCloseEvent* event);
+
 private slots:
     void dirLoaded(const QString& dir);
     void dirActivated(const QModelIndex& index);
@@ -73,7 +76,11 @@ private:
     void setEntryRoot();
     void refreshEntry();
 
+    QString organization() const { return tr("KO Myung-Hun"); }
     QString title() const { return tr("K File Wizard"); }
+
+    void saveSettings();
+    void loadSettings();
 };
 
 #endif // KFILEWIZARD_H
