@@ -473,6 +473,12 @@ void KFileWizard::refreshEntry()
 {
     ui->entryTree->setUpdatesEnabled(false);
 
+    QString path = entryModel->filePath(
+                        entryProxyModel->mapToSource(
+                            ui->entryTree->currentIndex()));
+
+    QByteArray headerState(ui->entryTree->header()->saveState());
+
     entryProxyModel->setSourceModel(0);
     delete entryModel;
 
@@ -485,6 +491,10 @@ void KFileWizard::refreshEntry()
     ui->entryTree->setModel(entryProxyModel);
 
     setEntryRoot();
+
+    ui->entryTree->header()->restoreState(headerState);
+    ui->entryTree->setCurrentIndex(
+                entryProxyModel->mapFromSource(entryModel->index(path)));
 
     ui->entryTree->setUpdatesEnabled(true);
 }
