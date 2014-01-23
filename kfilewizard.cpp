@@ -258,6 +258,8 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
 
     ui->entryTree->setUpdatesEnabled(true);
 
+    // QFileSystemModel is not refreshed if only a size is changed,
+    // so there is need to force it to refresh.
     refreshEntry();
 }
 
