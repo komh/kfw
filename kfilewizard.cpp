@@ -473,19 +473,31 @@ void KFileWizard::refreshEntry()
 {
     ui->entryTree->setUpdatesEnabled(false);
 
-    QString path = entryModel->filePath(
-                        entryProxyModel->mapToSource(
-                            ui->entryTree->currentIndex()));
+    // for removing
+    QModelIndex current = entryProxyModel->mapToSource(
+                                ui->entryTree->currentIndex());
+
+    // for copying
+    QString path = entryModel->filePath(current);
 
     QByteArray headerState(ui->entryTree->header()->saveState());
 
     entryProxyModel->setSourceModel(0);
     delete entryModel;
 
+    QEventLoop loop;
+
     entryModel = new EntryListModel;
+
+    connect(entryModel, SIGNAL(directoryLoaded(QString)),
+            &loop, SLOT(quit()));
+
     entryModel->setRootPath(currentDir.path());
     entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot |
                           QDir::Files);
+
+    // wait for directory to be loaded
+    loop.exec();
 
     entryProxyModel->setSourceModel(entryModel);
     ui->entryTree->setModel(entryProxyModel);
@@ -493,8 +505,29 @@ void KFileWizard::refreshEntry()
     setEntryRoot();
 
     ui->entryTree->header()->restoreState(headerState);
-    ui->entryTree->setCurrentIndex(
-                entryProxyModel->mapFromSource(entryModel->index(path)));
+
+    // consider copy case first
+    QModelIndex newCurrent =
+            entryProxyModel->mapFromSource(entryModel->index(path));
+
+    if (newCurrent.isValid())
+        ui->entryTree->setCurrentIndex(newCurrent);
+    else
+    {
+        // remove case
+        QModelIndex parent = entryModel->index(currentDir.path());
+
+        // Select a previous row like Qt does
+        int row = current.row();
+        if (row > 0)
+            --row;
+
+        newCurrent = entryProxyModel->mapFromSource(
+                        entryModel->index(row, current.column(), parent));
+
+        ui->entryTree->selectionModel()->setCurrentIndex(
+                                newCurrent, QItemSelectionModel::NoUpdate);
+    }
 
     ui->entryTree->setUpdatesEnabled(true);
 }
