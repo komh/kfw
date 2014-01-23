@@ -182,6 +182,8 @@ void KFileWizard::entryCdUp(const QModelIndex& index)
 
 void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
 {
+    QList<QUrl> urlListToSelect;
+
     QProgressDialog progress(this);
     progress.setWindowTitle(title());
     progress.setLabelText(copy ? tr("Preparing for copying files..."):
@@ -263,13 +265,15 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
                                 "%2"))
                      .arg(canonicalSource)
                      .arg(canonicalDest));
+        else
+            urlListToSelect.append(dest);
     }
 
     ui->entryTree->setUpdatesEnabled(true);
 
     // QFileSystemModel is not refreshed if only a size is changed,
     // so there is need to force it to refresh.
-    refreshEntry();
+    refreshEntry(urlListToSelect);
 }
 
 QString KFileWizard::getNameOfCopy(const QString& source)
@@ -366,7 +370,7 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
     // Refresh entry only in case of FTP
     // QFileSystemModel works fine with a local remove operation
     if (urlList.first().scheme() == "ftp")
-        refreshEntry();
+        refreshEntry(urlList, true);
 }
 
 bool KFileWizard::fileWorker(AbstractFileWorker* worker,
@@ -469,16 +473,60 @@ void KFileWizard::setEntryRoot()
     ui->entryTree->setRootIndex(rootIndex);
 }
 
-void KFileWizard::refreshEntry()
+void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 {
     ui->entryTree->setUpdatesEnabled(false);
 
-    // for removing
-    QModelIndex current = entryProxyModel->mapToSource(
-                                ui->entryTree->currentIndex());
+    QString newPath;
 
-    // for copying
-    QString path = entryModel->filePath(current);
+    // removed ?
+    if (remove)
+    {
+        // This is only for FTP. QFileSystemWatcher does not work with it
+
+        QModelIndex parent = entryProxyModel->mapFromSource(
+                                    entryModel->index(currentDir.path()));
+
+        // Select a previous row like Qt does
+        int row = ui->entryTree->currentIndex().row();
+        while (row >= 0)
+        {
+            if (!urlList.contains(
+                        FileOperation::fixUrl(
+                            entryModel->filePath(
+                                entryProxyModel->mapToSource(
+                                    entryProxyModel->index(row, 0, parent))))))
+                break;
+
+            --row;
+        }
+
+        // reached to the top ?
+        if (row < 0)
+        {
+            // then try a next row
+            row = ui->entryTree->currentIndex().row();
+            while (row < entryProxyModel->rowCount(parent))
+            {
+                if (!urlList.contains(
+                            FileOperation::fixUrl(
+                                entryModel->filePath(
+                                    entryProxyModel->mapToSource(
+                                        entryProxyModel->index(row, 0,
+                                                               parent))))))
+                    break;
+
+                ++row;
+            }
+
+            if (row == entryProxyModel->rowCount(parent))
+                row = 0;    // all removed
+        }
+
+        newPath = entryModel->filePath(
+                    entryProxyModel->mapToSource(
+                        entryProxyModel->index(row, 0, parent)));
+    }
 
     QByteArray headerState(ui->entryTree->header()->saveState());
 
@@ -506,28 +554,37 @@ void KFileWizard::refreshEntry()
 
     ui->entryTree->header()->restoreState(headerState);
 
-    // consider copy case first
-    QModelIndex newCurrent =
-            entryProxyModel->mapFromSource(entryModel->index(path));
+    // select proper entries
 
-    if (newCurrent.isValid())
-        ui->entryTree->setCurrentIndex(newCurrent);
+    QItemSelectionModel* selection = ui->entryTree->selectionModel();
+
+    QModelIndex newCurrent;
+
+    if (remove)
+        newCurrent = entryProxyModel->mapFromSource(
+                            entryModel->index(newPath));
     else
     {
-        // remove case
-        QModelIndex parent = entryModel->index(currentDir.path());
+        // select the given list
 
-        // Select a previous row like Qt does
-        int row = current.row();
-        if (row > 0)
-            --row;
+        foreach (QUrl url, urlList)
+        {
+            QModelIndex index(entryProxyModel->mapFromSource(
+                                  entryModel->index(url.toString())));
 
-        newCurrent = entryProxyModel->mapFromSource(
-                        entryModel->index(row, current.column(), parent));
+            selection->select(index, QItemSelectionModel::Select |
+                                     QItemSelectionModel::Rows);
 
-        ui->entryTree->selectionModel()->setCurrentIndex(
-                                newCurrent, QItemSelectionModel::NoUpdate);
+            // find a bottom entry
+            if (!newCurrent.isValid() || newCurrent < index)
+                newCurrent = index;
+        }
     }
+
+    // set current
+    selection->setCurrentIndex(newCurrent, QItemSelectionModel::NoUpdate);
+
+    ui->entryTree->scrollTo(newCurrent);
 
     ui->entryTree->setUpdatesEnabled(true);
 }

@@ -74,7 +74,7 @@ private:
     QString getNameOfCopy(const QString& source);
     QMessageBox::StandardButton checkOverwrite(const QString& dest);
     void setEntryRoot();
-    void refreshEntry();
+    void refreshEntry(const QList<QUrl>& urlList, bool remove = false);
 
     QString organization() const { return tr("KO Myung-Hun"); }
     QString title() const { return tr("K File Wizard"); }
