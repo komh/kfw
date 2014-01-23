@@ -126,12 +126,10 @@ void FtpFileEngine::refreshFileInfoCache()
                      QAbstractFileEngine::ExistsFlag |
                      QAbstractFileEngine::DirectoryType;
 
-        QUrlInfo urlInfo;
+        _urlInfo.setName(_path);
+        _urlInfo.setDir(true);
 
-        urlInfo.setName(_path);
-        urlInfo.setDir(true);
-
-        _ftpCache->addFileInfo(getCachePath(_path, true), urlInfo);
+        _ftpCache->addFileInfo(getCachePath(_path, true), _urlInfo);
     }
     else
     {
