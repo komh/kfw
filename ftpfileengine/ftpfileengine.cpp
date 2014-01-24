@@ -519,7 +519,7 @@ bool FtpFileEngine::remove()
     {
         // remove cache entry
         _ftpCache->removeFileInfo(getCachePath(_path));
-        _fileFlags &= ~QAbstractFileEngine::ExistsFlag;
+        _fileFlags = QAbstractFileEngine::FileType;
     }
 
     return result;
