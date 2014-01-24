@@ -475,11 +475,19 @@ QString KFileWizard::canonicalize(const QString& path)
     return nativePath;
 }
 
+QModelIndex KFileWizard::findDirIndex(const QString& dir)
+{
+    QModelIndex index = dirProxyModel->mapFromSource(dirModel->index(dir));
+
+    if (!index.isValid() || !QDir(dir).isReadable())
+        return QModelIndex();
+
+    return index;
+}
+
 void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
 {
-    QModelIndex current =
-            dirProxyModel->mapFromSource(
-                dirModel->index(ui->locationLine->text()));
+    QModelIndex current(findDirIndex(ui->locationLine->text()));
 
     if (current.isValid())
     {
@@ -503,7 +511,8 @@ void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
     }
     else
     {
-        critical(tr("Directory is not valid."));
+        critical(tr("This is not a directory or not accessible.\n\n%1")
+                    .arg(ui->locationLine->text()));
 
         ui->locationLine->selectAll();
     }

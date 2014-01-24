@@ -130,6 +130,8 @@ void FtpFileEngine::initFtp()
         if (_path == "/")
             _fileFlags |= QAbstractFileEngine::RootFlag;
 
+        _fileFlags |= QAbstractFileEngine::FileFlag(urlInfo.permissions());
+
         _urlInfo = urlInfo;
 
         return;
@@ -145,12 +147,20 @@ void FtpFileEngine::refreshFileInfoCache()
 
     if (_path == "/")
     {
+        QAbstractFileEngine::FileFlags permissions =
+                QAbstractFileEngine::ReadOwnerPerm |
+                QAbstractFileEngine::ReadUserPerm |
+                QAbstractFileEngine::ReadGroupPerm |
+                QAbstractFileEngine::ReadOtherPerm;
+
         _fileFlags = QAbstractFileEngine::RootFlag |
                      QAbstractFileEngine::ExistsFlag |
-                     QAbstractFileEngine::DirectoryType;
+                     QAbstractFileEngine::DirectoryType |
+                     permissions;
 
         _urlInfo.setName(_path);
         _urlInfo.setDir(true);
+        _urlInfo.setPermissions(permissions);
 
         _ftpCache->addFileInfo(getCachePath(_path, true), _urlInfo);
     }
@@ -181,6 +191,9 @@ void FtpFileEngine::refreshFileInfoCache()
             _fileFlags |= _urlInfo.isDir() ?
                             QAbstractFileEngine::DirectoryType :
                             QAbstractFileEngine::FileType;
+
+            _fileFlags |=
+                    QAbstractFileEngine::FileFlag(_urlInfo.permissions());
         }
         else
             _fileFlags |= QAbstractFileEngine::FileType;
@@ -310,6 +323,8 @@ QAbstractFileEngine::FileFlags FtpFileEngine::fileFlags(FileFlags type) const
 
     if (type & QAbstractFileEngine::Refresh)
         const_cast<FtpFileEngine*>(this)->refreshFileInfoCache();
+
+    qDebug() << "\t" << _fileName << (type & _fileFlags);
 
     return type & _fileFlags;
 }
@@ -650,9 +665,18 @@ void FtpFileEngine::ftpListInfo(const QUrlInfo &urlInfo)
     qDebug() << "\t" << (urlInfo.isDir() ? "[D]" : "[F]") << urlInfo.name();
 
     _entries.append(urlInfo.name());
-    _entriesMap.insert(urlInfo.name(), urlInfo);
 
-    _ftpCache->addFileInfo(_cacheDir, urlInfo);
+    // QDir::isReadable() determines with ReadUserPerm
+    // And, I think, if ReadOtherPerm is set, assuming ReadUserPerm is set
+    // is fine. ftp://hobbes.nmsu.edu set only ReadOtherPerm not ReadUserPerm
+    QUrlInfo info(urlInfo);
+    if (info.permissions() & QAbstractFileEngine::ReadOtherPerm)
+        info.setPermissions(info.permissions() |
+                            QAbstractFileEngine::ReadUserPerm);
+
+    _entriesMap.insert(urlInfo.name(), info);
+
+    _ftpCache->addFileInfo(_cacheDir, info);
 }
 
 QString FtpFileEngine::getCachePath(const QString& path, bool key)

@@ -94,6 +94,7 @@ private:
                     const QProgressDialog &progress);
     void setLocationText(const QString& text, bool force = false);
     QString canonicalize(const QString& path);
+    QModelIndex findDirIndex(const QString& dir);
     QString getNameOfCopy(const QString& source);
     QMessageBox::StandardButton checkOverwrite(const QString& dest);
     void setEntryRoot();
