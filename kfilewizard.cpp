@@ -462,6 +462,10 @@ void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
         // To canonicalize a path
         setLocationText(ui->locationLine->text());
 
+        // already processed ?
+        if (ui->locationLine->text() == currentDir.path())
+            return;
+
         currentDir.setPath(ui->locationLine->text());
 
         ui->dirTree->setCurrentIndex(current);
@@ -483,11 +487,34 @@ void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
 
 void KFileWizard::setEntryRoot()
 {
+    bool currentChanged = entryModel->rootPath() != currentDir.path();
+
+    QMessageBox msgBox(this);
+    QEventLoop loop;
+
+    if (currentChanged)
+    {
+        msgBox.setWindowTitle(title());
+        msgBox.setText(tr("Reading directory entries, please wait...\n\n%1")
+                       .arg(currentDir.path()));
+        msgBox.setStandardButtons(QMessageBox::NoButton);
+
+        QTimer::singleShot(500, &msgBox, SLOT(open()));
+
+        connect(entryModel, SIGNAL(directoryLoaded(QString)),
+                &loop, SLOT(quit()));
+
+        entryModel->setRootPath(currentDir.path());
+    }
+
     QModelIndex rootIndex = entryModel->index(currentDir.path());
     entryModel->setRootIndex(rootIndex);
 
     rootIndex = entryProxyModel->mapFromSource(rootIndex);
     ui->entryTree->setRootIndex(rootIndex);
+
+    if (currentChanged)
+        loop.exec();
 }
 
 void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
