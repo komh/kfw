@@ -339,6 +339,7 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
     progress.setRange(0, urlList.size());
     progress.setModal(true);
     progress.setAutoClose(false);
+    progress.setAutoReset(false);
 
     ui->entryTree->setUpdatesEnabled(false);
 
