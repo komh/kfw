@@ -26,7 +26,7 @@
 
 #include "urllistmimedata.h"
 
-UrlListMimeData::UrlListMimeData(Action action, QObject *parent) :
+UrlListMimeData::UrlListMimeData(Action action) :
     QMimeData()
   , _action(action)
 {

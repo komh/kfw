@@ -266,6 +266,8 @@ bool FtpFileEngine::close()
 
 bool FtpFileEngine::copy(const QString &newName)
 {
+    Q_UNUSED(newName);
+
     qDebug() << "copy()" << _fileName;
 
     return false;
@@ -561,6 +563,8 @@ bool FtpFileEngine::rmdir(const QString &dirName,
 
 bool FtpFileEngine::seek(qint64 pos)
 {
+    Q_UNUSED(pos);
+
     qDebug() << "seek()" << _fileName;
 
     return false;

@@ -33,8 +33,7 @@ class UrlListMimeData : public QMimeData
 public:
     enum Action { CopyAction = 1, CutAction = 2 };
 
-    explicit UrlListMimeData(Action action = CopyAction,
-                             QObject *parent = 0);
+    explicit UrlListMimeData(Action action = CopyAction);
 
     QStringList formats() const;
 
