@@ -311,7 +311,18 @@ QMessageBox::StandardButton KFileWizard::checkOverwrite(const QString& dest)
 {
     if (QFile(dest).exists())
     {
-        return question(tr("%1\n\n"
+        if (dest.startsWith("ftp://"))
+        {
+            critical(tr("%1\n\n"
+                        "This file already exists. "
+                        "Overwriting is not supported by FTP.")
+                            .arg(canonicalize(dest)),
+                     QMessageBox::Ok);
+
+            return QMessageBox::No;
+        }
+
+        return  question(tr("%1\n\n"
                            "This file already exists. "
                            "Are you sure to overwrite it?")
                             .arg(canonicalize(dest)),
