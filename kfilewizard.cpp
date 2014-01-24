@@ -419,8 +419,10 @@ bool KFileWizard::fileWorker(AbstractFileWorker* worker,
     worker->moveToThread(&workerThread);
 
     connect(&workerThread, SIGNAL(started()), worker, SLOT(perform()));
-    connect(&workerThread, SIGNAL(finished()), &loop, SLOT(quit()));
-    connect(&progress, SIGNAL(canceled()), &loop, SLOT(quit()));
+    connect(&workerThread, SIGNAL(finished()), &loop, SLOT(quit()),
+            Qt::QueuedConnection);
+    connect(&progress, SIGNAL(canceled()), &loop, SLOT(quit()),
+            Qt::QueuedConnection);
     connect(worker, SIGNAL(valueChanged(int)), &progress, SLOT(setValue(int)));
 
     workerThread.start();
@@ -534,7 +536,7 @@ void KFileWizard::setEntryRoot()
         QTimer::singleShot(500, &msgBox, SLOT(open()));
 
         connect(entryModel, SIGNAL(directoryLoaded(QString)),
-                &loop, SLOT(quit()));
+                &loop, SLOT(quit()), Qt::QueuedConnection);
 
         entryModel->setRootPath(currentDir.path());
 
@@ -620,7 +622,8 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 
     entryModel = new EntryListModel;
 
-    connect(entryModel, SIGNAL(directoryLoaded(QString)), &loop, SLOT(quit()));
+    connect(entryModel, SIGNAL(directoryLoaded(QString)), &loop, SLOT(quit()),
+            Qt::QueuedConnection);
 
     entryModel->setRootPath(currentDir.path());
     entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot |

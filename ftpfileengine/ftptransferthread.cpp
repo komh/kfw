@@ -53,11 +53,13 @@ void FtpTransferThread::run()
 
     QFtp ftp;
 
-    connect(&ftp, SIGNAL(done(bool)), &loop, SLOT(quit()));
+    connect(&ftp, SIGNAL(done(bool)), &loop, SLOT(quit()),
+            Qt::QueuedConnection);
     connect(&ftp, SIGNAL(commandFinished(int,bool)),
             this, SLOT(ftpCommandFinished(int,bool)));
     connect(this, SIGNAL(ftpAbort()), &ftp, SLOT(abort()));
-    connect(this, SIGNAL(loopQuit()), &loop, SLOT(quit()));
+    connect(this, SIGNAL(loopQuit()), &loop, SLOT(quit()),
+            Qt::QueuedConnection);
 
     ftp.connectToHost(_engine->_url.host(), _engine->_port);
     ftp.login(_engine->_userName, _engine->_password);
