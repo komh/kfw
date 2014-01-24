@@ -192,13 +192,13 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
     progress.setModal(true);
     progress.setAutoClose(false);
     progress.setAutoReset(false);
+    progress.setMinimumDuration(500);
 
     ui->entryTree->setUpdatesEnabled(false);
 
     foreach(QUrl url, urlList)
     {
         progress.setValue(0);
-        progress.show();
 
         if (progress.wasCanceled())
             break;
@@ -351,6 +351,7 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
     progress.setLabelText(tr("Preparing for deleting files..."));
     progress.setRange(0, urlList.size());
     progress.setModal(true);
+    progress.setMinimumDuration(500);
 
     ui->entryTree->setUpdatesEnabled(false);
 
