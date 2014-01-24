@@ -478,6 +478,14 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 {
     ui->entryTree->setUpdatesEnabled(false);
 
+    QMessageBox msgBox(this);
+
+    msgBox.setWindowTitle(title());
+    msgBox.setText("Refreshing entries, please wait...");
+    msgBox.setStandardButtons(QMessageBox::NoButton);
+    msgBox.setModal(true);
+    msgBox.show();
+
     QString newPath;
 
     // removed ?
@@ -534,19 +542,16 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
     entryProxyModel->setSourceModel(0);
     delete entryModel;
 
-    QEventLoop loop;
-
     entryModel = new EntryListModel;
 
-    connect(entryModel, SIGNAL(directoryLoaded(QString)),
-            &loop, SLOT(quit()));
+    connect(entryModel, SIGNAL(directoryLoaded(QString)), &msgBox, SLOT(accept()));
 
     entryModel->setRootPath(currentDir.path());
     entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot |
                           QDir::Files);
 
     // wait for directory to be loaded
-    loop.exec();
+    msgBox.exec();
 
     entryProxyModel->setSourceModel(entryModel);
     ui->entryTree->setModel(entryProxyModel);
