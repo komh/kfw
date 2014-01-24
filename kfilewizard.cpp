@@ -441,9 +441,14 @@ void KFileWizard::setLocationText(const QString& text, bool force)
 
 QString KFileWizard::canonicalize(const QString& path)
 {
-    return path.indexOf(':') > 1 ?
-                FileOperation::fixUrl(QDir::fromNativeSeparators(path)) :
-                QDir::toNativeSeparators(path);
+    if (path.indexOf(':') > 1)
+        return FileOperation::fixUrl(QDir::fromNativeSeparators(path));
+
+    QString nativePath = QDir::toNativeSeparators(path);
+
+    nativePath[0] = nativePath[0].toUpper();
+
+    return nativePath;
 }
 
 void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
