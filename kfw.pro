@@ -22,7 +22,6 @@ SOURCES += main.cpp\
     ftpfileengine/ftpfileengineiterator.cpp \
     ftpfileengine/ftpfileenginehandler.cpp \
     ftpfileengine/ftpfileengine.cpp \
-    msleep.cpp \
     ftpfileengine/ftpbuffer.cpp \
     ftpfileengine/ftptransferthread.cpp \
     ftpfileengine/ftphostinfocache.cpp \
@@ -43,7 +42,6 @@ HEADERS  += kfilewizard.h \
     ftpfileengine/ftpfileengineiterator.h \
     ftpfileengine/ftpfileenginehandler.h \
     ftpfileengine/ftpfileengine.h \
-    msleep.h \
     ftpfileengine/ftpbuffer.h \
     ftpfileengine/ftptransferthread.h \
     ftpfileengine/ftphostinfocache.h \
