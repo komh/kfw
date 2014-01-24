@@ -408,7 +408,7 @@ bool KFileWizard::fileWorker(AbstractFileWorker* worker,
         QMessageBox msgBox(this);
 
         msgBox.setWindowTitle(title());
-        msgBox.setText("Canceling file operations, please wait...");
+        msgBox.setText(tr("Canceling file operations, please wait..."));
         msgBox.setStandardButtons(QMessageBox::NoButton);
 
         connect(&workerThread, SIGNAL(finished()), &msgBox, SLOT(accept()));
@@ -524,7 +524,7 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
     QMessageBox msgBox(this);
 
     msgBox.setWindowTitle(title());
-    msgBox.setText("Refreshing entries, please wait...");
+    msgBox.setText(tr("Refreshing entries, please wait..."));
     msgBox.setStandardButtons(QMessageBox::NoButton);
     msgBox.setModal(true);
     msgBox.show();
