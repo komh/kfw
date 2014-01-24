@@ -524,7 +524,7 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
     QMessageBox msgBox(this);
 
     msgBox.setWindowTitle(title());
-    msgBox.setText(tr("Refreshing entries, please wait..."));
+    msgBox.setText(tr("Refreshing directory entries, please wait..."));
     msgBox.setStandardButtons(QMessageBox::NoButton);
     msgBox.setModal(true);
     msgBox.show();
