@@ -497,10 +497,11 @@ void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
         setLocationText(ui->locationLine->text());
 
         // already processed ?
-        if (ui->locationLine->text() == currentDir.path())
+        if (ui->locationLine->text() == canonicalize(currentDir.path()))
             return;
 
         currentDir.setPath(ui->locationLine->text());
+        currentDir.makeAbsolute();
 
         ui->dirTree->setCurrentIndex(current);
         ui->dirTree->expand(current);
@@ -522,7 +523,8 @@ void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
 
 void KFileWizard::setEntryRoot()
 {
-    if (entryModel->rootPath() != currentDir.path())
+    // already fetched ?
+    if (FileOperation::fixUrl(entryModel->rootPath()) != currentDir.path())
     {
         QEventLoop loop;
 
