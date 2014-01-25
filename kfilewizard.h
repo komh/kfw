@@ -92,7 +92,7 @@ private:
 
     bool fileWorker(AbstractFileWorker* worker,
                     const QProgressDialog &progress);
-    void setLocationText(const QString& text, bool force = false);
+    void setLocationText(const QString& text);
     QString canonicalize(const QString& path);
     QModelIndex findDirIndex(const QString& dir);
     QString getNameOfCopy(const QString& source);

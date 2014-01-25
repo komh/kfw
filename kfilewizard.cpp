@@ -180,12 +180,14 @@ void KFileWizard::dirLoaded(const QString& dir)
             dirProxyModel->mapFromSource(dirModel->index(currentDir.path()));
 
     dirActivated(current);
+
+    ui->dirTree->scrollTo(current);
+    ui->dirTree->setCurrentIndex(current);
 }
 
 void KFileWizard::dirActivated(const QModelIndex &index)
 {
-    setLocationText(dirModel->filePath(dirProxyModel->mapToSource(index)),
-                    true);
+    setLocationText(dirModel->filePath(dirProxyModel->mapToSource(index)));
 }
 
 void KFileWizard::entryActivated(const QModelIndex &index)
@@ -453,11 +455,11 @@ bool KFileWizard::fileWorker(AbstractFileWorker* worker,
     return result;
 }
 
-void KFileWizard::setLocationText(const QString& text, bool force)
+void KFileWizard::setLocationText(const QString& text)
 {
     QString canonicalPath = canonicalize(text);
 
-    if (force || canonicalPath != ui->locationLine->text())
+    if (canonicalPath != ui->locationLine->text())
     {
         ui->locationLine->setText(canonicalPath);
 
@@ -502,9 +504,6 @@ void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
 
         currentDir.setPath(ui->locationLine->text());
         currentDir.makeAbsolute();
-
-        ui->dirTree->setCurrentIndex(current);
-        ui->dirTree->scrollTo(current);
 
         setEntryRoot();
 
