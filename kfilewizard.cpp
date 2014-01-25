@@ -34,6 +34,8 @@
 #include "fileoperation/removefileworker.h"
 #include "fileoperation/movefileworker.h"
 
+#include "delayedmessagebox.h"
+
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KFileWizard),
@@ -526,23 +528,17 @@ void KFileWizard::setEntryRoot()
     // already fetched ?
     if (FileOperation::fixUrl(entryModel->rootPath()) != currentDir.path())
     {
-        QEventLoop loop;
-
-        QMessageBox msgBox(this);
+        DelayedMessageBox msgBox(this);
 
         msgBox.setWindowTitle(title());
         msgBox.setText(tr("Reading directory entries, please wait...\n\n%1")
-                       .arg(currentDir.path()));
-        msgBox.setStandardButtons(QMessageBox::NoButton);
+                            .arg(currentDir.path()));
 
-        QTimer::singleShot(500, &msgBox, SLOT(open()));
-
-        connect(entryModel, SIGNAL(directoryLoaded(QString)),
-                &loop, SLOT(quit()), Qt::QueuedConnection);
+        msgBox.setQuitSignal(entryModel, SIGNAL(directoryLoaded(QString)));
 
         entryModel->setRootPath(currentDir.path());
 
-        loop.exec();
+        msgBox.exec();
     }
 
     QModelIndex rootIndex = entryModel->index(currentDir.path());
@@ -555,16 +551,6 @@ void KFileWizard::setEntryRoot()
 void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 {
     ui->entryTree->setUpdatesEnabled(false);
-
-    QEventLoop loop;
-
-    QMessageBox msgBox(this);
-
-    msgBox.setWindowTitle(title());
-    msgBox.setText(tr("Refreshing directory entries, please wait..."));
-    msgBox.setStandardButtons(QMessageBox::NoButton);
-
-    QTimer::singleShot(500, &msgBox, SLOT(open()));
 
     QString newPath;
 
@@ -624,15 +610,19 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 
     entryModel = new EntryListModel;
 
-    connect(entryModel, SIGNAL(directoryLoaded(QString)), &loop, SLOT(quit()),
-            Qt::QueuedConnection);
+    DelayedMessageBox msgBox(this);
+
+    msgBox.setWindowTitle(title());
+    msgBox.setText(tr("Refreshing directory entries, please wait..."));
+
+    msgBox.setQuitSignal(entryModel, SIGNAL(directoryLoaded(QString)));
 
     entryModel->setRootPath(currentDir.path());
     entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot |
                           QDir::Files);
 
     // wait for directory to be loaded
-    loop.exec();
+    msgBox.exec();
 
     entryProxyModel->setSourceModel(entryModel);
     ui->entryTree->setModel(entryProxyModel);
