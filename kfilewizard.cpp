@@ -199,10 +199,12 @@ void KFileWizard::entryActivated(const QModelIndex &index)
 
 void KFileWizard::entryCdUp(const QModelIndex& index)
 {
-    if (entryModel->parent(entryProxyModel->mapToSource(index)).isValid())
-        setLocationText(entryModel->filePath(
-                            entryModel->parent(
-                                entryProxyModel->mapToSource(index))));
+    QModelIndex parentIndex(entryModel->parent(
+                                entryProxyModel->mapToSource(index)));
+    QString parentPath(entryModel->filePath(parentIndex));
+
+    if (parentIndex.isValid() && parentPath != "ftp:")
+        setLocationText(parentPath);
 }
 
 void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
@@ -483,7 +485,7 @@ QModelIndex KFileWizard::findDirIndex(const QString& dir)
 {
     QModelIndex index = dirProxyModel->mapFromSource(dirModel->index(dir));
 
-    if (!index.isValid() || !QDir(dir).isReadable())
+    if (!index.isValid() || dir == "ftp:" || !QDir(dir).isReadable())
         return QModelIndex();
 
     return index;
