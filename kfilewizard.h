@@ -50,6 +50,7 @@ protected:
     void closeEvent(QCloseEvent* event);
 
 private slots:
+    void appFocusChanged(QWidget* old, QWidget* now);
     void dirLoaded(const QString& dir);
     void dirActivated(const QModelIndex& index);
     void entryActivated(const QModelIndex& index);

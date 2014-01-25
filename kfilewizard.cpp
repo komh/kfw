@@ -43,6 +43,9 @@ KFileWizard::KFileWizard(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    connect(qApp, SIGNAL(focusChanged(QWidget*,QWidget*)),
+            this, SLOT(appFocusChanged(QWidget*, QWidget*)));
+
     initLocationLine();
 
     initSplitter();
@@ -81,8 +84,6 @@ bool KFileWizard::eventFilter(QObject* target, QEvent *event)
                                             Qt::TabFocusReason));
         }
     }
-    else if (event->type() == QEvent::FocusIn)  // dirTree or entryTree
-        setLocationText(currentDir.path());
 
     return QMainWindow::eventFilter(target, event);
 }
@@ -110,8 +111,6 @@ void KFileWizard::initSplitter()
 
 void KFileWizard::initDirTree()
 {
-    ui->dirTree->installEventFilter(this);
-
     dirModel = new QFileSystemModel;
     dirModel->setRootPath(currentDir.path());
     dirModel->setFilter(QDir::AllDirs | QDir::Drives | QDir::NoDotAndDotDot);
@@ -143,8 +142,6 @@ void KFileWizard::initDirTree()
 
 void KFileWizard::initEntryTree()
 {
-    ui->entryTree->installEventFilter(this);
-
     entryModel = new EntryListModel;
     entryModel->setRootPath(currentDir.path());
     entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Files);
@@ -172,6 +169,13 @@ void KFileWizard::initEntryTree()
             this, SLOT(entryRemove(QList<QUrl>)));
 
     setEntryRoot();
+}
+
+void KFileWizard::appFocusChanged(QWidget* old, QWidget* now)
+{
+    if (old == ui->locationLine
+            && (now == ui->dirTree || now == ui->entryTree))
+        setLocationText(currentDir.path());
 }
 
 void KFileWizard::dirLoaded(const QString& dir)
