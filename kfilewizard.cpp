@@ -504,7 +504,6 @@ void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
         currentDir.makeAbsolute();
 
         ui->dirTree->setCurrentIndex(current);
-        ui->dirTree->expand(current);
         ui->dirTree->scrollTo(current);
 
         setEntryRoot();
