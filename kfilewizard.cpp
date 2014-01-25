@@ -544,9 +544,6 @@ void KFileWizard::setEntryRoot()
         entryModel->setRootPath(currentDir.path());
 
         msgBox.exec();
-
-        // Qt cached already, so there is no delay any more
-        dirModel->setRootPath(currentDir.path());
     }
 
     QModelIndex rootIndex = entryModel->index(currentDir.path());
