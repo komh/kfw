@@ -489,12 +489,26 @@ QString KFileWizard::canonicalize(const QString& path)
 
 QModelIndex KFileWizard::findDirIndex(const QString& dir)
 {
-    QModelIndex index = dirProxyModel->mapFromSource(dirModel->index(dir));
+    DelayedMessageBox msgBox(this);
+    msgBox.setWindowTitle(title());
+    msgBox.setText(tr("Checking the accessability, please wait...\n\n%1")
+                        .arg(canonicalize(dir)));
+    // just trigger a single shot timer without setting quit signal
+    msgBox.trigger();
 
-    if (!QDir(dir).isReadable())
-        return QModelIndex();
+    QFuture<bool> future = QtConcurrent::run(QDir(dir), &QDir::isReadable);
 
-    return index;
+    // don't enter into our event loop started by msgBox.exec()
+    // It causes unpredictable problems. I don't know why. Just
+    // guess QtConcurrent::run() conflics with a local event loop.
+    // In addition, the strange is that GUI thread is not freezed
+    // in spite of QFuture::result() blocking it. Magic ? ^^
+
+    // QFuture::result() blocks until a result is ready
+    if (future.result())
+        return dirProxyModel->mapFromSource(dirModel->index(dir));
+
+    return QModelIndex();
 }
 
 void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
