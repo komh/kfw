@@ -544,7 +544,7 @@ bool FtpFileEngine::rename(const QString &newName)
 {
     qDebug() << "rename()" << _fileName << _path << newName;
 
-    QString newPath(QUrl(newName).path());
+    QString newPath(QUrl(FileOperation::fixUrl(newName)).path());
 
     _ftp->connectToHost(_url.host(), _port);
     _ftp->login(_userName, _password);
