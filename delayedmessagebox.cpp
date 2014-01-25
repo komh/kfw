@@ -35,12 +35,15 @@ DelayedMessageBox::DelayedMessageBox(QWidget *parent) :
 
 void DelayedMessageBox::setQuitSignal(QObject *sender, const char *signal)
 {
+    connect(sender, signal, &_loop, SLOT(quit()), Qt::QueuedConnection);
+}
+
+void DelayedMessageBox::trigger()
+{
     if (minimumDuration() == 0)
         _msgBox.open();
     else
         QTimer::singleShot(_minimumDuration, &_msgBox, SLOT(open()));
-
-    connect(sender, signal, &_loop, SLOT(quit()), Qt::QueuedConnection);
 }
 
 void DelayedMessageBox::exec()

@@ -539,6 +539,7 @@ void KFileWizard::setEntryRoot()
                             .arg(canonicalize(currentDir.path())));
 
         msgBox.setQuitSignal(entryModel, SIGNAL(directoryLoaded(QString)));
+        msgBox.trigger();
 
         entryModel->setRootPath(currentDir.path());
 
@@ -630,6 +631,7 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
     msgBox.setText(tr("Refreshing directory entries, please wait..."));
 
     msgBox.setQuitSignal(entryModel, SIGNAL(directoryLoaded(QString)));
+    msgBox.trigger();
 
     entryModel->setRootPath(currentDir.path());
     entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot |

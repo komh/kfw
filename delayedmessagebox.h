@@ -48,6 +48,8 @@ public:
 
     void setQuitSignal(QObject* sender, const char *signal);
 
+    void trigger();
+
     void exec();
 
 signals:
