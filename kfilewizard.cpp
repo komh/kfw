@@ -491,7 +491,7 @@ QModelIndex KFileWizard::findDirIndex(const QString& dir)
 {
     QModelIndex index = dirProxyModel->mapFromSource(dirModel->index(dir));
 
-    if (!index.isValid() || dir == "ftp:" || !QDir(dir).isReadable())
+    if (!QDir(dir).isReadable())
         return QModelIndex();
 
     return index;
