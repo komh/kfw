@@ -536,7 +536,7 @@ void KFileWizard::setEntryRoot()
 
         msgBox.setWindowTitle(title());
         msgBox.setText(tr("Reading directory entries, please wait...\n\n%1")
-                            .arg(currentDir.path()));
+                            .arg(canonicalize(currentDir.path())));
 
         msgBox.setQuitSignal(entryModel, SIGNAL(directoryLoaded(QString)));
 
