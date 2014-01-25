@@ -543,6 +543,9 @@ void KFileWizard::setEntryRoot()
         entryModel->setRootPath(currentDir.path());
 
         msgBox.exec();
+
+        // Qt cached already, so there is no delay any more
+        dirModel->setRootPath(currentDir.path());
     }
 
     QModelIndex rootIndex = entryModel->index(currentDir.path());
@@ -550,6 +553,13 @@ void KFileWizard::setEntryRoot()
 
     rootIndex = entryProxyModel->mapFromSource(rootIndex);
     ui->entryTree->setRootIndex(rootIndex);
+
+    // select a corresponding entry of dir tree
+    QModelIndex current =
+            dirProxyModel->mapFromSource(dirModel->index(currentDir.path()));
+
+    ui->dirTree->setCurrentIndex(current);
+    ui->dirTree->scrollTo(current);
 }
 
 void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
