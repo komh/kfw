@@ -35,12 +35,15 @@ FtpHostInfoCache::~FtpHostInfoCache()
 
 }
 
-QStringList FtpHostInfoCache::hostInfo(const QString& host)
+QStringList FtpHostInfoCache::hostInfo(const QString& host,
+                                       const QString& userName)
 {
-    if (!_hostMap.contains(host))
-        addHostInfo(host, "anonymous", "anonymous", 21);
+    QString key(userName);
 
-    return _hostMap.value(host);
+    key.append("@");
+    key.append(host);
+
+    return _hostMap.value(key);
 }
 
 void FtpHostInfoCache::addHostInfo(const QString& host,
@@ -48,7 +51,12 @@ void FtpHostInfoCache::addHostInfo(const QString& host,
                                    const QString& password,
                                    const QString& port)
 {
-    _hostMap.insert(host, QStringList() << userName << password << port);
+    QString key(userName);
+
+    key.append("@");
+    key.append(host);
+
+    _hostMap.insert(key, QStringList() << password << port);
 }
 
 void FtpHostInfoCache::addHostInfo(const QString& host,

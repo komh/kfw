@@ -37,23 +37,18 @@ public:
     explicit FtpHostInfoCache(QObject *parent = 0);
     ~FtpHostInfoCache();
 
-    enum { UserName = 0, Password = 1, Port = 2 };
+    enum { Password = 0, Port = 1 };
 
-    QStringList hostInfo(const QString& host);
+    QStringList hostInfo(const QString& host, const QString &userName);
 
-    QString userName(const QString& host)
+    QString password(const QString& host, const QString& userName)
     {
-        return hostInfo(host).at(UserName);
+        return hostInfo(host, userName).at(Password);
     }
 
-    QString password(const QString& host)
+    int port(const QString& host, const QString& userName)
     {
-        return hostInfo(host).at(Password);
-    }
-
-    int port(const QString& host)
-    {
-        return hostInfo(host).at(Port).toInt();
+        return hostInfo(host, userName).at(Port).toInt();
     }
 
     void addHostInfo(const QString& host, const QString& userName,

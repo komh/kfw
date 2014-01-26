@@ -81,15 +81,16 @@ void FtpFileEngine::initFromFileName(const QString& file)
 
     _userName = _url.userName();
     if (_userName.isEmpty())
-        _userName = hostCache.userName(_url.host());
+        _userName = "anonymous";
 
     _password = _url.password();
     if (_password.isEmpty())
-        _password = hostCache.password(_url.host());
+    {
+        _password = _userName == "anonymous" ?
+                    "kfw@kfw.com" : hostCache.password(_url.host(), _userName);
+    }
 
-    _port = _url.port();
-    if (_port == -1)
-        _port = hostCache.port(_url.host());
+    _port = _url.port(21);
 
     _url.setUserName(_userName);
     _url.setPassword(_password);
@@ -401,12 +402,26 @@ QString FtpFileEngine::fileName(FileName file) const
 {
     qDebug() << "fileName()" << _fileName << file;
 
-    QString result;
+    QString result(_url.scheme());
+
+    result.append("://");
+
+    // remove default infomations
+    if (_userName != "anonymous")
+        result.append(_userName).append("@");
+
+    result.append(_url.host());
+
+    if (_port != 21)
+    {
+        result.append(":");
+        result.append(QString::number(_port));
+    }
 
     switch (file)
     {
     case QAbstractFileEngine::DefaultName:
-        result = _url.toString(QUrl::RemoveUserInfo | QUrl::RemovePort);
+        result.append(_path);
         break;
 
     case QAbstractFileEngine::BaseName:
@@ -414,19 +429,17 @@ QString FtpFileEngine::fileName(FileName file) const
         break;
 
     case QAbstractFileEngine::PathName:
-        result = _url.scheme().append("://").append(_url.host())
-                    .append(QFileInfo(_path).path());
+        result.append(QFileInfo(_path).path());
         break;
 
     case QAbstractFileEngine::AbsoluteName:
     case QAbstractFileEngine::CanonicalName:
-        result = _url.scheme().append("://").append(_url.host()).append(_path);
+        result.append(_path);
         break;
 
     case QAbstractFileEngine::AbsolutePathName:
     case QAbstractFileEngine::CanonicalPathName:
-        result = _url.scheme().append("://").append(_url.host())
-                    .append(QFileInfo(_path).path());
+        result.append(QFileInfo(_path).path());
         break;
 
     case QAbstractFileEngine::LinkName:
@@ -751,7 +764,9 @@ QString FtpFileEngine::getCachePath(const QString& path, bool key)
 {
     QString cachePath(_url.scheme());
 
-    cachePath.append("://").append(_url.host()).append(path);
+    cachePath.append("://").append(_userName).append("@")
+             .append(_url.host()).append(":").append(QString::number(_port))
+             .append(path);
 
     if (path.isEmpty())
         cachePath.append("/");
