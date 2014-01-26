@@ -122,6 +122,14 @@ void FtpFileEngine::initFtp()
     QUrlInfo urlInfo = _ftpCache->findFileInfo(cacheEntry);
     if (urlInfo.isValid())
     {
+        // non-existent file ?
+        if (urlInfo.permissions() == 0)
+        {
+            _fileFlags = QAbstractFileEngine::FileType;
+
+            return;
+        }
+
         _fileFlags = QAbstractFileEngine::ExistsFlag;
 
         _fileFlags |= urlInfo.isDir() ? QAbstractFileEngine::DirectoryType :
@@ -196,7 +204,17 @@ void FtpFileEngine::refreshFileInfoCache()
                     QAbstractFileEngine::FileFlag(_urlInfo.permissions());
         }
         else
+        {
+            // add a non-existent entry as well not to read a directory
+            // to retrive its information and to test its existence again
+            // later
             _fileFlags |= QAbstractFileEngine::FileType;
+
+            _urlInfo.setName(name);
+            _urlInfo.setPermissions(0);
+
+            _ftpCache->addFileInfo(_cacheDir, _urlInfo);
+        }
     }
 
     _ftp->close();
