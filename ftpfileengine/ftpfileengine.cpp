@@ -229,8 +229,12 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
         {
             QUrlInfo urlInfo = it.next();
 
-            _entries.append(urlInfo.name());
-            _entriesMap.insert(urlInfo.name(), urlInfo);
+            // exclude an empty entry inserted by us
+            if (urlInfo.isValid())
+            {
+                _entries.append(urlInfo.name());
+                _entriesMap.insert(urlInfo.name(), urlInfo);
+            }
         }
     }
     else if (_fileFlags & QAbstractFileEngine::DirectoryType)
@@ -239,6 +243,10 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
         _ftp->login(_userName, _password);
 
         _cacheDir = getCachePath(_path, true);
+
+        // add an empty entry to distinguish a empty directory from
+        // a non-existent directory
+        _ftpCache->addFileInfo(_cacheDir, QUrlInfo());
 
         _ftp->cd(_path);
         _ftp->list();
