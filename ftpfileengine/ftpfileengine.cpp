@@ -321,8 +321,12 @@ QAbstractFileEngine::FileFlags FtpFileEngine::fileFlags(FileFlags type) const
 {
     qDebug() << "fileFlags() : " << _fileName << type;
 
+    // ignore Refresh flag. Qt uses Refresh flag ver frequently,
+    // this decrease the cache performance
+#if 0
     if (type & QAbstractFileEngine::Refresh)
         const_cast<FtpFileEngine*>(this)->refreshFileInfoCache();
+#endif
 
     qDebug() << "\t" << _fileName << (type & _fileFlags);
 
