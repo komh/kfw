@@ -1,0 +1,162 @@
+                             K File Wizard
+                            ---------------
+                            
+1. Introduction
+---------------
+  
+  This program is a file manager to help you to copy/move/rename files 
+conveniently.
+
+2. Development Environment
+--------------------------
+  
+  - OS/2 Warp v4 for Korean with FixPak #15
+  
+  - GCC v4.7.3
+  
+  - OS/2 ToolKit v4.5
+  
+  - GNU Make v3.81r3
+
+  - Qt v4.7.3GA2  
+  
+  - Qt Creator v2.2.1
+  
+  - git v1.7.3.2 
+      
+3. Requirements
+---------------
+
+  - Runtime : kLIBC v0.6.5, Qt v4.7.3GA2
+
+4. Test Environment
+--------------------
+
+  This program is tested on OS/2 Warp v4 for Korean with FixPak #15 and
+eComStation 2.1.
+
+5. Installation
+---------------
+
+  Put kfw.exe into any directory.
+  
+6. Usage
+--------
+
+6.1 File - Exit
+---------------
+
+  K File Wizard exit.
+  
+6.2 Hot keys
+------------------
+
+6.2.1 Ctrl-C
+------------
+
+  Copy the selected file lists for copying to the clipboard
+        
+6.2.2 Ctrl-X
+------------
+
+  Copy the selected file lists for moving to the clipboard
+  
+6.2.3 Ctrl-V
+------------
+  
+  Copy or move the file lists in clipboard
+  
+7. Limitations/Known bugs
+-----------------------------
+
+  - See https://github.com/komh/kfw/issues 
+  
+8. TODOs...
+-----------
+
+  - Support directory operations
+  
+  - Support drag & drop
+  
+  - Support SFTP
+  
+  - For more details, see https://github.com/komh/kfw/issues
+  
+9. History
+----------
+
+  - alpha ( 2014/01/26 )
+    .First release
+      
+10. Compilation
+---------------
+
+10.1 Requirements...
+--------------------
+
+  - gcc v4.7.3
+  
+  - OS/2 ToolKit v4.5
+  
+  - GNU Make v3.81r3
+  
+  - Qt 4.7.3GA2
+  
+  - Qt Creator v2.2.1
+  
+  - git v1.7.3.2
+  
+10.2 How to  Download the sources
+---------------------------------
+
+  The following git repository is provided,
+  
+      git://github.com/komh/kfw.git
+      
+  To download the sources, do like below.
+    
+      git clone git://github.com/komh/kfw.git
+      
+  To update,
+  
+      git pull
+
+10.3 How to compile
+-------------------
+  
+  If you get the sources, then execute qmake.
+  
+      qmake
+      
+  After qmake completes, execute make.
+  
+      make
+      
+  Then you can get kfw.exe
+
+  If you want to use Qt Creator, then execute Qt Creator and open kfw.pro. And 
+build it using Ctrl-B.
+  
+11. Modules
+-----------
+
+  kfw.exe : The executable of K File Wizard
+
+12. Donation
+------------
+
+  If you are satisfied with this program and want to donate to me, please visit
+the following URL.
+
+    http://www.ecomstation.co.kr/komh/donate.html
+
+13. Contacts
+------------
+
+  e-mail : komh@chollian.net
+  ICQ    : 124861818
+  MSN    : komh@chollian.net
+  IRC    : lvzuufx, #os2 at HANIRC(irc.hanirc.org)
+  Jabber : komh@jabber.org
+               
+KO Myung-Hun
