@@ -150,8 +150,52 @@ void FtpFileEngine::initFtp()
 
 void FtpFileEngine::refreshFileInfoCache()
 {
+    int lastIndex = _path.lastIndexOf("/");
+    QString dir = _path.left(lastIndex == 0 ? 1 : lastIndex);
+    QString name = _path.mid(lastIndex + 1);
+
+    _cacheDir = getCachePath(dir, true);
+
     _ftp->connectToHost(_url.host(), _port);
+
+    // failed to connect ?
+    if (!_ftpSync.wait())
+    {
+        // add root entry first
+        _urlInfo.setName("/");
+        _urlInfo.setPermissions(0);
+
+        _ftpCache->addFileInfo(getCachePath("/", true), _urlInfo);
+
+        if (_path != "/")
+        {
+            // add an entry
+
+            _urlInfo.setName(name);
+
+            _ftpCache->addFileInfo(_cacheDir, _urlInfo);
+        }
+
+        _fileFlags = QAbstractFileEngine::FileType;
+
+        return;
+    }
+
     _ftp->login(_userName, _password);
+
+    // failed to login ?
+    if (!_ftpSync.wait())
+    {
+        // do not cache
+
+        _fileFlags = QAbstractFileEngine::FileType;
+
+        _ftp->close();
+
+        _ftpSync.wait();
+
+        return;
+    }
 
     if (_path == "/")
     {
@@ -174,13 +218,7 @@ void FtpFileEngine::refreshFileInfoCache()
     }
     else
     {
-        int lastIndex = _path.lastIndexOf("/");
-        QString dir = _path.left(lastIndex == 0 ? 1 : lastIndex);
-        QString name = _path.mid(lastIndex + 1);
-
         _ftpCache->removeDirInfo(getCachePath(dir));
-
-        _cacheDir = getCachePath(dir, true);
 
         // get a file list from a parent directory
         _ftp->cd(dir);
