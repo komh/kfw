@@ -157,37 +157,24 @@ void FtpFileEngine::refreshFileInfoCache()
 
     _cacheDir = getCachePath(dir, true);
 
+    bool connected = false;
+
     _ftp->connectToHost(_url.host(), _port);
 
-    // failed to connect ?
-    if (!_ftpSync.wait())
+    // connected ?
+    if (_ftpSync.wait())
     {
-        // add root entry first
-        _urlInfo.setName("/");
-        _urlInfo.setPermissions(0);
+        _ftp->login(_userName, _password);
 
-        _ftpCache->addFileInfo(getCachePath("/", true), _urlInfo);
-
-        if (_path != "/")
-        {
-            // add an entry
-
-            _urlInfo.setName(name);
-
-            _ftpCache->addFileInfo(_cacheDir, _urlInfo);
-        }
-
-        _fileFlags = QAbstractFileEngine::FileType;
-
-        return;
+        connected = _ftpSync.wait();
     }
 
-    _ftp->login(_userName, _password);
-
-    // failed to login ?
-    if (!_ftpSync.wait())
+    // failed to connect or to login ?
+    if (!connected)
     {
-        // do not cache
+        // Do not cache.
+        // It is possbiel that a server was down and it will be up later.
+        // and caching a wrong account is useless
 
         _fileFlags = QAbstractFileEngine::FileType;
 
