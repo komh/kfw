@@ -1,0 +1,10 @@
+*.pro.user
+moc_*.cpp
+ui_*.h
+*.cmd
+*.qm
+*.rsp
+*.obj
+*.sym
+*.exe
+Makefile
