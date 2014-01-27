@@ -56,3 +56,5 @@ HEADERS  += kfilewizard.h \
     delayedmessagebox.h
 
 FORMS    += kfilewizard.ui
+
+TRANSLATIONS = translations/kfw_ko.ts

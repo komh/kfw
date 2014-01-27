@@ -27,11 +27,32 @@
 
 #include "ftpfileengine/ftpfileenginehandler.h"
 
+static void initT()
+{
+    QString qmPath("../kfw/translations");    // for Qt Creator
+    if (!QDir(qmPath).exists())
+        qmPath = "translations";              // for release
+
+    QString localeName(QLocale::system().name());
+
+    static QTranslator kfwT;    // for K File Wizard
+
+    kfwT.load("kfw_" + localeName, qmPath);
+    QApplication::installTranslator(&kfwT);
+
+    static QTranslator qtT;     // for Qt
+
+    qtT.load("qt_" + localeName, qmPath);
+    QApplication::installTranslator(&qtT);
+}
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
     FtpFileEngineHandler ftpHandler;
+
+    initT();
 
     KFileWizard w;
     w.show();
