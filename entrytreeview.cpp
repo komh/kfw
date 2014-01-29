@@ -71,6 +71,13 @@ void EntryTreeView::keyPressEvent(QKeyEvent *event)
         return;
     }
 
+    if (event->matches(QKeySequence::Refresh))
+    {
+        emit refresh();
+
+        return;
+    }
+
     QTreeView::keyPressEvent(event);
 }
 

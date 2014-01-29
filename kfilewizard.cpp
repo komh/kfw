@@ -167,6 +167,7 @@ void KFileWizard::initEntryTree()
             this, SLOT(entryPaste(QList<QUrl>, bool)));
     connect(ui->entryTree, SIGNAL(remove(QList<QUrl>)),
             this, SLOT(entryRemove(QList<QUrl>)));
+    connect(ui->entryTree, SIGNAL(refresh()), this, SLOT(entryRefresh()));
 
     setEntryRoot();
 }
@@ -463,6 +464,11 @@ bool KFileWizard::fileWorker(AbstractFileWorker* worker,
     return result;
 }
 
+void KFileWizard::entryRefresh()
+{
+    refreshEntry(QList<QUrl>(), false);
+}
+
 void KFileWizard::setLocationText(const QString& text)
 {
     QString canonicalPath = canonicalize(text);
@@ -643,6 +649,19 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 
     msgBox.setQuitSignal(entryModel, SIGNAL(directoryLoaded(QString)));
     msgBox.trigger();
+
+    // signal to FtpFileEngine to refresh entries
+    if (currentDir.path().startsWith("ftp:"))
+    {
+        QString refreshName(currentDir.path());
+
+        if (!refreshName.endsWith("/"))
+            refreshName.append("/");
+
+        refreshName.append(":refresh:");
+
+        QFile(refreshName).exists();
+    }
 
     entryModel->setRootPath(currentDir.path());
     entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot |

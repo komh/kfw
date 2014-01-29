@@ -229,7 +229,7 @@ void FtpFileEngine::refreshFileInfoCache()
             _fileFlags |=
                     QAbstractFileEngine::FileFlag(_urlInfo.permissions());
         }
-        else
+        else if (name != ":refresh:")   // do not cache a refresh signal
         {
             // add a non-existent entry as well not to read a directory
             // to retrive its information and to test its existence again

@@ -38,6 +38,7 @@ signals:
     void cdUp(const QModelIndex& index);
     void paste(const QList<QUrl>&, bool copy = true);
     void remove(const QList<QUrl>&);
+    void refresh();
 
 public slots:
 
