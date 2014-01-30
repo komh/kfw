@@ -50,6 +50,8 @@ public:
         return itemFlags;
     }
 
+    bool setData(const QModelIndex &index, const QVariant &value, int role);
+
     QString filePath(const QModelIndex &index) const
     {
         return PathComp::fixUrl(QFileSystemModel::filePath(index));
@@ -59,6 +61,10 @@ public:
     {
         _rootIndex = rootIndex;
     }
+
+signals:
+    void renameBegin(const QString& oldName, const QString& newName);
+    void renameEnd();
 
 private:
     QModelIndex _rootIndex;

@@ -40,7 +40,8 @@
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KFileWizard),
-    dirModel(0), dirProxyModel(0), entryModel(0), entryProxyModel(0)
+    dirModel(0), dirProxyModel(0), entryModel(0), entryProxyModel(0),
+    progressDialog(0)
 {
     ui->setupUi(this);
 
@@ -151,8 +152,8 @@ void KFileWizard::initDirTree()
 void KFileWizard::initEntryTree()
 {
     entryModel = new EntryListModel;
-    entryModel->setRootPath(currentDir.path());
-    entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Files);
+
+    initEntryModel();
 
     entryProxyModel = new FileSystemSortFilterProxyModel;
     entryProxyModel->setSourceModel(entryModel);
@@ -177,7 +178,19 @@ void KFileWizard::initEntryTree()
             this, SLOT(entryRemove(QList<QUrl>)));
     connect(ui->entryTree, SIGNAL(refresh()), this, SLOT(entryRefresh()));
 
+
     setEntryRoot();
+}
+
+void KFileWizard::initEntryModel()
+{
+    entryModel->setRootPath(currentDir.path());
+    entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Files);
+
+    connect(entryModel, SIGNAL(renameBegin(QString,QString)),
+            this, SLOT(renameBegin(QString,QString)));
+
+    connect(entryModel, SIGNAL(renameEnd()), this, SLOT(renameEnd()));
 }
 
 void KFileWizard::appFocusChanged(QWidget* old, QWidget* now)
@@ -477,6 +490,33 @@ void KFileWizard::entryRefresh()
     refreshEntry(QList<QUrl>(), false);
 }
 
+void KFileWizard::renameBegin(const QString& oldName, const QString& newName)
+{
+    Q_UNUSED(oldName);
+    Q_UNUSED(newName);
+
+    progressDialog = new QProgressDialog(this);
+
+    progressDialog->setWindowTitle(title());
+    progressDialog->setLabelText(tr("Renaming\n\n"
+                                    "%1\n\n"
+                                    "to\n\n"
+                                    "%2")
+                                    .arg(PathComp(oldName).fileName())
+                                    .arg(newName));
+    progressDialog->setCancelButton(0);
+    progressDialog->setRange(0, 0);
+
+    // progressDialog would not show up without exec().
+    // Instead, signal to progressDialog using QTimer::singleShot()
+    QTimer::singleShot(500, progressDialog, SLOT(open()));
+}
+
+void KFileWizard::renameEnd()
+{
+    delete progressDialog;
+}
+
 void KFileWizard::setLocationText(const QString& text)
 {
     QString canonicalPath = canonicalize(text);
@@ -664,9 +704,7 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
         QFile(PathComp::merge(currentDir, ":refresh:")).exists();
     }
 
-    entryModel->setRootPath(currentDir.path());
-    entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot |
-                          QDir::Files);
+    initEntryModel();
 
     // wait for directory to be loaded
     msgBox.exec();

@@ -27,3 +27,14 @@ EntryListModel::EntryListModel(QObject *parent) :
     QFileSystemModel(parent)
 {
 }
+
+bool EntryListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    emit renameBegin(filePath(index), value.toString());
+
+    bool result = QFileSystemModel::setData(index, value, role);
+
+    emit renameEnd();
+
+    return result;
+}

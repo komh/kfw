@@ -58,6 +58,8 @@ private slots:
     void entryPaste(const QList<QUrl>& urlList, bool copy);
     void entryRemove(const QList<QUrl>& urlList);
     void entryRefresh();
+    void renameBegin(const QString& oldName, const QString& newName);
+    void renameEnd();
     void locationReturnPressed(bool moveFocusToEntryView = true);
     void about();
 
@@ -71,6 +73,8 @@ private:
 
     EntryListModel* entryModel;
     FileSystemSortFilterProxyModel* entryProxyModel;
+
+    QProgressDialog* progressDialog;
 
     inline QMessageBox::StandardButton critical(
                 const QString& text,
@@ -93,6 +97,7 @@ private:
     void initSplitter();
     void initDirTree();
     void initEntryTree();
+    void initEntryModel();
 
     bool fileWorker(AbstractFileWorker* worker,
                     const QProgressDialog &progress);
