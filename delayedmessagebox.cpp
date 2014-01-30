@@ -27,10 +27,11 @@
 
 DelayedMessageBox::DelayedMessageBox(QWidget *parent) :
     QObject(parent)
-  , _msgBox(parent)
+  , _progress(parent)
   , _minimumDuration(500)
 {
-    _msgBox.setStandardButtons(QMessageBox::NoButton);
+    _progress.setCancelButton(0);
+    _progress.setRange(0, 0);
 }
 
 void DelayedMessageBox::setQuitSignal(QObject *sender, const char *signal)
@@ -41,9 +42,9 @@ void DelayedMessageBox::setQuitSignal(QObject *sender, const char *signal)
 void DelayedMessageBox::trigger()
 {
     if (minimumDuration() == 0)
-        _msgBox.open();
+        _progress.open();
     else
-        QTimer::singleShot(_minimumDuration, &_msgBox, SLOT(open()));
+        QTimer::singleShot(_minimumDuration, &_progress, SLOT(open()));
 }
 
 void DelayedMessageBox::exec()

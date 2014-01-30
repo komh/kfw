@@ -24,7 +24,7 @@
 #ifndef DELAYEDMESSAGEBOX_H
 #define DELAYEDMESSAGEBOX_H
 
-#include <QMessageBox>
+#include <QProgressDialog>
 #include <QEventLoop>
 
 class DelayedMessageBox : public QObject
@@ -33,14 +33,14 @@ class DelayedMessageBox : public QObject
 public:
     explicit DelayedMessageBox(QWidget *parent = 0);
 
-    QString text() const { return _msgBox.text(); }
-    void setText(const QString& text) { _msgBox.setText(text); }
+    QString text() const { return _progress.labelText(); }
+    void setText(const QString& text) { _progress.setLabelText(text);}
 
-    QString windowTitle() const { return _msgBox.windowTitle(); }
+    QString windowTitle() const { return _progress.windowTitle(); }
 
     void setWindowTitle(const QString& title)
     {
-        _msgBox.setWindowTitle(title);
+        _progress.setWindowTitle(title);
     }
 
     int minimumDuration() const { return _minimumDuration; }
@@ -57,7 +57,7 @@ signals:
 public slots:
 
 private:
-    QMessageBox _msgBox;
+    QProgressDialog _progress;
     QEventLoop _loop;
 
     int _minimumDuration;
