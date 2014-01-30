@@ -59,6 +59,7 @@ private slots:
     void entryRemove(const QList<QUrl>& urlList);
     void entryRefresh();
     void locationReturnPressed(bool moveFocusToEntryView = true);
+    void about();
 
 private:
     Ui::KFileWizard *ui;
@@ -87,6 +88,7 @@ private:
         return QMessageBox::question(this, title(), text, buttons);
     }
 
+    void initMenu();
     void initLocationLine();
     void initSplitter();
     void initDirTree();

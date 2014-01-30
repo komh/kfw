@@ -47,6 +47,8 @@ KFileWizard::KFileWizard(QWidget *parent) :
     connect(qApp, SIGNAL(focusChanged(QWidget*,QWidget*)),
             this, SLOT(appFocusChanged(QWidget*, QWidget*)));
 
+    initMenu();
+
     initLocationLine();
 
     initSplitter();
@@ -94,6 +96,11 @@ void KFileWizard::closeEvent(QCloseEvent *event)
     saveSettings();
 
     QMainWindow::closeEvent(event);
+}
+
+void KFileWizard::initMenu()
+{
+    connect(ui->about, SIGNAL(triggered()), this, SLOT(about()));
 }
 
 void KFileWizard::initLocationLine()
@@ -741,4 +748,23 @@ void KFileWizard::loadSettings()
     settings.endGroup(); // entrytree
     settings.endGroup(); // splitter
     settings.endGroup(); // mainwindow
+}
+
+void KFileWizard::about()
+{
+    QMessageBox::about( this, tr("About K File Wizard"), tr(
+"<h2>K File Wizard alpha</h2>"
+"<p>Copyright &copy; 2014 by KO Myung-Hun "
+"<a href=mailto:komh@chollian.net>&lt;komh@chollian.net&gt;</a>"
+"<p>K File Wizard is a program to provide the integreated file management "
+"both for the local files and for the remote files."
+"<p>If you want to promote to develop this program, then donate at the below "
+"web page, please."
+"<p align=center><a href=http://www.ecomstation.co.kr/komh/donate.html>"
+"http://www.ecomstation.co.kr/komh/donate.html</a>"
+"<p>This program comes with ABSOLUTELY NO WARRANTY. This is free software, "
+"and you are welcome to redistribute it under certain conditions. See "
+"<a href=http://www.gnu.org/licenses/gpl.html>the GPL v3 license</a> "
+"for details."
+                      ));
 }

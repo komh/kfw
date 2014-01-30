@@ -72,7 +72,14 @@
     </property>
     <addaction name="fileExit"/>
    </widget>
+   <widget class="QMenu" name="helpMenu">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="about"/>
+   </widget>
    <addaction name="fileMenu"/>
+   <addaction name="helpMenu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -89,6 +96,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="about">
+   <property name="text">
+    <string>About K File Wizard...</string>
    </property>
   </action>
  </widget>
