@@ -21,8 +21,6 @@
 **
 ****************************************************************************/
 
-#include <QDir>
-
 #include "pathcomp.h"
 
 PathComp::PathComp(const QString& path)
@@ -55,6 +53,11 @@ QString PathComp::merge(const QString& dir, const QString& fileName)
         fName.remove(0, 1);
 
     return path.append("/").append(fName);
+}
+
+QString PathComp::merge(const QDir& dir, const QString& fileName)
+{
+    return PathComp::merge(dir.path(), fileName);
 }
 
 QString PathComp::fixUrl(const QString &url)

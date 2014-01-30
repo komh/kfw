@@ -25,6 +25,7 @@
 #define PATHCOMP_H
 
 #include <QString>
+#include <QDir>
 
 class PathComp
 {
@@ -38,6 +39,7 @@ public:
     QString fileName() const {return _fileName; }
 
     static QString merge(const QString& dir, const QString& fileName);
+    static QString merge(const QDir& dir, const QString& fileName);
     static QString fixUrl(const QString &url);
 
 private:

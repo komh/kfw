@@ -653,14 +653,8 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
     // signal to FtpFileEngine to refresh entries
     if (currentDir.path().startsWith("ftp:"))
     {
-        QString refreshName(currentDir.path());
-
-        if (!refreshName.endsWith("/"))
-            refreshName.append("/");
-
-        refreshName.append(":refresh:");
-
-        QFile(refreshName).exists();
+        // QDir::filePath() does not work with ":refresh:"
+        QFile(PathComp::merge(currentDir, ":refresh:")).exists();
     }
 
     entryModel->setRootPath(currentDir.path());
