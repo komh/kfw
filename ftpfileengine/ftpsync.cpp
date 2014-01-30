@@ -29,6 +29,7 @@ FtpSync::FtpSync(QObject *parent)
     : QThread(parent)
     , _ftpDone(false)
     , _ftpError(false)
+    , _ftpTimedOut(false)
 {
 }
 
@@ -48,15 +49,27 @@ void FtpSync::setFtp(QFtp* ftp)
     connect(ftp, SIGNAL(done(bool)), this, SLOT(ftpDone(bool)));
 }
 
-bool FtpSync::wait()
+bool FtpSync::wait(int ms)
 {
+    _ftpTimedOut = false;
+
     // check if already done
     if (!_ftpDone)
-        _loop.exec();
+    {
+        if (ms != 0)
+        {
+            if (ms != -1)
+                QTimer::singleShot(ms, &_loop, SLOT(quit()));
+
+            _loop.exec();
+        }
+
+        _ftpTimedOut = !_ftpDone;
+    }
 
     _ftpDone = false;
 
-    return !_ftpError;
+    return !_ftpError && !_ftpTimedOut;
 }
 
 void FtpSync::ftpDone(bool error)

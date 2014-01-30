@@ -37,6 +37,7 @@ FtpFileEngine::FtpFileEngine(QObject* parent)
     : QObject(parent)
     , QAbstractFileEngine()
     , _ftp(0)
+    , _ftpConnected(false)
     , _fileFlags(0)
     , _ftpCache(0)
     , _ftpTransfer(0)
@@ -50,6 +51,7 @@ FtpFileEngine::FtpFileEngine(const QString &fileName, QObject *parent)
     : QObject(parent)
     , QAbstractFileEngine()
     , _ftp(0)
+    , _ftpConnected(false)
     , _fileFlags(0)
     , _ftpCache(0)
     , _ftpTransfer(0)
@@ -157,30 +159,14 @@ void FtpFileEngine::refreshFileInfoCache()
 
     _cacheDir = getCachePath(dir, true);
 
-    bool connected = false;
-
-    _ftp->connectToHost(_url.host(), _port);
-
-    // connected ?
-    if (_ftpSync.wait())
-    {
-        _ftp->login(_userName, _password);
-
-        connected = _ftpSync.wait();
-    }
-
     // failed to connect or to login ?
-    if (!connected)
+    if (!ftpConnect())
     {
         // Do not cache.
         // It is possbiel that a server was down and it will be up later.
         // and caching a wrong account is useless
 
         _fileFlags = QAbstractFileEngine::FileType;
-
-        _ftp->close();
-
-        _ftpSync.wait();
 
         return;
     }
@@ -243,9 +229,40 @@ void FtpFileEngine::refreshFileInfoCache()
         }
     }
 
+    ftpDisconnect();
+}
+
+bool FtpFileEngine::ftpConnect()
+{
+    _ftp->connectToHost(_url.host(), _port);
+
+    // wait at most 30s
+    _ftpConnected = _ftpSync.wait(30 * 1000);
+
+    if (_ftpSync.timedOut())
+        _ftp->abort();
+
+    if (_ftpConnected)
+    {
+        _ftp->login(_userName, _password);
+
+        if (!_ftpSync.wait())
+            ftpDisconnect();
+    }
+
+    return _ftpConnected;
+}
+
+bool FtpFileEngine::ftpDisconnect()
+{
+    if (!_ftpConnected)
+        return true;
+
     _ftp->close();
 
-    _ftpSync.wait();
+    _ftpConnected = !_ftpSync.wait();
+
+    return _ftpConnected;
 }
 
 bool FtpFileEngine::atEnd() const
@@ -281,11 +298,9 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
             }
         }
     }
-    else if (_fileFlags & QAbstractFileEngine::DirectoryType)
+    else if ((_fileFlags & QAbstractFileEngine::DirectoryType)
+                && ftpConnect())
     {
-        _ftp->connectToHost(_url.host(), _port);
-        _ftp->login(_userName, _password);
-
         _cacheDir = getCachePath(_path, true);
 
         // add an empty entry to distinguish a empty directory from
@@ -295,9 +310,7 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
         _ftp->cd(_path);
         _ftp->list();
 
-        _ftp->close();
-
-        _ftpSync.wait();
+        ftpDisconnect();
     }
 
     return new FtpFileEngineIterator(filters, filterNames, _entries);
@@ -587,14 +600,14 @@ bool FtpFileEngine::remove()
 {
     qDebug() << "remove()" << _fileName;
 
-    _ftp->connectToHost(_url.host(), _port);
-    _ftp->login(_userName, _password);
+    if (!ftpConnect())
+        return false;
+
     _ftp->remove(_path);
 
     bool result = _ftpSync.wait();
 
-    _ftp->close();
-    _ftpSync.wait();
+    ftpDisconnect();
 
     if (result)
     {
@@ -610,16 +623,16 @@ bool FtpFileEngine::rename(const QString &newName)
 {
     qDebug() << "rename()" << _fileName << _path << newName;
 
+    if (!ftpConnect())
+        return false;
+
     QString newPath(QUrl(FileOperation::fixUrl(newName)).path());
 
-    _ftp->connectToHost(_url.host(), _port);
-    _ftp->login(_userName, _password);
     _ftp->rename(_path, newPath);
 
     bool result = _ftpSync.wait();
 
-    _ftp->close();
-    _ftpSync.wait();
+    ftpDisconnect();
 
     if (result)
     {

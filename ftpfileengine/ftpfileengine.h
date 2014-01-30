@@ -89,6 +89,7 @@ private:
     friend class FtpTransferThread;
 
     QFtp* _ftp;
+    bool _ftpConnected;
 
     QString _fileName;
     QAbstractFileEngine::FileFlags _fileFlags;
@@ -115,6 +116,8 @@ private:
     void initFromFileName(const QString& file = QString());
     void initFtp();
     void refreshFileInfoCache();
+    bool ftpConnect();
+    bool ftpDisconnect();
     QString getCachePath(const QString& path, bool key = false);
 
 private slots:

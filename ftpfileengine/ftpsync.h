@@ -38,7 +38,8 @@ public:
     ~FtpSync();
 
     void setFtp(QFtp *ftp);
-    bool wait();
+    bool wait(int ms = -1);
+    bool timedOut() const { return _ftpTimedOut; }
 
 private slots:
     void ftpDone(bool error);
@@ -46,6 +47,7 @@ private slots:
 private:
     bool _ftpDone;
     bool _ftpError;
+    bool _ftpTimedOut;
 
     QEventLoop _loop;
 };
