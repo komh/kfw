@@ -36,6 +36,8 @@ FtpSync::FtpSync(QObject *parent)
 FtpSync::FtpSync(QFtp *ftp, QObject *parent)
     : QThread(parent)
     , _ftpDone(false)
+    , _ftpError(false)
+    , _ftpTimedOut(false)
 {
     setFtp(ftp);
 }
