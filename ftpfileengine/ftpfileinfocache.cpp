@@ -21,6 +21,8 @@
 **
 ****************************************************************************/
 
+#include "pathcomp.h"
+
 #include "ftpfileinfocache.h"
 
 QMultiMap<QString, QUrlInfo> FtpFileInfoCache::_dirMultiMap;
@@ -65,9 +67,8 @@ void FtpFileInfoCache::removeFileInfo(const QString& dir, const QString& name)
 
 void FtpFileInfoCache::removeFileInfo(const QString& path)
 {
-    int lastSlashIndex = path.lastIndexOf("/");
-    QString dir(path.left(lastSlashIndex));
-    QString name(path.mid(lastSlashIndex + 1));
+    QString dir(PathComp(path).dir());
+    QString name(PathComp(path).fileName());
 
     // Treat root like a file entry
     if (name.isEmpty())
@@ -92,8 +93,7 @@ void FtpFileInfoCache::renameFileInfo(const QString &dir,
 
     removeFileInfo(dir, oldName);
 
-    int lastSlashIndex = newName.lastIndexOf("/");
-    info.setName(newName.mid(lastSlashIndex + 1));
+    info.setName(PathComp(newName).fileName());
 
     addFileInfo(dir, info);
 }
@@ -101,9 +101,8 @@ void FtpFileInfoCache::renameFileInfo(const QString &dir,
 void FtpFileInfoCache::renameFileInfo(const QString &path,
                                       const QString &newName)
 {
-    int lastSlashIndex = path.lastIndexOf("/");
-    QString dir(path.left(lastSlashIndex));
-    QString name(path.mid(lastSlashIndex + 1));
+    QString dir(PathComp(path).dir());
+    QString name(PathComp(path).fileName());
 
     // Treat root like a file entry
     if (name.isEmpty())
@@ -135,9 +134,8 @@ QUrlInfo FtpFileInfoCache::findFileInfo(const QString& dir,
 
 QUrlInfo FtpFileInfoCache::findFileInfo(const QString& path)
 {
-    int lastSlashIndex = path.lastIndexOf("/");
-    QString dir(path.left(lastSlashIndex));
-    QString name(path.mid(lastSlashIndex + 1));
+    QString dir(PathComp(path).dir());
+    QString name(PathComp(path).fileName());
 
     // Treat root like a file entry
     if (name.isEmpty())

@@ -35,6 +35,7 @@
 #include "fileoperation/movefileworker.h"
 
 #include "delayedmessagebox.h"
+#include "pathcomp.h"
 
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
@@ -240,7 +241,7 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
         QString source(FileOperation::fixUrl(url.toString()));
         QString dest(FileOperation::fixUrl(
                          currentDir.absoluteFilePath(
-                             QFileInfo(url.path()).fileName())));
+                             PathComp(url.path()).fileName())));
 
         QString canonicalSource(canonicalize(source));
         QString canonicalDest(canonicalize(dest));

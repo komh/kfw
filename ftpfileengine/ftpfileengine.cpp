@@ -30,6 +30,7 @@
 #include "ftpbuffer.h"
 #include "ftptransferthread.h"
 #include "ftphostinfocache.h"
+#include "pathcomp.h"
 
 #include "ftpfileengine.h"
 
@@ -155,12 +156,6 @@ void FtpFileEngine::initFtp()
 
 void FtpFileEngine::refreshFileInfoCache()
 {
-    int lastIndex = _path.lastIndexOf("/");
-    QString dir = _path.left(lastIndex == 0 ? 1 : lastIndex);
-    QString name = _path.mid(lastIndex + 1);
-
-    _cacheDir = getCachePath(dir, true);
-
     // failed to connect or to login ?
     if (!ftpConnect())
     {
@@ -194,6 +189,11 @@ void FtpFileEngine::refreshFileInfoCache()
     }
     else
     {
+        QString dir(PathComp(_path).dir());
+        QString name(PathComp(_path).fileName());
+
+        _cacheDir = getCachePath(dir, true);
+
         _ftpCache->removeDirInfo(getCachePath(dir));
 
         // get a file list from a parent directory
@@ -425,11 +425,11 @@ QString FtpFileEngine::fileName(FileName file) const
         break;
 
     case QAbstractFileEngine::BaseName:
-        result = QFileInfo(_path).fileName();
+        result = PathComp(_path).fileName();
         break;
 
     case QAbstractFileEngine::PathName:
-        result.append(QFileInfo(_path).path());
+        result.append(PathComp(_path).dir());
         break;
 
     case QAbstractFileEngine::AbsoluteName:
@@ -439,7 +439,7 @@ QString FtpFileEngine::fileName(FileName file) const
 
     case QAbstractFileEngine::AbsolutePathName:
     case QAbstractFileEngine::CanonicalPathName:
-        result.append(QFileInfo(_path).path());
+        result.append(PathComp(_path).dir());
         break;
 
     case QAbstractFileEngine::LinkName:
@@ -641,7 +641,7 @@ bool FtpFileEngine::rename(const QString &newName)
     if (result)
     {
         _ftpCache->renameFileInfo(getCachePath(_path), newName);
-        _urlInfo.setName(QFileInfo(newPath).fileName());
+        _urlInfo.setName(PathComp(newPath).fileName());
     }
 
     return result;
