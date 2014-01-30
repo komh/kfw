@@ -56,8 +56,6 @@ public:
     bool remove();
     bool rename(const QString& newName);
 
-    static QString fixUrl(const QString& url);
-
 private:
     QString _source;
     QString _dest;

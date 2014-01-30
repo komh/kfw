@@ -38,6 +38,7 @@ public:
     QString fileName() const {return _fileName; }
 
     static QString merge(const QString& dir, const QString& fileName);
+    static QString fixUrl(const QString &url);
 
 private:
     QString _path;

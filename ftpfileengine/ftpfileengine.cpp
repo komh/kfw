@@ -78,7 +78,7 @@ FtpFileEngine::~FtpFileEngine()
 
 void FtpFileEngine::initFromFileName(const QString& file)
 {
-    _fileName = FileOperation::fixUrl(file);
+    _fileName = PathComp::fixUrl(file);
 
     _url.setUrl(_fileName);
 
@@ -630,7 +630,7 @@ bool FtpFileEngine::rename(const QString &newName)
     if (!ftpConnect())
         return false;
 
-    QString newPath(QUrl(FileOperation::fixUrl(newName)).path());
+    QString newPath(QUrl(PathComp::fixUrl(newName)).path());
 
     _ftp->rename(_path, newPath);
 

@@ -26,7 +26,7 @@
 #include "entrytreeview.h"
 #include "entrylistmodel.h"
 #include "filesystemsortfilterproxymodel.h"
-#include "fileoperation/fileoperation.h"
+#include "pathcomp.h"
 #include "urllistmimedata.h"
 
 EntryTreeView::EntryTreeView(QWidget *parent) :
@@ -160,8 +160,7 @@ QList<QUrl> EntryTreeView::selectedUrlList()
 
         if (sourceModel->headerData(index.column(), Qt::Horizontal)
                 == tr("Name"))
-            urlList.append(FileOperation::fixUrl(
-                               sourceModel->filePath(index)));
+            urlList.append(PathComp::fixUrl(sourceModel->filePath(index)));
     }
 
     qDebug() << "\t" << urlList;

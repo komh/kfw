@@ -238,8 +238,8 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
         if (progress.wasCanceled())
             break;
 
-        QString source(FileOperation::fixUrl(url.toString()));
-        QString dest(FileOperation::fixUrl(
+        QString source(PathComp::fixUrl(url.toString()));
+        QString dest(PathComp::fixUrl(
                          currentDir.absoluteFilePath(
                              PathComp(url.path()).fileName())));
 
@@ -395,7 +395,7 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
         if (progress.wasCanceled())
             break;
 
-        QString source(FileOperation::fixUrl(url.toString()));
+        QString source(PathComp::fixUrl(url.toString()));
 
         QString canonicalSource(canonicalize(source));
 
@@ -485,7 +485,7 @@ void KFileWizard::setLocationText(const QString& text)
 QString KFileWizard::canonicalize(const QString& path)
 {
     if (path.indexOf(':') > 1)
-        return FileOperation::fixUrl(QDir::fromNativeSeparators(path));
+        return PathComp::fixUrl(QDir::fromNativeSeparators(path));
 
     QString nativePath = QDir::toNativeSeparators(path);
 
@@ -551,7 +551,7 @@ void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
 void KFileWizard::setEntryRoot()
 {
     // already fetched ?
-    if (FileOperation::fixUrl(entryModel->rootPath()) != currentDir.path())
+    if (PathComp::fixUrl(entryModel->rootPath()) != currentDir.path())
     {
         DelayedMessageBox msgBox(this);
 
@@ -600,7 +600,7 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
         while (row >= 0)
         {
             if (!urlList.contains(
-                        FileOperation::fixUrl(
+                        PathComp::fixUrl(
                             entryModel->filePath(
                                 entryProxyModel->mapToSource(
                                     entryProxyModel->index(row, 0, parent))))))
@@ -617,7 +617,7 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
             while (row < entryProxyModel->rowCount(parent))
             {
                 if (!urlList.contains(
-                            FileOperation::fixUrl(
+                            PathComp::fixUrl(
                                 entryModel->filePath(
                                     entryProxyModel->mapToSource(
                                         entryProxyModel->index(row, 0,

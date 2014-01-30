@@ -32,7 +32,7 @@ PathComp::PathComp(const QString& path)
 
 void PathComp::setPath(const QString& path)
 {
-    _path = QDir::fromNativeSeparators(path);
+    _path = fixUrl(QDir::fromNativeSeparators(path));
 
     int lastSlashIndex = path.lastIndexOf("/");
 
@@ -55,4 +55,18 @@ QString PathComp::merge(const QString& dir, const QString& fileName)
         fName.remove(0, 1);
 
     return path.append("/").append(fName);
+}
+
+QString PathComp::fixUrl(const QString &url)
+{
+    static int colonSlashLength = QString(":/").length();
+
+    // QFileSystemModel does not recognize URL correctly.
+    // Always use xxx:/yyy style for a URL as well as a local path
+    QString fixedUrl(url);
+    int index = fixedUrl.indexOf(":/");
+    if (index > 1 && fixedUrl.at(index + colonSlashLength) != '/')
+        fixedUrl.replace(index, colonSlashLength, "://");
+
+    return fixedUrl;
 }
