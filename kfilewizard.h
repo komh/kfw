@@ -31,6 +31,7 @@
 #include "entrylistmodel.h"
 #include "filesystemsortfilterproxymodel.h"
 #include "fileoperation/abstractfileworker.h"
+#include "delayedmessagebox.h"
 
 namespace Ui {
 class KFileWizard;
@@ -74,7 +75,7 @@ private:
     EntryListModel* entryModel;
     FileSystemSortFilterProxyModel* entryProxyModel;
 
-    QProgressDialog* progressDialog;
+    DelayedMessageBox* delayedMsgBox;
 
     inline QMessageBox::StandardButton critical(
                 const QString& text,
