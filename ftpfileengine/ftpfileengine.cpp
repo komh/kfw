@@ -67,7 +67,9 @@ FtpFileEngine::~FtpFileEngine()
 {
     qDebug() << "~FtpFileEngine()" << _fileName;
 
+#if 0
     close();
+#endif
 
     // delete causes ASSERT to be failed on Windows debug build
     _ftp->deleteLater();
@@ -539,7 +541,9 @@ bool FtpFileEngine::open(QIODevice::OpenMode openMode)
             && (_fileFlags & QAbstractFileEngine::DirectoryType))
         return false;
 
+#if 0
     close();
+#endif
 
     _fileBuffer.open(QIODevice::ReadWrite);
 
