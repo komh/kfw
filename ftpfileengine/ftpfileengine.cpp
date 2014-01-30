@@ -640,12 +640,8 @@ bool FtpFileEngine::rename(const QString &newName)
 
     if (result)
     {
-        _ftpCache->removeFileInfo(getCachePath(_path));
-
+        _ftpCache->renameFileInfo(getCachePath(_path), newName);
         _urlInfo.setName(QFileInfo(newPath).fileName());
-        _ftpCache->addFileInfo(
-                    getCachePath(QFileInfo(newPath).dir().path(), true),
-                    _urlInfo);
     }
 
     return result;
