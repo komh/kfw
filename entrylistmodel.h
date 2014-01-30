@@ -26,6 +26,8 @@
 
 #include <QFileSystemModel>
 
+#include "pathcomp.h"
+
 class EntryListModel : public QFileSystemModel
 {
     Q_OBJECT
@@ -46,6 +48,11 @@ public:
             itemFlags |= Qt::ItemIsEditable;
 
         return itemFlags;
+    }
+
+    QString filePath(const QModelIndex &index) const
+    {
+        return PathComp::fixUrl(QFileSystemModel::filePath(index));
     }
 
     void setRootIndex(const QModelIndex rootIndex)

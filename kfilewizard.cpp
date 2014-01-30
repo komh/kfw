@@ -600,10 +600,9 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
         while (row >= 0)
         {
             if (!urlList.contains(
-                        PathComp::fixUrl(
                             entryModel->filePath(
                                 entryProxyModel->mapToSource(
-                                    entryProxyModel->index(row, 0, parent))))))
+                                    entryProxyModel->index(row, 0, parent)))))
                 break;
 
             --row;
@@ -617,11 +616,10 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
             while (row < entryProxyModel->rowCount(parent))
             {
                 if (!urlList.contains(
-                            PathComp::fixUrl(
                                 entryModel->filePath(
                                     entryProxyModel->mapToSource(
                                         entryProxyModel->index(row, 0,
-                                                               parent))))))
+                                                               parent)))))
                     break;
 
                 ++row;
