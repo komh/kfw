@@ -646,7 +646,8 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
     DelayedMessageBox msgBox(this);
 
     msgBox.setWindowTitle(title());
-    msgBox.setText(tr("Refreshing directory entries, please wait..."));
+    msgBox.setText(tr("Refreshing directory entries, please wait...\n\n%1")
+                        .arg(currentDir.path()));
 
     msgBox.setQuitSignal(entryModel, SIGNAL(directoryLoaded(QString)));
     msgBox.trigger();
