@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     pathcomp.cpp \
     entryview/entrytreeview.cpp \
     entryview/entrylistdelegate.cpp \
-    entryview/entrylistmodel.cpp
+    entryview/entrylistmodel.cpp \
+    fileiconprovider.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -57,7 +58,8 @@ HEADERS  += kfilewizard.h \
     pathcomp.h \
     entryview/entrylistdelegate.h \
     entryview/entrylistmodel.h \
-    entryview/entrytreeview.h
+    entryview/entrytreeview.h \
+    fileiconprovider.h
 
 FORMS    += kfilewizard.ui
 

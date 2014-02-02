@@ -37,6 +37,7 @@
 
 #include "delayedmessagebox.h"
 #include "pathcomp.h"
+#include "fileiconprovider.h"
 
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
@@ -122,6 +123,7 @@ void KFileWizard::initSplitter()
 void KFileWizard::initDirTree()
 {
     dirModel = new QFileSystemModel;
+    dirModel->setIconProvider(new FileIconProvider);
     dirModel->setRootPath(currentDir.path());
     dirModel->setFilter(QDir::AllDirs | QDir::Drives | QDir::NoDotAndDotDot);
 
@@ -186,6 +188,7 @@ void KFileWizard::initEntryTree()
 
 void KFileWizard::initEntryModel()
 {
+    entryModel->setIconProvider(new FileIconProvider);
     entryModel->setRootPath(currentDir.path());
     entryModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Files);
 
