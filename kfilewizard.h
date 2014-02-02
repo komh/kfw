@@ -101,12 +101,13 @@ private:
     void initEntryModel();
 
     bool fileWorker(AbstractFileWorker* worker,
-                    const QProgressDialog &progress);
+                    QProgressDialog *progress);
     void setLocationText(const QString& text);
     QString canonicalize(const QString& path);
     QModelIndex findDirIndex(const QString& dir);
     QString getNameOfCopy(const QString& source);
-    QMessageBox::StandardButton checkOverwrite(const QString& dest);
+    QMessageBox::StandardButton checkOverwrite(QProgressDialog* progress,
+                                               const QString& dest);
     void setEntryRoot();
     void refreshEntry(const QList<QUrl>& urlList, bool remove = false);
 

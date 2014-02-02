@@ -280,6 +280,8 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
             }
             else
             {
+                progress.show();
+
                 critical(tr("The target filename is "
                             "the same as the source filename.\n\n"
                             "%1").arg(canonicalDest));
@@ -300,7 +302,7 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
                               .arg(canonicalSource)
                               .arg(canonicalDest));
 
-        QMessageBox::StandardButton answer = checkOverwrite(dest);
+        QMessageBox::StandardButton answer = checkOverwrite(&progress, dest);
 
         if (answer == QMessageBox::Cancel)
             break;
@@ -314,7 +316,10 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
                        qobject_cast<AbstractFileWorker*>
                             (new MoveFileWorker(source, dest));
 
-        if (!fileWorker(worker, progress))
+        if (!fileWorker(worker, &progress))
+        {
+            progress.show();
+
             critical((copy ? tr("Failed to copy\n\n"
                                 "%1\n\n"
                                 "to\n\n"
@@ -325,6 +330,7 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
                                 "%2"))
                      .arg(canonicalSource)
                      .arg(canonicalDest));
+        }
         else
             urlListToSelect.append(dest);
     }
@@ -367,10 +373,13 @@ QString KFileWizard::getNameOfCopy(const QString& source)
     return result;
 }
 
-QMessageBox::StandardButton KFileWizard::checkOverwrite(const QString& dest)
+QMessageBox::StandardButton KFileWizard::checkOverwrite(
+        QProgressDialog* progress, const QString& dest)
 {
     if (QFile(dest).exists())
     {
+        progress->show();
+
         if (dest.startsWith("ftp://"))
         {
             critical(tr("%1\n\n"
@@ -430,10 +439,14 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
                               .arg(urlList.size())
                               .arg(canonicalSource));
 
-        if (!fileWorker(new RemoveFileWorker(source), progress))
+        if (!fileWorker(new RemoveFileWorker(source), &progress))
+        {
+            progress.show();
+
             critical(tr("Failed to delete\n\n"
                         "%1")
                         .arg(canonicalSource));
+        }
 
         progress.setValue(urlList.indexOf(url) + 1);
     }
@@ -447,7 +460,7 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
 }
 
 bool KFileWizard::fileWorker(AbstractFileWorker* worker,
-                             const QProgressDialog &progress)
+                             QProgressDialog *progress)
 {
     QEventLoop loop;
 
@@ -458,16 +471,18 @@ bool KFileWizard::fileWorker(AbstractFileWorker* worker,
     connect(&workerThread, SIGNAL(started()), worker, SLOT(perform()));
     connect(&workerThread, SIGNAL(finished()), &loop, SLOT(quit()),
             Qt::QueuedConnection);
-    connect(&progress, SIGNAL(canceled()), &loop, SLOT(quit()),
+    connect(progress, SIGNAL(canceled()), &loop, SLOT(quit()),
             Qt::QueuedConnection);
-    connect(worker, SIGNAL(valueChanged(int)), &progress, SLOT(setValue(int)));
+    connect(worker, SIGNAL(valueChanged(int)), progress, SLOT(setValue(int)));
 
     workerThread.start();
 
     loop.exec();
 
-    if (progress.wasCanceled())
+    if (progress->wasCanceled())
     {
+        progress->show();
+
         QMessageBox msgBox(this);
 
         msgBox.setWindowTitle(title());
