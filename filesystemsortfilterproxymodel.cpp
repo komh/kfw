@@ -45,14 +45,15 @@ bool FileSystemSortFilterProxyModel::lessThan(const QModelIndex &left,
     QString header(model->headerData(left.column(),
                                      Qt::Horizontal).toString());
 
-    if (header == tr("Size") && model->size(left) != model->size(right))
+    if (header == qApp->translate("QFileSystemModel", "Size")
+            && model->size(left) != model->size(right))
         return model->size(left) < model->size(right);
 
-    if (header == tr("Type")
+    if (header == qApp->translate("QFileSystemModel", "Type")
             && model->type(left).toUpper()  !=  model->type(right).toUpper())
         return model->type(left).toUpper() < model->type(right).toUpper();
 
-    if (header == tr("Date Modified")
+    if (header == qApp->translate("QFileSystemModel", "Date Modified")
             && model->lastModified(left) != model->lastModified(right))
         return model->lastModified(left) < model->lastModified(right);
 

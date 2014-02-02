@@ -159,7 +159,7 @@ QList<QUrl> EntryTreeView::selectedUrlList()
         QModelIndex index = proxyModel->mapToSource(proxyIndex);
 
         if (sourceModel->headerData(index.column(), Qt::Horizontal)
-                == tr("Name"))
+                == qApp->translate("QFileSystemModel", "Name"))
             urlList.append(PathComp::fixUrl(sourceModel->filePath(index)));
     }
 
