@@ -15,8 +15,6 @@ TEMPLATE = app
 SOURCES += main.cpp\
         kfilewizard.cpp \
     filesystemsortfilterproxymodel.cpp \
-    entrytreeview.cpp \
-    entrylistmodel.cpp \
     ftpfileengine/ftpsync.cpp \
     ftpfileengine/ftpfileinfocache.cpp \
     ftpfileengine/ftpfileengineiterator.cpp \
@@ -34,12 +32,12 @@ SOURCES += main.cpp\
     fileoperation/movefileworker.cpp \
     delayedmessagebox.cpp \
     pathcomp.cpp \
-    entrylistdelegate.cpp
+    entryview/entrytreeview.cpp \
+    entryview/entrylistdelegate.cpp \
+    entryview/entrylistmodel.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
-    entrytreeview.h \
-    entrylistmodel.h \
     ftpfileengine/ftpsync.h \
     ftpfileengine/ftpfileinfocache.h \
     ftpfileengine/ftpfileengineiterator.h \
@@ -57,7 +55,9 @@ HEADERS  += kfilewizard.h \
     fileoperation/movefileworker.h \
     delayedmessagebox.h \
     pathcomp.h \
-    entrylistdelegate.h
+    entryview/entrylistdelegate.h \
+    entryview/entrylistmodel.h \
+    entryview/entrytreeview.h
 
 FORMS    += kfilewizard.ui
 

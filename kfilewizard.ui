@@ -109,7 +109,7 @@
   <customwidget>
    <class>EntryTreeView</class>
    <extends>QTreeView</extends>
-   <header>entrytreeview.h</header>
+   <header>entryview/entrytreeview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

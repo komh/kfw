@@ -28,7 +28,7 @@
 
 #include <QtGui>
 
-#include "entrylistmodel.h"
+#include "entryview/entrylistmodel.h"
 #include "filesystemsortfilterproxymodel.h"
 #include "fileoperation/abstractfileworker.h"
 #include "delayedmessagebox.h"

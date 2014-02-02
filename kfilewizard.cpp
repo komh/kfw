@@ -27,9 +27,9 @@
 #include "ui_kfilewizard.h"
 
 #include "filesystemsortfilterproxymodel.h"
-#include "entrylistmodel.h"
-#include "entrytreeview.h"
-#include "entrylistdelegate.h"
+#include "entryview/entrylistmodel.h"
+#include "entryview/entrytreeview.h"
+#include "entryview/entrylistdelegate.h"
 #include "fileoperation/fileoperation.h"
 #include "fileoperation/copyfileworker.h"
 #include "fileoperation/removefileworker.h"
