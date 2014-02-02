@@ -335,7 +335,8 @@ bool FtpFileEngine::close()
 
         // without this, FTP commands are also blocked
         connect(_ftpTransfer, SIGNAL(finished()), &loop, SLOT(quit()));
-        loop.exec();
+        if (_ftpTransfer->isRunning())
+            loop.exec();
 
         _ftpTransfer->wait();
 
