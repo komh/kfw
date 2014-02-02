@@ -29,6 +29,7 @@
 #include "filesystemsortfilterproxymodel.h"
 #include "entrylistmodel.h"
 #include "entrytreeview.h"
+#include "entrylistdelegate.h"
 #include "fileoperation/fileoperation.h"
 #include "fileoperation/copyfileworker.h"
 #include "fileoperation/removefileworker.h"
@@ -166,6 +167,7 @@ void KFileWizard::initEntryTree()
     ui->entryTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
     ui->entryTree->setAllColumnsShowFocus(true);
     ui->entryTree->setRootIsDecorated(false);
+    ui->entryTree->setItemDelegate(new EntryListDelegate);
 
     connect(ui->entryTree, SIGNAL(activated(QModelIndex)),
             this, SLOT(entryActivated(QModelIndex)));

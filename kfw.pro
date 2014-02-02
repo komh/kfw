@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     fileoperation/renamefileworker.cpp \
     fileoperation/movefileworker.cpp \
     delayedmessagebox.cpp \
-    pathcomp.cpp
+    pathcomp.cpp \
+    entrylistdelegate.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -55,7 +56,8 @@ HEADERS  += kfilewizard.h \
     fileoperation/renamefileworker.h \
     fileoperation/movefileworker.h \
     delayedmessagebox.h \
-    pathcomp.h
+    pathcomp.h \
+    entrylistdelegate.h
 
 FORMS    += kfilewizard.ui
 
