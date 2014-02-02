@@ -331,6 +331,12 @@ bool FtpFileEngine::close()
 
     if (_ftpTransfer)
     {
+        QEventLoop loop;
+
+        // without this, FTP commands are also blocked
+        connect(_ftpTransfer, SIGNAL(finished()), &loop, SLOT(quit()));
+        loop.exec();
+
         _ftpTransfer->wait();
 
         delete _ftpTransfer;
