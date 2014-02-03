@@ -28,6 +28,7 @@
 #include "filesystemsortfilterproxymodel.h"
 #include "pathcomp.h"
 #include "urllistmimedata.h"
+#include "qttr.h"
 
 EntryTreeView::EntryTreeView(QWidget *parent) :
     QTreeView(parent)
@@ -159,7 +160,7 @@ QList<QUrl> EntryTreeView::selectedUrlList()
         QModelIndex index = proxyModel->mapToSource(proxyIndex);
 
         if (sourceModel->headerData(index.column(), Qt::Horizontal)
-                == qApp->translate("QFileSystemModel", "Name"))
+                == QtTr::name())
             urlList.append(PathComp::fixUrl(sourceModel->filePath(index)));
     }
 

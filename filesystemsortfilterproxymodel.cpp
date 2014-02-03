@@ -25,6 +25,8 @@
 
 #include "filesystemsortfilterproxymodel.h"
 
+#include "qttr.h"
+
 FileSystemSortFilterProxyModel::FileSystemSortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
@@ -45,15 +47,14 @@ bool FileSystemSortFilterProxyModel::lessThan(const QModelIndex &left,
     QString header(model->headerData(left.column(),
                                      Qt::Horizontal).toString());
 
-    if (header == qApp->translate("QFileSystemModel", "Size")
-            && model->size(left) != model->size(right))
+    if (header == QtTr::size() && model->size(left) != model->size(right))
         return model->size(left) < model->size(right);
 
-    if (header == qApp->translate("QFileSystemModel", "Type")
+    if (header == QtTr::type()
             && model->type(left).toUpper()  !=  model->type(right).toUpper())
         return model->type(left).toUpper() < model->type(right).toUpper();
 
-    if (header == qApp->translate("QFileSystemModel", "Date Modified")
+    if (header == QtTr::dateModified()
             && model->lastModified(left) != model->lastModified(right))
         return model->lastModified(left) < model->lastModified(right);
 

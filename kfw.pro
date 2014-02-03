@@ -59,7 +59,8 @@ HEADERS  += kfilewizard.h \
     entryview/entrylistdelegate.h \
     entryview/entrylistmodel.h \
     entryview/entrytreeview.h \
-    fileiconprovider.h
+    fileiconprovider.h \
+    qttr.h
 
 FORMS    += kfilewizard.ui
 

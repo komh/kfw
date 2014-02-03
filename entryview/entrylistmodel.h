@@ -26,9 +26,8 @@
 
 #include <QFileSystemModel>
 
-#include <QApplication>
-
 #include "pathcomp.h"
+#include "qttr.h"
 
 class EntryListModel : public QFileSystemModel
 {
@@ -46,7 +45,7 @@ public:
         Qt::ItemFlags itemFlags = QFileSystemModel::flags(index);
 
         if (headerData(index.column(), Qt::Horizontal).toString()
-                == qApp->translate("QFileSystemModel", "Name"))
+                == QtTr::name())
             itemFlags |= Qt::ItemIsEditable;
 
         return itemFlags;
