@@ -67,5 +67,5 @@ bool FileSystemSortFilterProxyModel::lessThan(const QModelIndex &left,
     if (model->fileName(right) == "ftp:")
         return true;
 
-    return model->fileName(left).toUpper() < model->fileName(right).toUpper();
+    return model->filePath(left).toUpper() < model->filePath(right).toUpper();
 }
