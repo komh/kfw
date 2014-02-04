@@ -1,12 +1,20 @@
-                             K File Wizard
-                            ---------------
+                             K File Wizard beta
+                            --------------------
                             
 1. Introduction
 ---------------
   
-  This program is a file manager to help you to copy/move/rename files 
-conveniently.
+  This program is a file manager to provide the integrated file management 
+both for the local files and for the remote files.
 
+  This programs has the following features.
+  
+    - Support FTP
+    
+    - Support to transfer files from a FTP server to another directly
+    
+    - Support file operations among separated K File Wizard processes
+    
 2. Development Environment
 --------------------------
   
@@ -43,10 +51,18 @@ eComStation 2.1.
 6. Usage
 --------
 
-6.1 File - Exit
----------------
+6.1 Menu
+--------
+
+6.1.1 File - Exit
+-----------------
 
   K File Wizard exit.
+  
+6.1.2 Help - About K File Wizard...
+-----------------------------------
+
+  Show informations about K File Wizard.
   
 6.2 Hot keys
 ------------------
@@ -65,7 +81,45 @@ eComStation 2.1.
 ------------
   
   Copy or move the file lists in clipboard
+
+6.2.4 Delete
+------------
+
+  Delete selected files.
   
+6.2.5 Backspace
+---------------
+
+  Change a directory to a parent directory.
+  
+6.3 Mouse
+---------
+
+6.3.1 Click on a selected entry
+-------------------------------
+
+  Rename the selected entry.
+  
+6.4 URL
+-------
+
+6.4.1 FTP
+---------
+
+  You can connect to FTP using the following URL syntax.
+  
+    ftp://[username:password@]host[:port][/directory]
+
+  You can omit []. When ommitted, username is anonymous and port is 21.
+  
+  If you want to connect to hobbes,
+  
+    ftp://hobbes.nmsu.edu
+    
+  If you want to connect to incoming of hobbes,
+  
+    ftp://hobbes.nmsu.edu/pub/incoming
+    
 7. Limitations/Known bugs
 -----------------------------
 
@@ -85,6 +139,15 @@ eComStation 2.1.
 9. History
 ----------
 
+  - beta ( 2014/02/03 )
+    .Added manual refresh
+    .Added timeout check when connecting to FTP
+    .Added 'about' dialog
+    .Added Korean translation
+    .Improved 'rename' feature
+    .Improved directory listing of FTP
+    .Icon of directory entry of FTP was showed as a file icon. Fixed.
+    
   - alpha ( 2014/01/26 )
     .First release
       
