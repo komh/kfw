@@ -802,7 +802,7 @@ void KFileWizard::loadSettings()
 void KFileWizard::about()
 {
     QMessageBox::about( this, tr("About K File Wizard"), tr(
-"<h2>K File Wizard alpha</h2>"
+"<h2>K File Wizard %1</h2>"
 "<p>Copyright &copy; 2014 by KO Myung-Hun "
 "<a href=mailto:komh@chollian.net>&lt;komh@chollian.net&gt;</a>"
 "<p>K File Wizard is a program to provide the integreated file management "
@@ -815,5 +815,5 @@ void KFileWizard::about()
 "and you are welcome to redistribute it under certain conditions. See "
 "<a href=http://www.gnu.org/licenses/gpl.html>the GPL v3 license</a> "
 "for details."
-                      ));
+                            ).arg(version()));
 }
