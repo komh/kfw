@@ -265,8 +265,8 @@ to
     </message>
     <message>
         <location filename="../kfilewizard.h" line="116"/>
-        <source>alpha</source>
-        <translation>알파</translation>
+        <source>beta</source>
+        <translation type="unfinished">베타</translation>
     </message>
 </context>
 <context>

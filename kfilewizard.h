@@ -113,7 +113,7 @@ private:
 
     QString organization() const { return tr("KO Myung-Hun"); }
     QString title() const { return tr("K File Wizard"); }
-    QString version() const { return tr("alpha"); }
+    QString version() const { return tr("beta"); }
 
     void saveSettings();
     void loadSettings();
