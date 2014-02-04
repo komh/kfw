@@ -27,11 +27,26 @@
 
 #include "ftpfileengine/ftpfileenginehandler.h"
 
+static QString kfwDir()
+{
+    QStringList pathList;
+
+    pathList << "../kfw"        // for Qt Creator
+             << "../kfw.git"    // for Qt Creator
+             << ".";            // for release
+
+    foreach(QString path, pathList)
+    {
+        if (QDir(path).exists())
+            return path;
+    }
+
+    return QString();
+}
+
 static void initT()
 {
-    QString qmPath("../kfw/translations");    // for Qt Creator
-    if (!QDir(qmPath).exists())
-        qmPath = "translations";              // for release
+    QString qmPath(kfwDir() + "/translations");
 
     QString localeName(QLocale::system().name());
 
