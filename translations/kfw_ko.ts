@@ -255,40 +255,40 @@ to
     </message>
     <message>
         <location filename="../kfilewizard.cpp" line="804"/>
-        <source>&lt;h2&gt;K File Wizard alpha&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2014 by KO Myung-Hun &lt;a href=mailto:komh@chollian.net&gt;&amp;lt;komh@chollian.net&amp;gt;&lt;/a&gt;&lt;p&gt;K File Wizard is a program to provide the integreated file management both for the local files and for the remote files.&lt;p&gt;If you want to promote to develop this program, then donate at the below web page, please.&lt;p align=center&gt;&lt;a href=http://www.ecomstation.co.kr/komh/donate.html&gt;http://www.ecomstation.co.kr/komh/donate.html&lt;/a&gt;&lt;p&gt;This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. See &lt;a href=http://www.gnu.org/licenses/gpl.html&gt;the GPL v3 license&lt;/a&gt; for details.</source>
-        <translation>&lt;h2&gt;K File Wizard 알파&lt;/h2&gt;&lt;p&gt;저작권 &amp;copy; 2014 고명훈 &lt;a href=mailto:komh@chollian.net&gt;&amp;lt;komh@chollian.net&amp;gt;&lt;/a&gt;&lt;p&gt;K File Wizard 는 로컬 파일들과 원격지 파일들을 통합 관리하는 프로그램입니다.&lt;p&gt;이 프로그램의 개발을 후원하고 싶으시면, 아래 웹 페이지에서 기부해 주시면 고맙겠습니다.&lt;p align=center&gt;&lt;a href=http://www.ecomstation.co.kr/komh/donate.html&gt;http://www.ecomstation.co.kr/komh/donate.html&lt;/a&gt;&lt;p&gt;이 프로그램은 품질을 보증하지 않습니다. 이것은 자유 소프트웨어이며, 당신은 특정한 조건 하에 얼마든지 이것을 재배포할 수 있습니다. 자세한 것은 &lt;a href=http://www.gnu.org/licenses/gpl.html&gt;GPL v3 라이센스&lt;/a&gt;를 보십시오.</translation>
+        <source>&lt;h2&gt;K File Wizard %1&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2014 by KO Myung-Hun &lt;a href=mailto:komh@chollian.net&gt;&amp;lt;komh@chollian.net&amp;gt;&lt;/a&gt;&lt;p&gt;K File Wizard is a program to provide the integreated file management both for the local files and for the remote files.&lt;p&gt;If you want to promote to develop this program, then donate at the below web page, please.&lt;p align=center&gt;&lt;a href=http://www.ecomstation.co.kr/komh/donate.html&gt;http://www.ecomstation.co.kr/komh/donate.html&lt;/a&gt;&lt;p&gt;This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. See &lt;a href=http://www.gnu.org/licenses/gpl.html&gt;the GPL v3 license&lt;/a&gt; for details.</source>
+        <translation>&lt;h2&gt;K File Wizard %1&lt;/h2&gt;&lt;p&gt;저작권 &amp;copy; 2014 고명훈 &lt;a href=mailto:komh@chollian.net&gt;&amp;lt;komh@chollian.net&amp;gt;&lt;/a&gt;&lt;p&gt;K File Wizard 는 로컬 파일들과 원격지 파일들을 통합 관리하는 프로그램입니다.&lt;p&gt;이 프로그램의 개발을 후원하고 싶으시면, 아래 웹 페이지에서 기부해 주시면 고맙겠습니다.&lt;p align=center&gt;&lt;a href=http://www.ecomstation.co.kr/komh/donate.html&gt;http://www.ecomstation.co.kr/komh/donate.html&lt;/a&gt;&lt;p&gt;이 프로그램은 품질을 보증하지 않습니다. 이것은 자유 소프트웨어이며, 당신은 특정한 조건 하에 얼마든지 이것을 재배포할 수 있습니다. 자세한 것은 &lt;a href=http://www.gnu.org/licenses/gpl.html&gt;GPL v3 라이센스&lt;/a&gt;를 보십시오.</translation>
     </message>
     <message>
         <location filename="../kfilewizard.h" line="114"/>
         <source>KO Myung-Hun</source>
         <translation></translation>
     </message>
+    <message>
+        <location filename="../kfilewizard.h" line="116"/>
+        <source>alpha</source>
+        <translation>알파</translation>
+    </message>
 </context>
 <context>
     <name>QFileSystemModel</name>
     <message>
-        <location filename="../qttr.h" line="35"/>
+        <location filename="../qttr.h" line="34"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qttr.h" line="40"/>
+        <location filename="../qttr.h" line="39"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qttr.h" line="45"/>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qttr.h" line="46"/>
+        <location filename="../qttr.h" line="44"/>
         <source>Type</source>
         <comment>All other platforms</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qttr.h" line="52"/>
+        <location filename="../qttr.h" line="50"/>
         <source>Date Modified</source>
         <translation type="unfinished"></translation>
     </message>
