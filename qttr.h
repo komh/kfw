@@ -29,8 +29,6 @@
 class QtTr
 {
 public:
-    QtTr();
-
     static inline QString name()
     {
         return QCoreApplication::translate("QFileSystemModel", "Name");
@@ -43,7 +41,8 @@ public:
 
     static inline QString type()
     {
-        return QCoreApplication::translate("QFileSystemModel", "Type");
+        return QCoreApplication::translate("QFileSystemModel", "Type",
+                                           "All other platforms");
     }
 
     static inline QString dateModified()
