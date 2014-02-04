@@ -424,6 +424,8 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
 
     ui->entryTree->setUpdatesEnabled(false);
 
+    progress.setValue(0);
+
     foreach(QUrl url, urlList)
     {
         if (progress.wasCanceled())
