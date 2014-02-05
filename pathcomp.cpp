@@ -41,6 +41,11 @@ void PathComp::setPath(const QString& path)
     _fileName = path.mid(lastSlashIndex + 1);
 }
 
+bool PathComp::isRemotePath() const
+{
+    return PathComp::isRemotePath(path());
+}
+
 QString PathComp::merge(const QString& dir, const QString& fileName)
 {
     QString path(QDir::fromNativeSeparators(dir));
@@ -72,4 +77,9 @@ QString PathComp::fixUrl(const QString &url)
         fixedUrl.replace(index, colonSlashLength, "://");
 
     return fixedUrl;
+}
+
+bool PathComp::isRemotePath(const QString &path)
+{
+    return path.indexOf(":/") > 1;
 }

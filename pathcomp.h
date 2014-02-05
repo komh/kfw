@@ -38,9 +38,12 @@ public:
     QString dir() const { return _dir; }
     QString fileName() const {return _fileName; }
 
+    bool isRemotePath() const;
+
     static QString merge(const QString& dir, const QString& fileName);
     static QString merge(const QDir& dir, const QString& fileName);
     static QString fixUrl(const QString &url);
+    static bool isRemotePath(const QString& path);
 
 private:
     QString _path;
