@@ -33,6 +33,71 @@
 EntryTreeView::EntryTreeView(QWidget *parent) :
     QTreeView(parent)
 {
+    setAcceptDrops(true);
+}
+
+void EntryTreeView::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event->mimeData()->hasFormat(UrlListMimeData::format()))
+    {
+        event->setDropAction(determineDropAction(event->mimeData()));
+        event->accept();
+        
+        return;
+    }
+    
+    event->ignore();
+}
+
+void EntryTreeView::dragMoveEvent(QDragMoveEvent *event)
+{
+    if (event->mimeData()->hasFormat(UrlListMimeData::format()))
+    {
+        event->setDropAction(determineDropAction(event->mimeData()));
+        event->accept();
+        
+        return;
+    }
+    
+    event->ignore();
+}
+
+void EntryTreeView::dropEvent(QDropEvent *event)
+{
+    if (event->mimeData()->hasFormat(UrlListMimeData::format()))
+    {
+        Qt::DropAction dropAction = determineDropAction(event->mimeData());
+
+        emit paste(UrlListMimeData::listFrom(event->mimeData()),
+                   dropAction == Qt::CopyAction);
+
+        event->setDropAction(dropAction);
+        event->accept();
+
+        return;
+    }
+    
+    event->ignore();
+}
+
+void EntryTreeView::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+        startPos = event->pos();
+
+    QTreeView::mousePressEvent(event);
+}
+
+void EntryTreeView::mouseMoveEvent(QMouseEvent *event)
+{
+    int distance = (event->pos() - startPos).manhattanLength();
+
+    if ((event->buttons() & Qt::LeftButton)
+            && distance >= QApplication::startDragDistance())
+        perfromDrag();
+
+    // Do not call QTreeView::mouseMoveEvent().
+    // Calling it causes selection to be changed
 }
 
 void EntryTreeView::keyPressEvent(QKeyEvent *event)
@@ -127,7 +192,6 @@ void EntryTreeView::pasteFromClipboard()
 
         clipboard->clear();
     }
-
 }
 
 void EntryTreeView::deletePressed()
@@ -167,4 +231,59 @@ QList<QUrl> EntryTreeView::selectedUrlList()
     qDebug() << "\t" << urlList;
 
     return urlList;
+}
+
+void EntryTreeView::perfromDrag()
+{
+    QList<QUrl> urlList(selectedUrlList());
+
+    if (urlList.size() == 0)
+        return;
+
+    UrlListMimeData* mimeData = new UrlListMimeData;
+    mimeData->setList(urlList);
+
+    QDrag* drag = new QDrag(this);
+    drag->setMimeData(mimeData);
+
+    Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction,
+                                           Qt::MoveAction);
+
+    if (dropAction == Qt::MoveAction)
+    {
+        if (PathComp::isRemotePath(urlList.first().toString()))
+            emit refresh();
+    }
+}
+
+Qt::DropAction EntryTreeView::determineDropAction(const QMimeData* mimeData)
+{
+    QList<QUrl> urlList(UrlListMimeData::listFrom(mimeData));
+
+    FileSystemSortFilterProxyModel* proxyModel =
+            qobject_cast<FileSystemSortFilterProxyModel*>(model());
+    EntryListModel* entryModel =
+            qobject_cast<EntryListModel*>(proxyModel->sourceModel());
+
+    QString rootPath =
+            entryModel->filePath(proxyModel->mapToSource(rootIndex()));
+
+    // same directory
+    if (rootPath == PathComp(urlList.first().toString()).dir())
+        return Qt::IgnoreAction;
+
+    // do not move remote entries
+    if (PathComp::isRemotePath(rootPath))
+        return Qt::CopyAction;
+
+    if (QApplication::queryKeyboardModifiers() & Qt::ControlModifier)
+        return Qt::CopyAction;
+
+    // same local drives
+    if (rootPath.left(2).toUpper() ==
+            urlList.first().toString().left(2).toUpper()
+            && rootPath.at(1) == ':')
+        return Qt::MoveAction;
+
+    return Qt::CopyAction;
 }

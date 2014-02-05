@@ -43,14 +43,26 @@ signals:
 public slots:
 
 protected:
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dragMoveEvent(QDragMoveEvent *event);
+    void dropEvent(QDropEvent *event);
+
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+
     void keyPressEvent(QKeyEvent *event);
 
 private:
+    QPoint startPos;
+
     void copyToClipboard(bool copy = true);
     void pasteFromClipboard();
     void deletePressed();
 
     QList<QUrl> selectedUrlList();
+
+    void perfromDrag();
+    Qt::DropAction determineDropAction(const QMimeData *mimeData);
 };
 
 #endif // ENTRYTREEVIEW_H
