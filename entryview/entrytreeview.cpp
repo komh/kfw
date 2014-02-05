@@ -268,6 +268,10 @@ Qt::DropAction EntryTreeView::determineDropAction(const QMimeData* mimeData)
     QString rootPath =
             entryModel->filePath(proxyModel->mapToSource(rootIndex()));
 
+    // drive lists ?
+    if (rootPath.isEmpty())
+        return Qt::IgnoreAction;
+
     // same directory
     if (rootPath == PathComp(urlList.first().toString()).dir())
         return Qt::IgnoreAction;
