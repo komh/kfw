@@ -58,6 +58,11 @@ public:
         return PathComp::fixUrl(QFileSystemModel::filePath(index));
     }
 
+    QString rootPath() const
+    {
+        return PathComp::fixUrl(QFileSystemModel::rootPath());
+    }
+
     void setRootIndex(const QModelIndex rootIndex)
     {
         _rootIndex = rootIndex;

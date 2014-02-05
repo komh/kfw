@@ -612,7 +612,7 @@ void KFileWizard::locationReturnPressed(bool bySignal)
 void KFileWizard::setEntryRoot()
 {
     // already fetched ?
-    if (PathComp::fixUrl(entryModel->rootPath()) != currentDir.path())
+    if (entryModel->rootPath() != currentDir.path())
     {
         DelayedMessageBox msgBox(this);
 
