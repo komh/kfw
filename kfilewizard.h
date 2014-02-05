@@ -61,7 +61,7 @@ private slots:
     void entryRefresh();
     void renameBegin(const QString& oldName, const QString& newName);
     void renameEnd();
-    void locationReturnPressed(bool moveFocusToEntryView = true);
+    void locationReturnPressed(bool bySignal = true);
     void about();
 
 private:

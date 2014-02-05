@@ -236,7 +236,7 @@ void KFileWizard::entryCdUp(const QModelIndex& index)
                                 entryProxyModel->mapToSource(index)));
     QString parentPath(entryModel->filePath(parentIndex));
 
-    if (parentIndex.isValid() && parentPath != "ftp:")
+    if (index.isValid() && parentPath != "ftp:")
         setLocationText(parentPath);
 }
 
@@ -549,7 +549,8 @@ QString KFileWizard::canonicalize(const QString& path)
 
     QString nativePath = QDir::toNativeSeparators(path);
 
-    nativePath[0] = nativePath[0].toUpper();
+    if (!nativePath.isEmpty())
+        nativePath[0] = nativePath[0].toUpper();
 
     return nativePath;
 }
@@ -578,11 +579,11 @@ QModelIndex KFileWizard::findDirIndex(const QString& dir)
     return QModelIndex();
 }
 
-void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
+void KFileWizard::locationReturnPressed(bool bySignal)
 {
-    QModelIndex current(findDirIndex(ui->locationLine->text()));
-
-    if (current.isValid())
+    // cdUp() from a drive root or a valid directory entry ?
+    if ((!bySignal && ui->locationLine->text().isEmpty())
+            || findDirIndex(ui->locationLine->text()).isValid())
     {
         // To canonicalize a path
         setLocationText(ui->locationLine->text());
@@ -596,7 +597,7 @@ void KFileWizard::locationReturnPressed(bool moveFocusToEntryView)
 
         setEntryRoot();
 
-        if (moveFocusToEntryView)
+        if (bySignal)
             ui->entryTree->setFocus();
     }
     else
@@ -622,9 +623,13 @@ void KFileWizard::setEntryRoot()
         msgBox.setQuitSignal(entryModel, SIGNAL(directoryLoaded(QString)));
         msgBox.trigger();
 
+        QString prevRootPath = entryModel->rootPath();
         entryModel->setRootPath(currentDir.path());
 
-        msgBox.exec();
+        // if a previous root path was empty, directoryLoaded() is not
+        // signaled
+        if (!prevRootPath.isEmpty())
+            msgBox.exec();
     }
 
     QModelIndex rootIndex = entryModel->index(currentDir.path());
