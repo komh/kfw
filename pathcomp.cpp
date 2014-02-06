@@ -73,7 +73,8 @@ QString PathComp::fixUrl(const QString &url)
     // Always use xxx:/yyy style for a URL as well as a local path
     QString fixedUrl(url);
     int index = fixedUrl.indexOf(":/");
-    if (index > 1 && fixedUrl.at(index + colonSlashLength) != '/')
+    if (index > 1 && (fixedUrl.endsWith(":/")
+                        || fixedUrl.at(index + colonSlashLength) != '/'))
         fixedUrl.replace(index, colonSlashLength, "://");
 
     return fixedUrl;
