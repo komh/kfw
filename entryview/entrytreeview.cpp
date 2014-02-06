@@ -40,7 +40,8 @@ void EntryTreeView::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasFormat(UrlListMimeData::format()))
     {
-        event->setDropAction(determineDropAction(event->mimeData()));
+        event->setDropAction(determineDropAction(event->keyboardModifiers(),
+                                                 event->mimeData()));
         event->accept();
         
         return;
@@ -53,7 +54,8 @@ void EntryTreeView::dragMoveEvent(QDragMoveEvent *event)
 {
     if (event->mimeData()->hasFormat(UrlListMimeData::format()))
     {
-        event->setDropAction(determineDropAction(event->mimeData()));
+        event->setDropAction(determineDropAction(event->keyboardModifiers(),
+                                                 event->mimeData()));
         event->accept();
         
         return;
@@ -66,7 +68,9 @@ void EntryTreeView::dropEvent(QDropEvent *event)
 {
     if (event->mimeData()->hasFormat(UrlListMimeData::format()))
     {
-        Qt::DropAction dropAction = determineDropAction(event->mimeData());
+        Qt::DropAction dropAction =
+                determineDropAction(event->keyboardModifiers(),
+                                    event->mimeData());
 
         emit paste(UrlListMimeData::listFrom(event->mimeData()),
                    dropAction == Qt::CopyAction);
@@ -256,7 +260,8 @@ void EntryTreeView::perfromDrag()
     }
 }
 
-Qt::DropAction EntryTreeView::determineDropAction(const QMimeData* mimeData)
+Qt::DropAction EntryTreeView::determineDropAction(
+        const Qt::KeyboardModifiers &modifiers, const QMimeData* mimeData)
 {
     QList<QUrl> urlList(UrlListMimeData::listFrom(mimeData));
 
@@ -280,7 +285,7 @@ Qt::DropAction EntryTreeView::determineDropAction(const QMimeData* mimeData)
     if (PathComp::isRemotePath(rootPath))
         return Qt::CopyAction;
 
-    if (QApplication::queryKeyboardModifiers() & Qt::ControlModifier)
+    if (modifiers & Qt::ControlModifier)
         return Qt::CopyAction;
 
     // same local drives

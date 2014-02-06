@@ -62,7 +62,8 @@ private:
     QList<QUrl> selectedUrlList();
 
     void perfromDrag();
-    Qt::DropAction determineDropAction(const QMimeData *mimeData);
+    Qt::DropAction determineDropAction(const Qt::KeyboardModifiers &modifier,
+                                       const QMimeData *mimeData);
 };
 
 #endif // ENTRYTREEVIEW_H
