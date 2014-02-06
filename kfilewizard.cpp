@@ -772,8 +772,9 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 
     initEntryModel();
 
-    // wait for directory to be loaded
-    msgBox.exec();
+    // wait for directory to be loaded unless a current index is a drive list
+    if (!entryModel->rootPath().isEmpty())
+        msgBox.exec();
 
     entryProxyModel->setSourceModel(entryModel);
     ui->entryTree->setModel(entryProxyModel);
