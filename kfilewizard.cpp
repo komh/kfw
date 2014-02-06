@@ -268,6 +268,10 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
 void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
                              bool copy)
 {
+    // to a drive list ? No...
+    if (to.isEmpty())
+        return;
+
     QList<QUrl> urlListToSelect;
 
     QProgressDialog progress(this);
