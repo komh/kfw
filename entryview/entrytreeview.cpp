@@ -40,7 +40,8 @@ void EntryTreeView::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasFormat(UrlListMimeData::format()))
     {
-        event->setDropAction(determineDropAction(event->keyboardModifiers(),
+        event->setDropAction(determineDropAction(event->pos(),
+                                                 event->keyboardModifiers(),
                                                  event->mimeData()));
         event->accept();
         
@@ -54,7 +55,8 @@ void EntryTreeView::dragMoveEvent(QDragMoveEvent *event)
 {
     if (event->mimeData()->hasFormat(UrlListMimeData::format()))
     {
-        event->setDropAction(determineDropAction(event->keyboardModifiers(),
+        event->setDropAction(determineDropAction(event->pos(),
+                                                 event->keyboardModifiers(),
                                                  event->mimeData()));
         event->accept();
         
@@ -68,8 +70,19 @@ void EntryTreeView::dropEvent(QDropEvent *event)
 {
     if (event->mimeData()->hasFormat(UrlListMimeData::format()))
     {
-        emit paste(UrlListMimeData::listFrom(event->mimeData()),
-                   event->dropAction() == Qt::CopyAction);
+        FileSystemSortFilterProxyModel* proxyModel =
+                qobject_cast<FileSystemSortFilterProxyModel*>(model());
+        EntryListModel* entryModel =
+                qobject_cast<EntryListModel*>(proxyModel->sourceModel());
+
+        QModelIndex index = proxyModel->mapToSource(indexAt(event->pos()));
+        if (!entryModel->isDir(index))
+            index = proxyModel->mapToSource(rootIndex());
+
+        QString to(entryModel->filePath(index));
+
+        emit dropped(UrlListMimeData::listFrom(event->mimeData()), to,
+                     event->dropAction() == Qt::CopyAction);
 
         event->setDropAction(event->dropAction());
         event->accept();
@@ -257,7 +270,8 @@ void EntryTreeView::perfromDrag()
 }
 
 Qt::DropAction EntryTreeView::determineDropAction(
-        const Qt::KeyboardModifiers &modifiers, const QMimeData* mimeData)
+        const QPoint& pos, const Qt::KeyboardModifiers &modifiers,
+        const QMimeData* mimeData)
 {
     QList<QUrl> urlList(UrlListMimeData::listFrom(mimeData));
 
@@ -269,12 +283,16 @@ Qt::DropAction EntryTreeView::determineDropAction(
     QString rootPath =
             entryModel->filePath(proxyModel->mapToSource(rootIndex()));
 
+    QModelIndex index = proxyModel->mapToSource(indexAt(pos));
+    bool isIndexDir = index.isValid() && entryModel->isDir(index);
+
     // drive lists ?
     if (rootPath.isEmpty())
         return Qt::IgnoreAction;
 
-    // same directory
-    if (rootPath == PathComp(urlList.first().toString()).dir())
+    // same directory but not a directory entry
+    if (rootPath == PathComp(urlList.first().toString()).dir()
+            && !isIndexDir)
         return Qt::IgnoreAction;
 
     // do not move remote entries

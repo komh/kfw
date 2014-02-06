@@ -184,7 +184,8 @@ void KFileWizard::initEntryTree()
     connect(ui->entryTree, SIGNAL(remove(QList<QUrl>)),
             this, SLOT(entryRemove(QList<QUrl>)));
     connect(ui->entryTree, SIGNAL(refresh()), this, SLOT(entryRefresh()));
-
+    connect(ui->entryTree, SIGNAL(dropped(QList<QUrl>,QString,bool)),
+            this, SLOT(dirDropped(QList<QUrl>,QString,bool)));
 
     setEntryRoot();
 }

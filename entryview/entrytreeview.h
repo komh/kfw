@@ -41,6 +41,7 @@ signals:
     void paste(const QList<QUrl>&, bool copy = true);
     void remove(const QList<QUrl>&);
     void refresh();
+    void dropped(const QList<QUrl>& urlList, const QString& to, bool copy);
 
 public slots:
 
@@ -62,7 +63,8 @@ private:
     void deletePressed();
 
     void perfromDrag();
-    Qt::DropAction determineDropAction(const Qt::KeyboardModifiers &modifier,
+    Qt::DropAction determineDropAction(const QPoint &pos,
+                                       const Qt::KeyboardModifiers &modifier,
                                        const QMimeData *mimeData);
 };
 
