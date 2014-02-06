@@ -100,6 +100,11 @@ private:
     void initEntryTree();
     void initEntryModel();
 
+    void copyUrlsTo(const QList<QUrl>& urlList, const QString& to,
+                    bool copy = true);
+
+    void removeUrls(const QList<QUrl>& urlList);
+
     bool fileWorker(AbstractFileWorker* worker,
                     QProgressDialog *progress);
     void setLocationText(const QString& text);

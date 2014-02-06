@@ -253,6 +253,12 @@ void KFileWizard::entryCdUp(const QModelIndex& index)
 
 void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
 {
+    copyUrlsTo(urlList, currentDir.path(), copy);
+}
+
+void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
+                             bool copy)
+{
     QList<QUrl> urlListToSelect;
 
     QProgressDialog progress(this);
@@ -276,8 +282,8 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
 
         QString source(PathComp::fixUrl(url.toString()));
         QString dest(PathComp::fixUrl(
-                         currentDir.absoluteFilePath(
-                             PathComp(url.path()).fileName())));
+                         QDir(to).absoluteFilePath(
+                             PathComp(source).fileName())));
 
         QString canonicalSource(canonicalize(source));
         QString canonicalDest(canonicalize(dest));
@@ -414,6 +420,11 @@ QMessageBox::StandardButton KFileWizard::checkOverwrite(
 }
 
 void KFileWizard::entryRemove(const QList<QUrl>& urlList)
+{
+    removeUrls(urlList);
+}
+
+void KFileWizard::removeUrls(const QList<QUrl> &urlList)
 {
     QString msg(urlList.size() == 1 ?
                     tr("Are you sure to delete this file?\n\n"
