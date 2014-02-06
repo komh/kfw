@@ -83,23 +83,24 @@ void FtpFileInfoCache::removeDirInfo(const QString& dir)
 }
 
 void FtpFileInfoCache::renameFileInfo(const QString &dir,
-                                      const QString &oldName,
+                                      const QString &name,
+                                      const QString &newDir,
                                       const QString &newName)
 {
-    QUrlInfo info(findFileInfo(dir, oldName));
+    QUrlInfo info(findFileInfo(dir, name));
 
     if (!info.isValid())
         return;
 
-    removeFileInfo(dir, oldName);
+    removeFileInfo(dir, name);
 
-    info.setName(PathComp(newName).fileName());
+    info.setName(newName);
 
-    addFileInfo(dir, info);
+    addFileInfo(newDir, info);
 }
 
 void FtpFileInfoCache::renameFileInfo(const QString &path,
-                                      const QString &newName)
+                                      const QString &newPath)
 {
     QString dir(PathComp(path).dir());
     QString name(PathComp(path).fileName());
@@ -108,7 +109,14 @@ void FtpFileInfoCache::renameFileInfo(const QString &path,
     if (name.isEmpty())
         name = "/";
 
-    renameFileInfo(dir, name, newName);
+    QString newDir(PathComp(newPath).dir());
+    QString newName(PathComp(newPath).fileName());
+
+    // Treat root like a file entry
+    if (newName.isEmpty())
+        newName = "/";
+
+    renameFileInfo(dir, name, newDir, newName);
 }
 
 QUrlInfo FtpFileInfoCache::findFileInfo(const QString& dir,

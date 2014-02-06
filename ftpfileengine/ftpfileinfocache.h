@@ -35,9 +35,9 @@ public:
     void removeFileInfo(const QString& dir, const QString& name);
     void removeFileInfo(const QString& path);
     void removeDirInfo(const QString& dir);
-    void renameFileInfo(const QString& dir,
-                        const QString& oldName, const QString& newName);
-    void renameFileInfo(const QString& path, const QString& newName);
+    void renameFileInfo(const QString& dir, const QString& name,
+                        const QString &newDir, const QString& newName);
+    void renameFileInfo(const QString& path, const QString& newPath);
 
     QUrlInfo findFileInfo(const QString& dir, const QString& name);
     QUrlInfo findFileInfo(const QString& path);
