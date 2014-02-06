@@ -275,6 +275,8 @@ Qt::DropAction EntryTreeView::determineDropAction(
 {
     QList<QUrl> urlList(UrlListMimeData::listFrom(mimeData));
 
+    QString first = urlList.first().toString();
+
     FileSystemSortFilterProxyModel* proxyModel =
             qobject_cast<FileSystemSortFilterProxyModel*>(model());
     EntryListModel* entryModel =
@@ -291,7 +293,7 @@ Qt::DropAction EntryTreeView::determineDropAction(
         return Qt::IgnoreAction;
 
     // same directory but not a directory entry
-    if (rootPath == PathComp(urlList.first().toString()).dir()
+    if (rootPath == PathComp(first).dir()
             && !isIndexDir)
         return Qt::IgnoreAction;
 
@@ -303,8 +305,8 @@ Qt::DropAction EntryTreeView::determineDropAction(
         return Qt::CopyAction;
 
     // same local drives
-    if (rootPath.left(2).toUpper() ==
-            urlList.first().toString().left(2).toUpper()
+    if (rootPath.length() >= 2
+            && rootPath.left(2).toUpper() ==  first.left(2).toUpper()
             && rootPath.at(1) == ':')
         return Qt::MoveAction;
 
