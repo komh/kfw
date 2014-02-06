@@ -32,13 +32,13 @@ void PathComp::setPath(const QString& path)
 {
     _path = fixUrl(QDir::fromNativeSeparators(path));
 
-    int lastSlashIndex = path.lastIndexOf("/");
+    int lastSlashIndex = _path.lastIndexOf("/");
 
     _dir = (lastSlashIndex == -1) ?
                 "." :
-                (path.left(lastSlashIndex == 0 ? 1 : lastSlashIndex));
+                (_path.left(lastSlashIndex == 0 ? 1 : lastSlashIndex));
 
-    _fileName = path.mid(lastSlashIndex + 1);
+    _fileName = _path.mid(lastSlashIndex + 1);
 }
 
 bool PathComp::isRemotePath() const
