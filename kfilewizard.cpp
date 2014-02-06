@@ -140,6 +140,9 @@ void KFileWizard::initDirTree()
     connect(ui->dirTree, SIGNAL(clicked(QModelIndex)),
             this, SLOT(dirActivated(QModelIndex)));
 
+    connect(ui->dirTree, SIGNAL(dropped(QList<QUrl>,QString,bool)),
+            this, SLOT(dirDropped(QList<QUrl>,QString,bool)));
+
     ui->dirTree->setSortingEnabled(true);
     ui->dirTree->sortByColumn(0, Qt::AscendingOrder);
     ui->dirTree->setHeaderHidden(true);
@@ -232,6 +235,11 @@ void KFileWizard::dirLoaded(const QString& dir)
 void KFileWizard::dirActivated(const QModelIndex &index)
 {
     setLocationText(dirModel->filePath(dirProxyModel->mapToSource(index)));
+}
+
+void KFileWizard::dirDropped(const QList<QUrl> &urlList, const QString &to, bool copy)
+{
+    copyUrlsTo(urlList, to, copy);
 }
 
 void KFileWizard::entryActivated(const QModelIndex &index)
@@ -670,6 +678,17 @@ void KFileWizard::setEntryRoot()
 
 void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 {
+    QString urlDir(urlList.isEmpty() ?
+                       QString() : PathComp(urlList.first().toString()).dir());
+
+    bool isUrlDifferentDir =
+            urlDir !=  PathComp::fixUrl(currentDir.absolutePath());
+
+    QList<QUrl> selectedUrlList;
+
+    if (isUrlDifferentDir)
+        selectedUrlList = ui->entryTree->selectedUrlList();
+
     ui->entryTree->setUpdatesEnabled(false);
 
     QString newPath;
@@ -744,6 +763,12 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
         QFile(PathComp::merge(currentDir, ":refresh:")).exists();
     }
 
+    // a different directory from a current directory was modified ?
+    // then refresh it as well. the case of drag and drop from a entry view to
+    // a dir view
+    if (isUrlDifferentDir && urlDir.startsWith("ftp:"))
+        QFile(PathComp::merge(urlDir, ":refresh:")).exists();
+
     initEntryModel();
 
     // wait for directory to be loaded
@@ -769,7 +794,12 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
     {
         // select the given list
 
-        foreach (QUrl url, urlList)
+        // a target dir is different from the current dir, then preserve
+        // current selections, otherwise select the new targets
+        QList<QUrl> urlListToSelect(isUrlDifferentDir ? selectedUrlList :
+                                                        urlList);
+
+        foreach (QUrl url, urlListToSelect)
         {
             QModelIndex index(entryProxyModel->mapFromSource(
                                   entryModel->index(url.toString())));
@@ -777,7 +807,9 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
             selection->select(index, QItemSelectionModel::Select |
                                      QItemSelectionModel::Rows);
 
-            // find a bottom entry
+            // in case of a different dir, need to preserve a current index
+            // as well ?
+            // just find a bottom entry
             if (!newCurrent.isValid() || newCurrent < index)
                 newCurrent = index;
         }

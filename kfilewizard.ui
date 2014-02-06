@@ -47,7 +47,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTreeView" name="dirTree">
+      <widget class="DirTreeView" name="dirTree">
        <property name="sortingEnabled">
         <bool>false</bool>
        </property>
@@ -110,6 +110,11 @@
    <class>EntryTreeView</class>
    <extends>QTreeView</extends>
    <header>entryview/entrytreeview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DirTreeView</class>
+   <extends>QTreeView</extends>
+   <header>dirtreeview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

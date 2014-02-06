@@ -1,11 +1,11 @@
 /****************************************************************************
 **
-** EntryTreeView, class in order to show directory entires
+** DirTreeView, a class to show a directory tree
 ** Copyright (C) 2014 by KO Myung-Hun
 ** All rights reserved.
 ** Contact: KO Myung-Hun (komh@chollian.net)
 **
-** This file is part of K File Wizard.
+** This file is part of K File Wizard
 **
 ** $BEGIN_LICENSE$
 **
@@ -21,26 +21,19 @@
 **
 ****************************************************************************/
 
-#ifndef ENTRYTREEVIEW_H
-#define ENTRYTREEVIEW_H
+#ifndef DIRTREEVIEW_H
+#define DIRTREEVIEW_H
 
 #include <QTreeView>
 
-#include <QtGui>
-
-class EntryTreeView : public QTreeView
+class DirTreeView : public QTreeView
 {
     Q_OBJECT
 public:
-    explicit EntryTreeView(QWidget *parent = 0);
-
-    QList<QUrl> selectedUrlList();
+    explicit DirTreeView(QWidget *parent = 0);
 
 signals:
-    void cdUp(const QModelIndex& index);
-    void paste(const QList<QUrl>&, bool copy = true);
-    void remove(const QList<QUrl>&);
-    void refresh();
+    void dropped(const QList<QUrl>& urlList, const QString& to, bool copy);
 
 public slots:
 
@@ -49,21 +42,10 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event);
     void dropEvent(QDropEvent *event);
 
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-
-    void keyPressEvent(QKeyEvent *event);
-
 private:
-    QPoint startPos;
-
-    void copyToClipboard(bool copy = true);
-    void pasteFromClipboard();
-    void deletePressed();
-
-    void perfromDrag();
-    Qt::DropAction determineDropAction(const Qt::KeyboardModifiers &modifier,
+    Qt::DropAction determineDropAction(const QPoint& pos,
+                                       const Qt::KeyboardModifiers &modifiers,
                                        const QMimeData *mimeData);
 };
 
-#endif // ENTRYTREEVIEW_H
+#endif // DIRTREEVIEW_H

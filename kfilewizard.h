@@ -54,6 +54,7 @@ private slots:
     void appFocusChanged(QWidget* old, QWidget* now);
     void dirLoaded(const QString& dir);
     void dirActivated(const QModelIndex& index);
+    void dirDropped(const QList<QUrl>& urlList, const QString& to, bool copy);
     void entryActivated(const QModelIndex& index);
     void entryCdUp(const QModelIndex &index);
     void entryPaste(const QList<QUrl>& urlList, bool copy);
