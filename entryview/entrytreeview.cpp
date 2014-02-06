@@ -68,14 +68,10 @@ void EntryTreeView::dropEvent(QDropEvent *event)
 {
     if (event->mimeData()->hasFormat(UrlListMimeData::format()))
     {
-        Qt::DropAction dropAction =
-                determineDropAction(event->keyboardModifiers(),
-                                    event->mimeData());
-
         emit paste(UrlListMimeData::listFrom(event->mimeData()),
-                   dropAction == Qt::CopyAction);
+                   event->dropAction() == Qt::CopyAction);
 
-        event->setDropAction(dropAction);
+        event->setDropAction(event->dropAction());
         event->accept();
 
         return;
