@@ -216,6 +216,17 @@ void KFileWizard::dirLoaded(const QString& dir)
 
     ui->dirTree->scrollTo(current);
     ui->dirTree->setCurrentIndex(current);
+
+    // direcoryLoaded() signals occurs in this order if rootPath is
+    // x:/path/to/dir
+    // 1. x:/path/to/dir
+    // 2. x:/
+    // 3. x:/path
+    // 4. x:/path/to
+    // so disconnect directoryLoaded() signal if dir is the parent of
+    // currentDir
+    if (dir == PathComp(currentDir.absolutePath()).dir())
+        disconnect(dirModel, SIGNAL(directoryLoaded(QString)), this, 0);
 }
 
 void KFileWizard::dirActivated(const QModelIndex &index)
