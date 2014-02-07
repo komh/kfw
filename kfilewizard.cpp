@@ -439,6 +439,12 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
 
 void KFileWizard::removeUrls(const QList<QUrl> &urlList)
 {
+    QString urlPath = urlList.first().path();
+
+    // root directory ?
+    if (urlPath.isEmpty() || urlPath == "/")
+        return;
+
     QString msg(urlList.size() == 1 ?
                     tr("Are you sure to delete this file?\n\n"
                        "%1")
