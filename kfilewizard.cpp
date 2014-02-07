@@ -544,6 +544,10 @@ bool KFileWizard::fileWorker(AbstractFileWorker* worker,
 
 void KFileWizard::entryRefresh()
 {
+    // do not refresh on a drive list
+    if (currentDir.path().isEmpty())
+        return;
+
     refreshEntry(QList<QUrl>(), false);
 }
 
@@ -776,9 +780,7 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 
     initEntryModel();
 
-    // wait for directory to be loaded unless a current index is a drive list
-    if (!entryModel->rootPath().isEmpty())
-        msgBox.exec();
+    msgBox.exec();
 
     entryProxyModel->setSourceModel(entryModel);
     ui->entryTree->setModel(entryProxyModel);
