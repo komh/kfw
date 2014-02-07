@@ -114,6 +114,10 @@ Qt::DropAction DirTreeView::determineDropAction(
 
     QString first = urlList.first().toString();
 
+    // ftp list
+    if (dir == "ftp:")
+        return Qt::IgnoreAction;
+
     // same directory
     if (dir == PathComp(first).dir())
         return Qt::IgnoreAction;
