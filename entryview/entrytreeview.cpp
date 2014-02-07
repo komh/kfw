@@ -282,32 +282,32 @@ Qt::DropAction EntryTreeView::determineDropAction(
     EntryListModel* entryModel =
             qobject_cast<EntryListModel*>(proxyModel->sourceModel());
 
-    QString rootPath =
-            entryModel->filePath(proxyModel->mapToSource(rootIndex()));
-
     QModelIndex index = proxyModel->mapToSource(indexAt(pos));
     bool isIndexDir = index.isValid() && entryModel->isDir(index);
 
-    // drive lists ?
-    if (rootPath.isEmpty())
+    QString targetDir = isIndexDir ?
+                entryModel->filePath(index) :
+                entryModel->filePath(proxyModel->mapToSource(rootIndex()));
+
+    // drive list or ftp list
+    if (targetDir.isEmpty() || targetDir == "ftp:")
         return Qt::IgnoreAction;
 
-    // same directory but not a directory entry
-    if (rootPath == PathComp(first).dir()
-            && !isIndexDir)
+    // same directory
+    if (targetDir == PathComp(first).dir())
         return Qt::IgnoreAction;
 
     // do not move remote entries
-    if (PathComp::isRemotePath(rootPath))
+    if (PathComp::isRemotePath(targetDir))
         return Qt::CopyAction;
 
     if (modifiers & Qt::ControlModifier)
         return Qt::CopyAction;
 
     // same local drives
-    if (rootPath.length() >= 2
-            && rootPath.left(2).toUpper() ==  first.left(2).toUpper()
-            && rootPath.at(1) == ':')
+    if (targetDir.length() >= 2
+            && targetDir.left(2).toUpper() ==  first.left(2).toUpper()
+            && targetDir.at(1) == ':')
         return Qt::MoveAction;
 
     return Qt::CopyAction;
