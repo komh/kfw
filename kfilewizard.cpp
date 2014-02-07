@@ -671,9 +671,8 @@ void KFileWizard::setEntryRoot()
         QString prevRootPath = entryModel->rootPath();
         entryModel->setRootPath(currentDir.path());
 
-        // if a previous root path was empty, directoryLoaded() is not
-        // signaled
-        if (!prevRootPath.isEmpty())
+        // no need to wait for populating a drive list
+        if (!entryModel->rootPath().isEmpty())
             msgBox.exec();
     }
 
