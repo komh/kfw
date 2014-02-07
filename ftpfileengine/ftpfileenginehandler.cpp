@@ -30,5 +30,5 @@
 QAbstractFileEngine*
 FtpFileEngineHandler::create(const QString &fileName) const
 {
-    return fileName.startsWith("ftp:/") ? new FtpFileEngine(fileName) : 0;
+    return QUrl(fileName).scheme() == "ftp" ? new FtpFileEngine(fileName) : 0;
 }

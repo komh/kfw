@@ -256,7 +256,7 @@ void KFileWizard::entryCdUp(const QModelIndex& index)
                                 entryProxyModel->mapToSource(index)));
     QString parentPath(entryModel->filePath(parentIndex));
 
-    if (index.isValid() && parentPath != "ftp:")
+    if (index.isValid())
         setLocationText(parentPath);
 }
 

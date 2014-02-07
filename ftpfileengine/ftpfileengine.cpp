@@ -156,6 +156,31 @@ void FtpFileEngine::initFtp()
 
 void FtpFileEngine::refreshFileInfoCache()
 {
+    // ftp: case ?
+    if (_url.host().isEmpty())
+    {
+        qDebug() << "refreshFileInfoCache()" << "host empty" << _path;
+
+        QAbstractFileEngine::FileFlags permissions =
+                QAbstractFileEngine::ReadOwnerPerm |
+                QAbstractFileEngine::ReadUserPerm |
+                QAbstractFileEngine::ReadGroupPerm |
+                QAbstractFileEngine::ReadOtherPerm;
+
+        _fileFlags = QAbstractFileEngine::RootFlag |
+                QAbstractFileEngine::ExistsFlag |
+                QAbstractFileEngine::DirectoryType |
+                permissions;
+
+        _urlInfo.setName(_path);
+        _urlInfo.setDir(true);
+        _urlInfo.setPermissions(permissions);
+
+        _ftpCache->addFileInfo(getCachePath(_path, true), _urlInfo);
+
+        return;
+    }
+
     // failed to connect or to login ?
     if (!ftpConnect())
     {
@@ -285,6 +310,7 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
 
     FtpFileInfoCache::QUrlInfoList list =
             _ftpCache->findDirInfo(getCachePath(_path));
+
     if (list.size() > 0)
     {
         FtpFileInfoCache::QUrlInfoListIterator it(list);
