@@ -690,70 +690,53 @@ void KFileWizard::setEntryRoot()
     ui->dirTree->scrollTo(current);
 }
 
-void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
+QString KFileWizard::newPathForRemove(const QList<QUrl>& urlList)
 {
-    QString urlDir(urlList.isEmpty() ?
-                       QString() : PathComp(urlList.first().toString()).dir());
+    // This is only for FTP. QFileSystemWatcher does not work with it
 
-    bool isUrlDifferentDir =
-            urlDir !=  PathComp::fixUrl(currentDir.absolutePath());
+    QModelIndex parent = entryProxyModel->mapFromSource(
+                entryModel->index(currentDir.path()));
 
-    QList<QUrl> selectedUrlList;
-
-    if (isUrlDifferentDir)
-        selectedUrlList = ui->entryTree->selectedUrlList();
-
-    ui->entryTree->setUpdatesEnabled(false);
-
-    QString newPath;
-
-    // removed ?
-    if (remove)
+    // Select a previous row like Qt does
+    int row = ui->entryTree->currentIndex().row();
+    while (row >= 0)
     {
-        // This is only for FTP. QFileSystemWatcher does not work with it
+        if (!urlList.contains(
+                    entryModel->filePath(
+                        entryProxyModel->mapToSource(
+                            entryProxyModel->index(row, 0, parent)))))
+            break;
 
-        QModelIndex parent = entryProxyModel->mapFromSource(
-                                    entryModel->index(currentDir.path()));
-
-        // Select a previous row like Qt does
-        int row = ui->entryTree->currentIndex().row();
-        while (row >= 0)
-        {
-            if (!urlList.contains(
-                            entryModel->filePath(
-                                entryProxyModel->mapToSource(
-                                    entryProxyModel->index(row, 0, parent)))))
-                break;
-
-            --row;
-        }
-
-        // reached to the top ?
-        if (row < 0)
-        {
-            // then try a next row
-            row = ui->entryTree->currentIndex().row();
-            while (row < entryProxyModel->rowCount(parent))
-            {
-                if (!urlList.contains(
-                                entryModel->filePath(
-                                    entryProxyModel->mapToSource(
-                                        entryProxyModel->index(row, 0,
-                                                               parent)))))
-                    break;
-
-                ++row;
-            }
-
-            if (row == entryProxyModel->rowCount(parent))
-                row = 0;    // all removed
-        }
-
-        newPath = entryModel->filePath(
-                    entryProxyModel->mapToSource(
-                        entryProxyModel->index(row, 0, parent)));
+        --row;
     }
 
+    // reached to the top ?
+    if (row < 0)
+    {
+        // then try a next row
+        row = ui->entryTree->currentIndex().row();
+        while (row < entryProxyModel->rowCount(parent))
+        {
+            if (!urlList.contains(
+                        entryModel->filePath(
+                            entryProxyModel->mapToSource(
+                                entryProxyModel->index(row, 0, parent)))))
+                break;
+
+            ++row;
+        }
+
+        if (row == entryProxyModel->rowCount(parent))
+            row = 0;    // all removed
+    }
+
+    return entryModel->filePath(entryProxyModel->mapToSource(
+                                    entryProxyModel->index(row, 0, parent)));
+}
+
+void KFileWizard::refreshEntryModel(bool isUrlDifferentDir,
+                                    const QString& urlDir)
+{
     QByteArray headerState(ui->entryTree->header()->saveState());
 
     entryProxyModel->setSourceModel(0);
@@ -793,7 +776,10 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
     setEntryRoot();
 
     ui->entryTree->header()->restoreState(headerState);
+}
 
+void KFileWizard::selectEntries(const QList<QUrl>& urlListToSelect, bool remove)
+{
     // select proper entries
 
     QItemSelectionModel* selection = ui->entryTree->selectionModel();
@@ -802,15 +788,10 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 
     if (remove)
         newCurrent = entryProxyModel->mapFromSource(
-                            entryModel->index(newPath));
+                        entryModel->index(urlListToSelect.first().toString()));
     else
     {
         // select the given list
-
-        // a target dir is different from the current dir, then preserve
-        // current selections, otherwise select the new targets
-        QList<QUrl> urlListToSelect(isUrlDifferentDir ? selectedUrlList :
-                                                        urlList);
 
         foreach (QUrl url, urlListToSelect)
         {
@@ -832,6 +813,35 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
     selection->setCurrentIndex(newCurrent, QItemSelectionModel::NoUpdate);
 
     ui->entryTree->scrollTo(newCurrent);
+}
+
+void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
+{
+    QString urlDir(urlList.isEmpty() ?
+                       QString() : PathComp(urlList.first().toString()).dir());
+
+    bool isUrlDifferentDir =
+            urlDir !=  PathComp::fixUrl(currentDir.absolutePath());
+
+    // a target dir is different from the current dir, then preserve
+    // current selections, otherwise select the new targets
+    QList<QUrl> urlListToSelect = isUrlDifferentDir ?
+                ui->entryTree->selectedUrlList() : urlList;
+
+    ui->entryTree->setUpdatesEnabled(false);
+
+    QString newPath;
+
+    // removed ?
+    if (remove)
+    {
+        urlListToSelect.clear();
+        urlListToSelect.append(newPathForRemove(urlList));
+    }
+
+    refreshEntryModel(isUrlDifferentDir, urlDir);
+
+    selectEntries(urlListToSelect, remove);
 
     ui->entryTree->setUpdatesEnabled(true);
 }
