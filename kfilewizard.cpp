@@ -268,8 +268,8 @@ void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
 void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
                              bool copy)
 {
-    // to a drive list ? No...
-    if (to.isEmpty())
+    // to a drive list or to a ftp list ? No...
+    if (to.isEmpty() || (to.startsWith("ftp:") && QUrl(to).host().isEmpty()))
         return;
 
     QList<QUrl> urlListToSelect;
