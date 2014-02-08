@@ -226,7 +226,6 @@ void FtpFileEngine::refreshFileInfoCache()
 
         _ftpCache->removeDirInfo(getCachePath(dir));
 
-        _entries.clear();
         _entriesMap.clear();
 
         // get a file list from a parent directory
@@ -239,7 +238,7 @@ void FtpFileEngine::refreshFileInfoCache()
 
         _fileFlags = 0;
 
-        if (_entries.contains(name))
+        if (_entriesMap.keys().contains(name))
         {
             _fileFlags |= QAbstractFileEngine::ExistsFlag;
 
@@ -372,7 +371,6 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
 {
     qDebug() << "beginEntryList() : " << _fileName << _fileFlags;
 
-    _entries.clear();
     _entriesMap.clear();
 
     FtpFileInfoCache::QUrlInfoList list =
@@ -387,10 +385,7 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
 
             // exclude an empty entry inserted by us
             if (urlInfo.isValid())
-            {
-                _entries.append(urlInfo.name());
                 _entriesMap.insert(urlInfo.name(), urlInfo);
-            }
         }
     }
     else if ((_fileFlags & QAbstractFileEngine::DirectoryType)
@@ -844,8 +839,6 @@ void FtpFileEngine::ftpListInfo(const QUrlInfo &urlInfo)
 {
     qDebug() << "ftpFileListInfo() : " << _fileName;
     qDebug() << "\t" << (urlInfo.isDir() ? "[D]" : "[F]") << urlInfo.name();
-
-    _entries.append(urlInfo.name());
 
     // QDir::isReadable() determines with ReadUserPerm
     // And, I think, if ReadOtherPerm is set, assuming ReadUserPerm is set

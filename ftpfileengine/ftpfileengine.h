@@ -104,7 +104,6 @@ private:
 
     QString _cacheDir;
 
-    QStringList _entries;
     QMap<QString, QUrlInfo> _entriesMap;
 
     FtpSync _ftpSync;
