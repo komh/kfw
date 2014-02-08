@@ -39,6 +39,8 @@ public:
     QString fileName() const {return _fileName; }
 
     bool isRemotePath() const;
+    bool isRoot() const;
+    bool isDriveList() const;
 
     static QString merge(const QString& dir, const QString& fileName);
     static QString merge(const QDir& dir, const QString& fileName);

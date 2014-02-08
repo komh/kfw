@@ -48,6 +48,18 @@ bool PathComp::isRemotePath() const
     return PathComp::isRemotePath(path());
 }
 
+bool PathComp::isRoot() const
+{
+    QString pathOfUrl(QUrl(path()).path());
+
+    return !path().isEmpty() && (pathOfUrl.isEmpty() || pathOfUrl == "/");
+}
+
+bool PathComp::isDriveList() const
+{
+    return path().isEmpty() || (isRemotePath() && QUrl(path()).host().isEmpty());
+}
+
 QString PathComp::merge(const QString& dir, const QString& fileName)
 {
     QString path(QDir::fromNativeSeparators(dir));
