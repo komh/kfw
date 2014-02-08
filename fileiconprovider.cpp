@@ -32,7 +32,7 @@ QIcon FileIconProvider::icon(const QFileInfo &info) const
 #ifdef Q_WS_PM
     // File type icon is returned for the not accessible files by APIs on OS/2
     // So correct its behavior here
-    if (info.filePath().startsWith("ftp:") && !info.isRoot() && info.isDir())
+    if (PathComp::isFtpPath(info.filePath()) && !info.isRoot() && info.isDir())
         return QFileIconProvider::icon(QFileIconProvider::Folder);
 #endif
 

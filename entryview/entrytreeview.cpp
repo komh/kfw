@@ -290,7 +290,7 @@ Qt::DropAction EntryTreeView::determineDropAction(
                 entryModel->filePath(proxyModel->mapToSource(rootIndex()));
 
     // drive list or ftp list
-    if (targetDir.isEmpty() || targetDir == "ftp:")
+    if (PathComp(targetDir).isDriveList())
         return Qt::IgnoreAction;
 
     // same directory

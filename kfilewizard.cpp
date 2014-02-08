@@ -269,7 +269,7 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
                              bool copy)
 {
     // to a drive list or to a ftp list ? No...
-    if (to.isEmpty() || (to.startsWith("ftp:") && QUrl(to).host().isEmpty()))
+    if (PathComp(to).isDriveList())
         return;
 
     QList<QUrl> urlListToSelect;
@@ -410,7 +410,7 @@ QMessageBox::StandardButton KFileWizard::checkOverwrite(
     {
         progress->show();
 
-        if (dest.startsWith("ftp://"))
+        if (PathComp::isFtpPath(dest))
         {
             critical(tr("%1\n\n"
                         "This file already exists. "
@@ -439,10 +439,8 @@ void KFileWizard::entryRemove(const QList<QUrl>& urlList)
 
 void KFileWizard::removeUrls(const QList<QUrl> &urlList)
 {
-    QString urlPath = urlList.first().path();
-
     // root directory ?
-    if (urlPath.isEmpty() || urlPath == "/")
+    if (PathComp(urlList.first().toString()).isRoot())
         return;
 
     QString msg(urlList.size() == 1 ?
@@ -498,7 +496,7 @@ void KFileWizard::removeUrls(const QList<QUrl> &urlList)
 
     // Refresh entry only in case of FTP
     // QFileSystemModel works fine with a local remove operation
-    if (urlList.first().scheme() == "ftp")
+    if (PathComp::isFtpPath(urlList.first().toString()))
         refreshEntry(urlList, true);
 }
 
@@ -550,10 +548,6 @@ bool KFileWizard::fileWorker(AbstractFileWorker* worker,
 
 void KFileWizard::entryRefresh()
 {
-    // do not refresh on a drive list
-    if (currentDir.path().isEmpty())
-        return;
-
     refreshEntry(QList<QUrl>(), false);
 }
 
@@ -672,7 +666,7 @@ void KFileWizard::setEntryRoot()
         entryModel->setRootPath(currentDir.path());
 
         // no need to wait for populating a drive list
-        if (!entryModel->rootPath().isEmpty())
+        if (!PathComp(entryModel->rootPath()).isDriveList())
             msgBox.exec();
     }
 
@@ -754,7 +748,7 @@ void KFileWizard::refreshEntryModel(bool isUrlDifferentDir,
     msgBox.trigger();
 
     // signal to FtpFileEngine to refresh entries
-    if (currentDir.path().startsWith("ftp:"))
+    if (PathComp::isFtpPath(currentDir.path()))
     {
         // QDir::filePath() does not work with ":refresh:"
         QFile(PathComp::merge(currentDir, ":refresh:")).exists();
@@ -763,7 +757,7 @@ void KFileWizard::refreshEntryModel(bool isUrlDifferentDir,
     // a different directory from a current directory was modified ?
     // then refresh it as well. the case of drag and drop from a entry view to
     // a dir view
-    if (isUrlDifferentDir && urlDir.startsWith("ftp:"))
+    if (isUrlDifferentDir && PathComp::isFtpPath(urlDir))
         QFile(PathComp::merge(urlDir, ":refresh:")).exists();
 
     initEntryModel();
@@ -817,6 +811,10 @@ void KFileWizard::selectEntries(const QList<QUrl>& urlListToSelect, bool remove)
 
 void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 {
+    // do not refresh on a drive list
+    if (PathComp(currentDir.path()).isDriveList())
+        return;
+
     QString urlDir(urlList.isEmpty() ?
                        QString() : PathComp(urlList.first().toString()).dir());
 

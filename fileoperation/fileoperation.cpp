@@ -23,6 +23,8 @@
 
 #include <QFile>
 
+#include "pathcomp.h"
+
 #include "fileoperation.h"
 
 FileOperation::FileOperation(const QString &source, const QString &dest,
@@ -51,7 +53,7 @@ bool FileOperation::open()
     _destFile.setFileName(dest());
 
     // Set the size of a file on FTP to help it to determine EOF
-    if (dest().startsWith("ftp://"))
+    if (PathComp::isFtpPath(dest()))
         _destFile.resize(_sourceFile.size());
 
     return _destFile.open(QIODevice::WriteOnly);
@@ -66,10 +68,10 @@ void FileOperation::close()
 void FileOperation::abort()
 {
     // abort FTP transfer
-    if (source().startsWith("ftp://"))
+    if (PathComp::isFtpPath(source()))
         _sourceFile.resize(-1);
 
-    if (dest().startsWith("ftp://"))
+    if (PathComp::isFtpPath(dest()))
         _destFile.resize(-1);
 }
 

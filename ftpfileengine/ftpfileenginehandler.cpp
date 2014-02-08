@@ -24,11 +24,12 @@
 #include <QUrl>
 
 #include "ftpfileengine.h"
+#include "pathcomp.h"
 
 #include "ftpfileenginehandler.h"
 
 QAbstractFileEngine*
 FtpFileEngineHandler::create(const QString &fileName) const
 {
-    return QUrl(fileName).scheme() == "ftp" ? new FtpFileEngine(fileName) : 0;
+    return PathComp::isFtpPath(fileName) ? new FtpFileEngine(fileName) : 0;
 }
