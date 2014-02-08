@@ -23,6 +23,8 @@
 
 #include "pathcomp.h"
 
+#include <QUrl>
+
 PathComp::PathComp(const QString& path)
 {
     setPath(path);
@@ -82,5 +84,5 @@ QString PathComp::fixUrl(const QString &url)
 
 bool PathComp::isRemotePath(const QString &path)
 {
-    return path.indexOf(":/") > 1;
+    return QUrl(path).scheme() == "ftp:";
 }
