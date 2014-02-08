@@ -23,6 +23,8 @@
 
 #include "fileiconprovider.h"
 
+#include "pathcomp.h"
+
 FileIconProvider::FileIconProvider() : QFileIconProvider()
 {
 }
