@@ -48,6 +48,11 @@ bool PathComp::isRemotePath() const
     return PathComp::isRemotePath(path());
 }
 
+bool PathComp::isFtpPath() const
+{
+    return PathComp::isFtpPath(path());
+}
+
 bool PathComp::isRoot() const
 {
     QString pathOfUrl(QUrl(path()).path());
@@ -96,5 +101,10 @@ QString PathComp::fixUrl(const QString &url)
 
 bool PathComp::isRemotePath(const QString &path)
 {
-    return QUrl(path).scheme() == "ftp:";
+    return isFtpPath(path);
+}
+
+bool PathComp::isFtpPath(const QString &path)
+{
+    return QUrl(path).scheme() == "ftp";
 }

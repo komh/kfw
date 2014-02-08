@@ -39,13 +39,17 @@ public:
     QString fileName() const {return _fileName; }
 
     bool isRemotePath() const;
+    bool isFtpPath() const;
+
     bool isRoot() const;
     bool isDriveList() const;
 
     static QString merge(const QString& dir, const QString& fileName);
     static QString merge(const QDir& dir, const QString& fileName);
     static QString fixUrl(const QString &url);
+
     static bool isRemotePath(const QString& path);
+    static bool isFtpPath(const QString& path);
 
 private:
     QString _path;
