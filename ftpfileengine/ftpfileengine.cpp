@@ -221,6 +221,9 @@ void FtpFileEngine::refreshFileInfoCache()
 
         _ftpCache->removeDirInfo(getCachePath(dir));
 
+        _entries.clear();
+        _entriesMap.clear();
+
         // get a file list from a parent directory
         _ftp->cd(dir);
         _ftp->list();
