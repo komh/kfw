@@ -307,6 +307,65 @@ bool FtpFileEngine::atEnd() const
     return _fileBuffer.readPos() >= size();
 }
 
+static QStringList filterEntries(QDir::Filters filters,
+                                 const QStringList& filterNames,
+                                 const QMap<QString, QUrlInfo>& entriesMap)
+{
+    QStringList entries;
+
+    QMapIterator<QString, QUrlInfo> it(entriesMap);
+
+    while (it.hasNext())
+    {
+        it.next();
+
+        if ((filters & QDir::AllDirs) && it.value().isDir())
+        {
+            if ((filters & (QDir::NoDot | QDir::NoDotAndDotDot))
+                    && it.value().name() == ".")
+                continue;
+
+            if ((filters & (QDir::NoDotDot | QDir::NoDotAndDotDot))
+                    && it.value().name() == "..")
+                continue;
+
+            entries.append(it.key());
+
+            continue;
+        }
+
+        bool matched = false;
+
+        if ((filters & QDir::Dirs) && it.value().isDir())
+        {
+            if ((filters & (QDir::NoDot | QDir::NoDotAndDotDot))
+                    && it.value().name() == ".")
+                continue;
+
+            if ((filters & (QDir::NoDotDot | QDir::NoDotAndDotDot))
+                    && it.value().name() == "..")
+                continue;
+
+            matched = true;
+        }
+
+        matched = matched ||
+                  ((filters & QDir::Files) && it.value().isFile()) ||
+                  ((filters & QDir::Readable) && it.value().isReadable()) ||
+                  ((filters & QDir::Writable) && it.value().isWritable()) ||
+                  ((filters & QDir::Executable)
+                        && it.value().isExecutable()) ||
+                  ((filters & QDir::Hidden)
+                        && it.value().name().startsWith("."));
+
+        if (matched  && (filterNames.isEmpty()
+                         || QDir::match(filterNames, it.value().name())))
+                entries.append(it.key());
+    }
+
+    return entries;
+}
+
 QAbstractFileEngine::Iterator*
 FtpFileEngine::beginEntryList(QDir::Filters filters,
                               const QStringList &filterNames)
@@ -349,7 +408,9 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
         ftpDisconnect();
     }
 
-    return new FtpFileEngineIterator(filters, filterNames, _entries);
+    return new FtpFileEngineIterator(filters, filterNames,
+                                     filterEntries(filters, filterNames,
+                                                   _entriesMap));
 }
 
 bool FtpFileEngine::caseSensitive() const
