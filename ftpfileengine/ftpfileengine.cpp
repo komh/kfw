@@ -176,7 +176,12 @@ void FtpFileEngine::refreshFileInfoCache()
         _urlInfo.setDir(true);
         _urlInfo.setPermissions(permissions);
 
-        _ftpCache->addFileInfo(getCachePath(_path, true), _urlInfo);
+        QString cacheDir(getCachePath(_path, true));
+
+        _ftpCache->addFileInfo(cacheDir, _urlInfo);
+
+        // insert a invalid entry to avoid cache failure in beginEntryList()
+        _ftpCache->addFileInfo(cacheDir, QUrlInfo());
 
         return;
     }
