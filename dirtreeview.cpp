@@ -122,10 +122,6 @@ Qt::DropAction DirTreeView::determineDropAction(
     if (dir == PathComp(first).dir())
         return Qt::IgnoreAction;
 
-    // do not move remote entries
-    if (PathComp::isRemotePath(dir))
-        return Qt::CopyAction;
-
     if (modifiers & Qt::ControlModifier)
         return Qt::CopyAction;
 
