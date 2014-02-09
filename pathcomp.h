@@ -44,6 +44,8 @@ public:
     bool isRoot() const;
     bool isDriveList() const;
 
+    QString toNativePath();
+
     static QString merge(const QString& dir, const QString& fileName);
     static QString merge(const QDir& dir, const QString& fileName);
     static QString fixUrl(const QString &url);

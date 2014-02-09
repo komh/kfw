@@ -65,6 +65,20 @@ bool PathComp::isDriveList() const
     return path().isEmpty() || (isRemotePath() && QUrl(path()).host().isEmpty());
 }
 
+QString PathComp::toNativePath()
+{
+    if (isFtpPath())
+        return path();
+
+    QString localPath = QDir::toNativeSeparators(path());
+
+    // convert a drive letter to an upper case
+    if (localPath.length() >= 2 && localPath.at(1) == ':')
+        localPath[0] = localPath.at(0).toUpper();
+
+    return localPath;
+}
+
 QString PathComp::merge(const QString& dir, const QString& fileName)
 {
     QString path(QDir::fromNativeSeparators(dir));
