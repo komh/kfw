@@ -123,6 +123,7 @@ void KFileWizard::initLocationLine()
     locationCompleterModel->setRootPath("");
 
     completer->setModel(locationCompleterModel);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
 
     ui->locationLine->setCompleter(completer);
 }
