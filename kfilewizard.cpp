@@ -639,7 +639,8 @@ void KFileWizard::locationReturnPressed(bool bySignal)
             return;
 
         currentDir.setPath(ui->locationLine->text());
-        currentDir.makeAbsolute();
+        if (!currentDir.path().isEmpty())
+            currentDir.makeAbsolute();
 
         setEntryRoot();
 
