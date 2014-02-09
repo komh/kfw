@@ -76,6 +76,8 @@ private:
     EntryListModel* entryModel;
     FileSystemSortFilterProxyModel* entryProxyModel;
 
+    QFileSystemModel* locationCompleterModel;
+
     DelayedMessageBox* delayedMsgBox;
 
     inline QMessageBox::StandardButton critical(

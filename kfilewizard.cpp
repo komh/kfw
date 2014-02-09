@@ -39,6 +39,8 @@
 #include "pathcomp.h"
 #include "fileiconprovider.h"
 
+#include "locationcompleter.h"
+
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KFileWizard),
@@ -112,6 +114,17 @@ void KFileWizard::initLocationLine()
             this, SLOT(locationReturnPressed()));
 
     ui->locationLine->installEventFilter(this);
+
+    QCompleter* completer = new LocationCompleter(this);
+
+    locationCompleterModel = new QFileSystemModel(this);
+
+    locationCompleterModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
+    locationCompleterModel->setRootPath("");
+
+    completer->setModel(locationCompleterModel);
+
+    ui->locationLine->setCompleter(completer);
 }
 
 void KFileWizard::initSplitter()
@@ -674,6 +687,8 @@ void KFileWizard::setEntryRoot()
 
     ui->dirTree->setCurrentIndex(current);
     ui->dirTree->scrollTo(current);
+
+    locationCompleterModel->setRootPath(currentDir.path());
 }
 
 QString KFileWizard::newPathForRemove(const QList<QUrl>& urlList)
