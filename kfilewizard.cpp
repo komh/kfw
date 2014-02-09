@@ -669,7 +669,6 @@ void KFileWizard::setEntryRoot()
         msgBox.setQuitSignal(entryModel, SIGNAL(directoryLoaded(QString)));
         msgBox.trigger();
 
-        QString prevRootPath = entryModel->rootPath();
         entryModel->setRootPath(currentDir.path());
 
         // no need to wait for populating a drive list
