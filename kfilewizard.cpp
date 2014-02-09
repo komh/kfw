@@ -119,6 +119,7 @@ void KFileWizard::initLocationLine()
 
     locationCompleterModel = new QFileSystemModel(this);
 
+    locationCompleterModel->setIconProvider(new FileIconProvider);
     locationCompleterModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
     locationCompleterModel->setRootPath("");
 
