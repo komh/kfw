@@ -583,15 +583,7 @@ void KFileWizard::setLocationText(const QString& text)
 
 QString KFileWizard::canonicalize(const QString& path)
 {
-    if (path.indexOf(':') > 1)
-        return PathComp::fixUrl(QDir::fromNativeSeparators(path));
-
-    QString nativePath = QDir::toNativeSeparators(path);
-
-    if (!nativePath.isEmpty())
-        nativePath[0] = nativePath[0].toUpper();
-
-    return nativePath;
+    return PathComp(path).toNativePath();
 }
 
 QModelIndex KFileWizard::findDirIndex(const QString& dir)
