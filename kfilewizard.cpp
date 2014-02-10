@@ -41,6 +41,8 @@
 
 #include "locationcompleter.h"
 
+#include "connecttodialog.h"
+
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KFileWizard),
@@ -106,6 +108,7 @@ void KFileWizard::closeEvent(QCloseEvent *event)
 void KFileWizard::initMenu()
 {
     connect(ui->about, SIGNAL(triggered()), this, SLOT(about()));
+    connect(ui->fileConnectTo, SIGNAL(triggered()), this, SLOT(connectTo()));
 }
 
 void KFileWizard::initLocationLine()
@@ -915,4 +918,12 @@ void KFileWizard::about()
 "<a href=http://www.gnu.org/licenses/gpl.html>the GPL v3 license</a> "
 "for details."
                             ).arg(version()));
+}
+
+void KFileWizard::connectTo()
+{
+    ConnectToDialog dialog(this);
+
+    if (dialog.exec() == QDialog::Accepted)
+        setLocationText(dialog.locationUrl());
 }

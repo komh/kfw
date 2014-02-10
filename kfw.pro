@@ -37,7 +37,8 @@ SOURCES += main.cpp\
     entryview/entrylistmodel.cpp \
     fileiconprovider.cpp \
     dirtreeview.cpp \
-    locationcompleter.cpp
+    locationcompleter.cpp \
+    connecttodialog.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -64,8 +65,10 @@ HEADERS  += kfilewizard.h \
     fileiconprovider.h \
     qttr.h \
     dirtreeview.h \
-    locationcompleter.h
+    locationcompleter.h \
+    connecttodialog.h
 
-FORMS    += kfilewizard.ui
+FORMS    += kfilewizard.ui \
+    connecttodialog.ui
 
 TRANSLATIONS = translations/kfw_ko.ts

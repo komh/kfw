@@ -64,6 +64,7 @@ private slots:
     void renameEnd();
     void locationReturnPressed(bool bySignal = true);
     void about();
+    void connectTo();
 
 private:
     Ui::KFileWizard *ui;

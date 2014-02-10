@@ -70,6 +70,8 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="fileConnectTo"/>
+    <addaction name="separator"/>
     <addaction name="fileExit"/>
    </widget>
    <widget class="QMenu" name="helpMenu">
@@ -101,6 +103,14 @@
   <action name="about">
    <property name="text">
     <string>About K File Wizard...</string>
+   </property>
+  </action>
+  <action name="fileConnectTo">
+   <property name="text">
+    <string>Connect &amp;to...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>
