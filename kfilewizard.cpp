@@ -845,8 +845,6 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 
     ui->entryTree->setUpdatesEnabled(false);
 
-    QString newPath;
-
     // removed ?
     if (remove)
     {
