@@ -824,6 +824,14 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
     if (PathComp(currentDir.path()).isDriveList())
         return;
 
+    static bool refreshing = false;
+
+    // prevent nested refresh
+    if (refreshing)
+        return;
+
+    refreshing = true;
+
     QString urlDir(urlList.isEmpty() ?
                        QString() : PathComp(urlList.first().toString()).dir());
 
@@ -851,6 +859,8 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
     selectEntries(urlListToSelect, remove);
 
     ui->entryTree->setUpdatesEnabled(true);
+
+    refreshing = false;
 }
 
 void KFileWizard::saveSettings()
