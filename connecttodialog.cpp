@@ -24,7 +24,7 @@
 #include "connecttodialog.h"
 #include "ui_connecttodialog.h"
 
-#include "QPushButton"
+#include <QPushButton>
 
 ConnectToDialog::ConnectToDialog(QWidget *parent, bool connectMode) :
     QDialog(parent),
