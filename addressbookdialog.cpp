@@ -102,6 +102,8 @@ void AddressBookDialog::on_addButton_clicked()
 {
     ConnectToDialog dialog(this, false);
 
+    dialog.setWindowTitle("Server information");
+
     if (dialog.exec() == QDialog::Accepted)
         addServerInfo(dialog.serverInfo());
 
@@ -123,6 +125,8 @@ void AddressBookDialog::on_editButton_clicked()
         return;
 
     ConnectToDialog dialog(this, false);
+
+    dialog.setWindowTitle("Server information");
 
     dialog.setServerInfo(serverInfoList.at(row));
 
