@@ -42,6 +42,7 @@
 #include "locationcompleter.h"
 
 #include "connecttodialog.h"
+#include "addressbookdialog.h"
 
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
@@ -50,6 +51,10 @@ KFileWizard::KFileWizard(QWidget *parent) :
     delayedMsgBox(0)
 {
     ui->setupUi(this);
+
+    // global settings for QSettings
+    QApplication::setOrganizationName(organization());
+    QApplication::setApplicationName(title());
 
     connect(qApp, SIGNAL(focusChanged(QWidget*,QWidget*)),
             this, SLOT(appFocusChanged(QWidget*, QWidget*)));
@@ -109,6 +114,8 @@ void KFileWizard::initMenu()
 {
     connect(ui->about, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->fileConnectTo, SIGNAL(triggered()), this, SLOT(connectTo()));
+    connect(ui->fileOpenAddressBook, SIGNAL(triggered()),
+            this, SLOT(openAddressBook()));
 }
 
 void KFileWizard::initLocationLine()
@@ -866,7 +873,7 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
 
 void KFileWizard::saveSettings()
 {
-    QSettings settings(organization(), title());
+    QSettings settings;
 
     settings.beginGroup("mainwindow");
     settings.setValue("geometry", saveGeometry());
@@ -884,7 +891,7 @@ void KFileWizard::saveSettings()
 
 void KFileWizard::loadSettings()
 {
-    QSettings settings(organization(), title());
+    QSettings settings;
 
     settings.beginGroup("mainwindow");
     restoreGeometry(settings.value("geometry").toByteArray());
@@ -926,4 +933,15 @@ void KFileWizard::connectTo()
 
     if (dialog.exec() == QDialog::Accepted)
         setLocationText(dialog.locationUrl());
+}
+
+void KFileWizard::openAddressBook()
+{
+    AddressBookDialog dialog(this);
+
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        setLocationText(dialog.locationUrl());
+        ui->entryTree->setFocus();
+    }
 }

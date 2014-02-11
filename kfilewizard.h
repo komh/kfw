@@ -65,6 +65,7 @@ private slots:
     void locationReturnPressed(bool bySignal = true);
     void about();
     void connectTo();
+    void openAddressBook();
 
 private:
     Ui::KFileWizard *ui;

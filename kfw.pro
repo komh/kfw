@@ -39,7 +39,8 @@ SOURCES += main.cpp\
     dirtreeview.cpp \
     locationcompleter.cpp \
     connecttodialog.cpp \
-    serverinfo.cpp
+    serverinfo.cpp \
+    addressbookdialog.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -68,9 +69,11 @@ HEADERS  += kfilewizard.h \
     dirtreeview.h \
     locationcompleter.h \
     connecttodialog.h \
-    serverinfo.h
+    serverinfo.h \
+    addressbookdialog.h
 
 FORMS    += kfilewizard.ui \
-    connecttodialog.ui
+    connecttodialog.ui \
+    addressbookdialog.ui
 
 TRANSLATIONS = translations/kfw_ko.ts
