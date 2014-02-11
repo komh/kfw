@@ -73,6 +73,16 @@ int ConnectToDialog::port() const
     return ui->portSpin->value();
 }
 
+QString ConnectToDialog::transferMode() const
+{
+    return ui->transferModeCombo->currentText();
+}
+
+QString ConnectToDialog::encoding() const
+{
+    return ui->encodingCombo->currentText();
+}
+
 bool ConnectToDialog::isAnonymous() const
 {
     return ui->anonymousCheck->isChecked();

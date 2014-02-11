@@ -42,6 +42,8 @@ public:
     QString protocol() const;
     QString host() const;
     int port() const;
+    QString transferMode() const;
+    QString encoding() const;
     bool isAnonymous() const;
     QString userName() const;
     QString password() const;
