@@ -52,8 +52,7 @@ void AddressBookDialog::accept()
 {
     if (selectedRow() == -1)
     {
-        QMessageBox::warning(this, tr("Address book"),
-                             tr("No entry selected"));
+        QMessageBox::warning(this, windowTitle(), tr("No entry selected"));
 
         return;
     }
@@ -181,7 +180,7 @@ void AddressBookDialog::removeServerInfo()
     if (row == -1)
         return;
 
-    if (QMessageBox::question(this, tr("Address book"),
+    if (QMessageBox::question(this, windowTitle(),
                               tr("Do you want remove this entry?\n\n%1")
                               .arg(serverInfoList.at(row).name()),
                               QMessageBox::Yes | QMessageBox::No)
