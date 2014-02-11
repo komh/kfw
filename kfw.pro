@@ -38,7 +38,8 @@ SOURCES += main.cpp\
     fileiconprovider.cpp \
     dirtreeview.cpp \
     locationcompleter.cpp \
-    connecttodialog.cpp
+    connecttodialog.cpp \
+    serverinfo.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -66,7 +67,8 @@ HEADERS  += kfilewizard.h \
     qttr.h \
     dirtreeview.h \
     locationcompleter.h \
-    connecttodialog.h
+    connecttodialog.h \
+    serverinfo.h
 
 FORMS    += kfilewizard.ui \
     connecttodialog.ui

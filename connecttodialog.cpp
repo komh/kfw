@@ -42,6 +42,10 @@ ConnectToDialog::ConnectToDialog(QWidget *parent, bool connectMode) :
         ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Connect"));
     }
 
+    ui->protocolCombo->addItems(ServerInfo::protocolList());
+    ui->transferModeCombo->addItems(ServerInfo::transferModeList());
+    ui->encodingCombo->addItems(ServerInfo::encodingList());
+
     connect(ui->anonymousCheck, SIGNAL(stateChanged(int)),
             this, SLOT(anonymousStateChanged(int)));
 
@@ -53,87 +57,52 @@ ConnectToDialog::~ConnectToDialog()
     delete ui;
 }
 
-QString ConnectToDialog::name() const
+void ConnectToDialog::accept()
 {
-    return ui->nameLine->text();
-}
+    _serverInfo.setName(ui->nameLine->text());
+    _serverInfo.setHost(ui->hostLine->text());
+    _serverInfo.setProtocol(ui->protocolCombo->currentText());
+    _serverInfo.setPort(ui->portSpin->value());
+    _serverInfo.setTransferMode(ui->transferModeCombo->currentText());
+    _serverInfo.setEncoding(ui->encodingCombo->currentText());
+    _serverInfo.setAnonymous(ui->anonymousCheck->isChecked());
+    _serverInfo.setUserName(ui->userNameLine->text());
+    _serverInfo.setPassword((ui->passwordLine->text()));
+    _serverInfo.setDirectory(ui->directoryLine->text());
 
-QString ConnectToDialog::protocol() const
-{
-    return ui->protocolCombo->currentText();
-}
-
-QString ConnectToDialog::host() const
-{
-    return ui->hostLine->text();
-}
-
-int ConnectToDialog::port() const
-{
-    return ui->portSpin->value();
-}
-
-QString ConnectToDialog::transferMode() const
-{
-    return ui->transferModeCombo->currentText();
-}
-
-QString ConnectToDialog::encoding() const
-{
-    return ui->encodingCombo->currentText();
-}
-
-bool ConnectToDialog::isAnonymous() const
-{
-    return ui->anonymousCheck->isChecked();
-}
-
-QString ConnectToDialog::userName() const
-{
-    return ui->userNameLine->text();
-}
-
-QString ConnectToDialog::password() const
-{
-    return ui->passwordLine->text();
-}
-
-QString ConnectToDialog::directory() const
-{
-    return ui->directoryLine->text();
+    QDialog::accept();
 }
 
 QString ConnectToDialog::locationUrl() const
 {
-    QString url;
+    return serverInfo().locationUrl();
+}
 
-    url.append(protocol().toLower());
-    url.append("://");
+const ServerInfo &ConnectToDialog::serverInfo() const
+{
+    return _serverInfo;
+}
 
-    if (!isAnonymous() && userName() != "anonymous")
-    {
-        url.append(userName());
+void ConnectToDialog::setServerInfo(const ServerInfo& si)
+{
+    _serverInfo = si;
 
-        if (!password().isEmpty())
-        {
-            url.append(":");
-            url.append(password());
-        }
-
-        url.append("@");
-    }
-
-    url.append(host());
-
-    if (port() != 21)
-    {
-        url.append(":");
-        url.append(QString::number(port()));
-    }
-
-    url.append(directory());
-
-    return url;
+    ui->nameLine->setText(si.name());
+    ui->hostLine->setText(si.host());
+    ui->protocolCombo->setCurrentIndex(
+                ui->protocolCombo->findText(
+                    ServerInfo::protocolText(si.protocol())));
+    ui->portSpin->setValue(si.port());
+    ui->transferModeCombo->setCurrentIndex(
+                ui->transferModeCombo->findText(
+                    ServerInfo::transferModeText(si.transferMode())));
+    ui->encodingCombo->setCurrentIndex(
+                ui->encodingCombo->findText(
+                    ServerInfo::encodingText(si.encoding())));
+    ui->anonymousCheck->setChecked(si.isAnonymous());
+    ui->userNameLine->setText(si.userName());
+    ui->passwordLine->setText(si.password());
+    ui->directoryLine->setText(si.directory());
 }
 
 void ConnectToDialog::anonymousStateChanged(int state)

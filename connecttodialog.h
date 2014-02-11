@@ -26,6 +26,8 @@
 
 #include <QDialog>
 
+#include "serverinfo.h"
+
 namespace Ui {
 class ConnectToDialog;
 }
@@ -38,21 +40,18 @@ public:
     explicit ConnectToDialog(QWidget *parent = 0, bool connectMode = true);
     ~ConnectToDialog();
 
-    QString name() const;
-    QString protocol() const;
-    QString host() const;
-    int port() const;
-    QString transferMode() const;
-    QString encoding() const;
-    bool isAnonymous() const;
-    QString userName() const;
-    QString password() const;
-    QString directory() const;
+    void accept();
 
     QString locationUrl() const;
 
+    const ServerInfo& serverInfo() const;
+
+    void setServerInfo(const ServerInfo &si);
+
 private:
     Ui::ConnectToDialog *ui;
+
+    ServerInfo _serverInfo;
 
 private slots:
     void anonymousStateChanged(int state);
