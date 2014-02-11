@@ -60,7 +60,7 @@ QString ConnectToDialog::name() const
 
 QString ConnectToDialog::protocol() const
 {
-    return ui->protocolCombo->currentText().toLower();
+    return ui->protocolCombo->currentText();
 }
 
 QString ConnectToDialog::host() const
