@@ -376,11 +376,12 @@
  </widget>
  <tabstops>
   <tabstop>nameLine</tabstop>
-  <tabstop>protocolCombo</tabstop>
   <tabstop>hostLine</tabstop>
+  <tabstop>protocolCombo</tabstop>
   <tabstop>portSpin</tabstop>
   <tabstop>transferModeCombo</tabstop>
   <tabstop>encodingCombo</tabstop>
+  <tabstop>anonymousCheck</tabstop>
   <tabstop>userNameLine</tabstop>
   <tabstop>passwordLine</tabstop>
   <tabstop>directoryLine</tabstop>
