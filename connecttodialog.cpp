@@ -25,6 +25,7 @@
 #include "ui_connecttodialog.h"
 
 #include <QPushButton>
+#include <QMessageBox>
 
 ConnectToDialog::ConnectToDialog(QWidget *parent, bool connectMode) :
     QDialog(parent),
@@ -59,6 +60,28 @@ ConnectToDialog::~ConnectToDialog()
 
 void ConnectToDialog::accept()
 {
+    bool connectMode = !ui->nameLine->isEnabled();
+
+    if (!connectMode && ui->nameLine->text().isEmpty())
+    {
+        QMessageBox::warning(this, windowTitle(),
+                             tr("%1 field is empty").arg(tr("Name:")));
+
+        ui->nameLine->setFocus();
+
+        return;
+    }
+
+    if (ui->hostLine->text().isEmpty())
+    {
+        QMessageBox::warning(this, windowTitle(),
+                             tr("%1 field is empty").arg(tr("Host:")));
+
+        ui->hostLine->setFocus();
+
+        return;
+    }
+
     _serverInfo.setName(ui->nameLine->text());
     _serverInfo.setHost(ui->hostLine->text());
     _serverInfo.setProtocol(ui->protocolCombo->currentText());
