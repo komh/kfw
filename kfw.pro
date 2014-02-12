@@ -40,7 +40,8 @@ SOURCES += main.cpp\
     locationcompleter.cpp \
     connecttodialog.cpp \
     serverinfo.cpp \
-    addressbookdialog.cpp
+    addressbookdialog.cpp \
+    sharedmemory.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -70,7 +71,8 @@ HEADERS  += kfilewizard.h \
     locationcompleter.h \
     connecttodialog.h \
     serverinfo.h \
-    addressbookdialog.h
+    addressbookdialog.h \
+    sharedmemory.h
 
 FORMS    += kfilewizard.ui \
     connecttodialog.ui \
