@@ -205,6 +205,14 @@ void AddressBookDialog::loadSettings()
 {
     QSettings settings;
 
+    settings.beginGroup("addressbook");
+
+    if (settings.contains("headerstate"))
+    {
+        ui->addressTree->header()->restoreState(
+                    settings.value("headerstate").toByteArray());
+    }
+
     int size = settings.beginReadArray("serverinfo");
 
     for (int i = 0; i < size; ++i)
@@ -231,11 +239,17 @@ void AddressBookDialog::loadSettings()
     }
 
     settings.endArray();
+
+    settings.endGroup();
 }
 
 void AddressBookDialog::saveSettings()
 {
     QSettings settings;
+
+    settings.beginGroup("addressbook");
+
+    settings.setValue("headerstate", ui->addressTree->header()->saveState());
 
     settings.beginWriteArray("serverinfo");
 
@@ -255,6 +269,8 @@ void AddressBookDialog::saveSettings()
     }
 
     settings.endArray();
+
+    settings.endGroup();
 }
 
 int AddressBookDialog::selectedRow() const
