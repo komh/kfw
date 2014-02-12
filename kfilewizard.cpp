@@ -894,14 +894,22 @@ void KFileWizard::loadSettings()
     QSettings settings;
 
     settings.beginGroup("mainwindow");
-    restoreGeometry(settings.value("geometry").toByteArray());
+
+    if (settings.contains("geometry"))
+        restoreGeometry(settings.value("geometry").toByteArray());
 
     settings.beginGroup("splitter");
-    ui->splitter->restoreState(settings.value("state").toByteArray());
+
+    if (settings.contains("state"))
+        ui->splitter->restoreState(settings.value("state").toByteArray());
 
     settings.beginGroup("entrytree");
-    ui->entryTree->header()->restoreState(
-                settings.value("headerstate").toByteArray());
+
+    if (settings.contains("headerstate"))
+    {
+        ui->entryTree->header()->restoreState(
+                    settings.value("headerstate").toByteArray());
+    }
 
     settings.endGroup(); // entrytree
     settings.endGroup(); // splitter
