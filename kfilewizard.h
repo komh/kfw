@@ -47,13 +47,19 @@ public:
 
     bool eventFilter(QObject* target, QEvent *event);
 
+#ifndef QT_NO_SHAREDMEMORY
     void lazyInitGeometry();
+#endif
 
 protected:
+#ifndef QT_NO_SHAREDMEMORY
     bool event(QEvent *event);
+#endif
     void closeEvent(QCloseEvent* event);
+#ifndef QT_NO_SHAREDMEMORY
     void moveEvent(QMoveEvent* event);
     void resizeEvent(QResizeEvent* event);
+#endif
 
 private slots:
     void appFocusChanged(QWidget* old, QWidget* now);
@@ -87,9 +93,11 @@ private:
 
     DelayedMessageBox* delayedMsgBox;
 
+#ifndef QT_NO_SHAREDMEMORY
     QSharedMemory sharedMem;
     QPoint initialPos;
     QSize initialSize;
+#endif
 
     inline QMessageBox::StandardButton critical(
                 const QString& text,

@@ -44,6 +44,7 @@
 #include "connecttodialog.h"
 #include "addressbookdialog.h"
 
+#ifndef QT_NO_SHAREDMEMORY
 // true : created
 // false : attached or failed
 static bool createSharedMem(QSharedMemory* mem)
@@ -107,12 +108,16 @@ static void storeSizeToSharedMem(QSharedMemory* mem, int w, int h)
 
     mem->unlock();
 }
+#endif
 
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KFileWizard),
     dirModel(0), dirProxyModel(0), entryModel(0), entryProxyModel(0),
-    delayedMsgBox(0), sharedMem(title())
+    delayedMsgBox(0)
+#ifndef QT_NO_SHAREDMEMORY
+  , sharedMem(title())
+#endif
 {
     ui->setupUi(this);
 
@@ -137,6 +142,7 @@ KFileWizard::KFileWizard(QWidget *parent) :
 
     loadSettings();
 
+#ifndef QT_NO_SHAREDMEMORY
     // save initial pos and initial size to refer to them later
     initialPos = pos();
     initialSize = size();
@@ -144,6 +150,7 @@ KFileWizard::KFileWizard(QWidget *parent) :
     // move out of screen to prevent a main window from flickering
     // until it is located properly later
     move(-50000, -50000);
+#endif
 }
 
 KFileWizard::~KFileWizard()
@@ -175,6 +182,7 @@ bool KFileWizard::eventFilter(QObject* target, QEvent *event)
     return QMainWindow::eventFilter(target, event);
 }
 
+#ifndef QT_NO_SHAREDMEMORY
 void KFileWizard::lazyInitGeometry()
 {
     QApplication::postEvent(this, new QEvent(QEvent::User));
@@ -246,6 +254,7 @@ bool KFileWizard::event(QEvent *event)
 
     return QMainWindow::event(event);
 }
+#endif
 
 void KFileWizard::closeEvent(QCloseEvent *event)
 {
@@ -254,6 +263,7 @@ void KFileWizard::closeEvent(QCloseEvent *event)
     QMainWindow::closeEvent(event);
 }
 
+#ifndef QT_NO_SHAREDMEMORY
 void KFileWizard::moveEvent(QMoveEvent *event)
 {
     Q_UNUSED(event);
@@ -266,6 +276,7 @@ void KFileWizard::resizeEvent(QResizeEvent *event)
     storeSizeToSharedMem(&sharedMem, event->size().width(),
                          event->size().height());
 }
+#endif
 
 void KFileWizard::initMenu()
 {
