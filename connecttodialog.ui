@@ -102,6 +102,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QSpinBox" name="portSpin">
+         <property name="maximum">
+          <number>65535</number>
+         </property>
          <property name="value">
           <number>21</number>
          </property>
