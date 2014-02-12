@@ -47,8 +47,13 @@ public:
 
     bool eventFilter(QObject* target, QEvent *event);
 
+    void lazyInitGeometry();
+
 protected:
+    bool event(QEvent *event);
     void closeEvent(QCloseEvent* event);
+    void moveEvent(QMoveEvent* event);
+    void resizeEvent(QResizeEvent* event);
 
 private slots:
     void appFocusChanged(QWidget* old, QWidget* now);
@@ -81,6 +86,10 @@ private:
     QFileSystemModel* locationCompleterModel;
 
     DelayedMessageBox* delayedMsgBox;
+
+    QSharedMemory sharedMem;
+    QPoint initialPos;
+    QSize initialSize;
 
     inline QMessageBox::StandardButton critical(
                 const QString& text,

@@ -71,6 +71,7 @@ int main(int argc, char *argv[])
 
     KFileWizard w;
     w.show();
+    w.lazyInitGeometry();
 
     return a.exec();
 }

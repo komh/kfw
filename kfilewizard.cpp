@@ -44,11 +44,75 @@
 #include "connecttodialog.h"
 #include "addressbookdialog.h"
 
+// true : created
+// false : attached or failed
+static bool createSharedMem(QSharedMemory* mem)
+{
+    if (mem->attach())
+        return false;
+
+    return mem->create(sizeof(quint16) * 4);
+}
+
+static QPoint posFromSharedMem(QSharedMemory* mem)
+{
+    if (!mem->lock())
+        return QPoint();
+
+    const quint16* data = static_cast<const quint16*>(mem->data());
+
+    QPoint point(data[0], data[1]);
+
+    mem->unlock();
+
+    return point;
+}
+
+static void storePosToSharedMem(QSharedMemory* mem, int x, int y)
+{
+    if (!mem->lock())
+        return;
+
+    quint16* data = static_cast<quint16*>(mem->data());
+
+    data[0] = x;
+    data[1] = y;
+
+    mem->unlock();
+}
+
+static QSize sizeFromSharedMem(QSharedMemory* mem)
+{
+    if (!mem->lock())
+        return QSize();
+
+    const quint16* data = static_cast<const quint16*>(mem->data());
+
+    QSize size(data[2], data[3]);
+
+    mem->unlock();
+
+    return size;
+}
+
+static void storeSizeToSharedMem(QSharedMemory* mem, int w, int h)
+{
+    if (!mem->lock())
+        return;
+
+    quint16* data = static_cast<quint16*>(mem->data());
+
+    data[2] = w;
+    data[3] = h;
+
+    mem->unlock();
+}
+
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KFileWizard),
     dirModel(0), dirProxyModel(0), entryModel(0), entryProxyModel(0),
-    delayedMsgBox(0)
+    delayedMsgBox(0), sharedMem(title())
 {
     ui->setupUi(this);
 
@@ -72,6 +136,14 @@ KFileWizard::KFileWizard(QWidget *parent) :
     initEntryTree();
 
     loadSettings();
+
+    // save initial pos and initial size to refer to them later
+    initialPos = pos();
+    initialSize = size();
+
+    // move out of screen to prevent a main window from flickering
+    // until it is located properly later
+    move(-50000, -50000);
 }
 
 KFileWizard::~KFileWizard()
@@ -103,11 +175,96 @@ bool KFileWizard::eventFilter(QObject* target, QEvent *event)
     return QMainWindow::eventFilter(target, event);
 }
 
+void KFileWizard::lazyInitGeometry()
+{
+    QApplication::postEvent(this, new QEvent(QEvent::User));
+}
+
+bool KFileWizard::event(QEvent *event)
+{
+    // lazyInitGeometry() event ?
+    if (event->type() == QEvent::User)
+    {
+        // first instance ?
+        if (createSharedMem(&sharedMem))
+        {
+            // QSettings could not find a main window geometry ?
+            if (initialPos.isNull())
+            {
+                // then locate a main window at center
+                initialPos.setX((QApplication::desktop()->width() -
+                                 initialSize.width()) / 2 );
+                initialPos.setY((QApplication::desktop()->height() -
+                                 initialSize.height()) / 2);
+            }
+
+            storePosToSharedMem(&sharedMem, initialPos.x(), initialPos.y());
+            storeSizeToSharedMem(&sharedMem, initialSize.width(),
+                                 initialSize.height());
+
+            move(initialPos);
+        }
+        else // second instance
+        {
+            QPoint pos(posFromSharedMem(&sharedMem));
+            QSize size(sizeFromSharedMem(&sharedMem));
+
+            // calculate thickness of a left frame
+            int leftFrameSize = geometry().x() - frameGeometry().x();
+
+            // calculate thickness of a top frame including a title bar
+            int topFrameSize = geometry().y() - frameGeometry().y();
+
+            // calculate thickness of both a left frame and a right frame
+            int horizontalFrameSize =
+                    frameGeometry().width() - geometry().width();
+
+            // calculate thickness of both a top frame and a bottom frame
+            int verticalFrameSize =
+                    frameGeometry().height() - geometry().height();
+
+            // move by leftFrameSize * 5 and topFrameSize
+            pos.setX(pos.x() + leftFrameSize * 5);
+            pos.setY(pos.y() + topFrameSize);
+
+            if (pos.x() + size.width() + horizontalFrameSize
+                    >= QApplication::desktop()->width())
+                pos.setX(0);
+
+            if (pos.y() + size.height() + verticalFrameSize
+                    >= QApplication::desktop()->height())
+                pos.setY(0);
+
+            move(pos);
+
+            if (!size.isNull())
+                resize(size);
+        }
+
+        return true;
+    }
+
+    return QMainWindow::event(event);
+}
+
 void KFileWizard::closeEvent(QCloseEvent *event)
 {
     saveSettings();
 
     QMainWindow::closeEvent(event);
+}
+
+void KFileWizard::moveEvent(QMoveEvent *event)
+{
+    Q_UNUSED(event);
+
+    storePosToSharedMem(&sharedMem, frameGeometry().x(), frameGeometry().y());
+}
+
+void KFileWizard::resizeEvent(QResizeEvent *event)
+{
+    storeSizeToSharedMem(&sharedMem, event->size().width(),
+                         event->size().height());
 }
 
 void KFileWizard::initMenu()
