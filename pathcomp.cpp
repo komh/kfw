@@ -79,6 +79,27 @@ QString PathComp::toNativePath() const
     return localPath;
 }
 
+QString PathComp::canonicalPath() const
+{
+    QUrl url(toNativePath());
+
+    QUrl::FormattingOptions flags(QUrl::None);
+
+    if (url.scheme() == "ftp")
+    {
+        if (url.userName() == "anonymous")
+            flags |= QUrl::RemoveUserInfo;
+
+        if (url.port() == 21)
+            flags |= QUrl::RemovePort;
+
+        flags |= QUrl::RemovePassword | QUrl::RemoveQuery |
+                 QUrl::RemoveFragment | QUrl::StripTrailingSlash;
+    }
+
+    return url.toString(flags);
+}
+
 QString PathComp::merge(const QString& dir, const QString& fileName)
 {
     QString path(QDir::fromNativeSeparators(dir));

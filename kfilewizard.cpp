@@ -773,7 +773,7 @@ QModelIndex KFileWizard::findDirIndex(const QString& dir)
     DelayedMessageBox msgBox(this);
     msgBox.setWindowTitle(title());
     msgBox.setText(tr("Checking the accessability, please wait...\n\n%1")
-                        .arg(canonicalize(dir)));
+                        .arg(PathComp(dir).canonicalPath()));
     // just trigger a single shot timer without setting quit signal
     msgBox.trigger();
 
@@ -808,6 +808,9 @@ void KFileWizard::locationReturnPressed(bool bySignal)
         currentDir.setPath(ui->locationLine->text());
         if (!currentDir.path().isEmpty())
             currentDir.makeAbsolute();
+
+        // remove password and so on
+        ui->locationLine->setText(PathComp(currentDir.path()).canonicalPath());
 
         setEntryRoot();
 
