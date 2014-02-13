@@ -41,7 +41,8 @@ SOURCES += main.cpp\
     connecttodialog.cpp \
     serverinfo.cpp \
     addressbookdialog.cpp \
-    sharedmemory.cpp
+    sharedmemory.cpp \
+    simplecrypt.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -72,7 +73,8 @@ HEADERS  += kfilewizard.h \
     connecttodialog.h \
     serverinfo.h \
     addressbookdialog.h \
-    sharedmemory.h
+    sharedmemory.h \
+    simplecrypt.h
 
 FORMS    += kfilewizard.ui \
     connecttodialog.ui \

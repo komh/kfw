@@ -30,6 +30,8 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 
+#include "simplecrypt.h"
+
 AddressBookDialog::AddressBookDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddressBookDialog)
@@ -203,6 +205,8 @@ void AddressBookDialog::replaceServerInfo(const ServerInfo &si)
 
 void AddressBookDialog::loadSettings()
 {
+    SimpleCrypt crypto(Q_UINT64_C(0xa1b2c3d4e5f61728));
+
     QSettings settings;
 
     settings.beginGroup("addressbook");
@@ -232,7 +236,8 @@ void AddressBookDialog::loadSettings()
                             (settings.value("encoding").toInt()));
         si.setAnonymous(settings.value("anonymous").toBool());
         si.setUserName(settings.value("userid").toString());
-        si.setPassword(settings.value("password").toString());
+        si.setPassword(crypto.decryptToString(
+                           settings.value("password").toString()));
         si.setDirectory(settings.value("directory").toString());
 
         addServerInfo(si);
@@ -245,6 +250,8 @@ void AddressBookDialog::loadSettings()
 
 void AddressBookDialog::saveSettings()
 {
+    SimpleCrypt crypto(Q_UINT64_C(0xa1b2c3d4e5f61728));
+
     QSettings settings;
 
     settings.beginGroup("addressbook");
@@ -264,7 +271,9 @@ void AddressBookDialog::saveSettings()
         settings.setValue("encoding", serverInfoList.at(i).encoding());
         settings.setValue("anonymous", serverInfoList.at(i).isAnonymous());
         settings.setValue("userid", serverInfoList.at(i).userName());
-        settings.setValue("password", serverInfoList.at(i).password());
+        settings.setValue("password",
+                          crypto.encryptToString(
+                              serverInfoList.at(i).password()));
         settings.setValue("directory", serverInfoList.at(i).directory());
     }
 
