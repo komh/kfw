@@ -82,7 +82,17 @@ bool SharedMemory::detach()
 #ifndef QT_NO_SHAREDMEMORY
     return sharedMem.detach();
 #elif defined(Q_OS_OS2)
-    return _attached && DosFreeMem(_data) == 0;
+    if (!_attached)
+        return false;
+
+    if (DosFreeMem(_data) == 0)
+    {
+        _attached = false;
+
+        return true;
+    }
+
+    return false;
 #endif
 }
 
