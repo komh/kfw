@@ -70,7 +70,7 @@ bool SharedMemory::attach()
 
     key.append(_key);
 
-    _attached = DosGetNamedSharedMem(&_data, key.toLatin1().data(), fALLOC)
+    _attached = DosGetNamedSharedMem(&_data, key.toLatin1().data(), fGETNMSHR)
                     == 0;
 
     return _attached;
