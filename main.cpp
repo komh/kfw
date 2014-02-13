@@ -71,9 +71,7 @@ int main(int argc, char *argv[])
 
     KFileWizard w;
     w.show();
-#ifndef QT_NO_SHAREDMEMORY
     w.lazyInitGeometry();
-#endif
 
     return a.exec();
 }
