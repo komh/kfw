@@ -188,16 +188,6 @@ bool KFileWizard::event(QEvent *event)
         // first instance ?
         if (createSharedMem(&sharedMem))
         {
-            // QSettings could not find a main window geometry ?
-            if (initialPos.isNull())
-            {
-                // then locate a main window at center
-                initialPos.setX((QApplication::desktop()->width() -
-                                 initialSize.width()) / 2 );
-                initialPos.setY((QApplication::desktop()->height() -
-                                 initialSize.height()) / 2);
-            }
-
             storePosToSharedMem(&sharedMem, initialPos.x(), initialPos.y());
             storeSizeToSharedMem(&sharedMem, initialSize.width(),
                                  initialSize.height());
@@ -1057,6 +1047,13 @@ void KFileWizard::loadSettings()
 
     if (settings.contains("geometry"))
         restoreGeometry(settings.value("geometry").toByteArray());
+    else
+    {
+        // no a main window geometry
+        // locate a main window at center. this is a default action of Qt
+        move((QApplication::desktop()->width() - frameGeometry().width()) / 2,
+             (QApplication::desktop()->height() - frameGeometry().height()) / 2);
+    }
 
     settings.beginGroup("splitter");
 
