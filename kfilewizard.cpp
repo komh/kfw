@@ -933,12 +933,15 @@ void KFileWizard::refreshEntryModel(bool isUrlDifferentDir,
 
     msgBox.exec();
 
+    // this should right before entryProxyModel->setSourceModel().
+    // otherwise, a scroll bar occurs  when refreshing.
+    // frankly, I don't know why. TT
+    ui->entryTree->header()->restoreState(headerState);
+
     entryProxyModel->setSourceModel(entryModel);
     ui->entryTree->setModel(entryProxyModel);
 
     setEntryRoot();
-
-    ui->entryTree->header()->restoreState(headerState);
 }
 
 void KFileWizard::selectEntries(const QList<QUrl>& urlListToSelect, bool remove)
