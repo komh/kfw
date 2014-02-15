@@ -28,7 +28,6 @@ SOURCES += main.cpp\
     fileoperation/abstractfileworker.cpp \
     fileoperation/copyfileworker.cpp \
     fileoperation/removefileworker.cpp \
-    fileoperation/renamefileworker.cpp \
     fileoperation/movefileworker.cpp \
     delayedmessagebox.cpp \
     pathcomp.cpp \
@@ -59,7 +58,6 @@ HEADERS  += kfilewizard.h \
     fileoperation/abstractfileworker.h \
     fileoperation/copyfileworker.h \
     fileoperation/removefileworker.h \
-    fileoperation/renamefileworker.h \
     fileoperation/movefileworker.h \
     delayedmessagebox.h \
     pathcomp.h \
