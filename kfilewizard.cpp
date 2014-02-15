@@ -942,6 +942,12 @@ void KFileWizard::refreshEntryModel(bool isUrlDifferentDir,
     ui->entryTree->setModel(entryProxyModel);
 
     setEntryRoot();
+
+    // trcik to make sure that a header is visible.
+    // a header is sometimes invisible on OS/2 after refreshing, especially,
+    // ftp
+    ui->entryTree->setHeaderHidden(true);
+    ui->entryTree->setHeaderHidden(false);
 }
 
 void KFileWizard::selectEntries(const QList<QUrl>& urlListToSelect, bool remove)
