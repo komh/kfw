@@ -43,12 +43,22 @@ public:
 
     QString password(const QString& host, const QString& userName)
     {
-        return hostInfo(host, userName).at(Password);
+        QStringList info(hostInfo(host, userName));
+
+        if (info.isEmpty())
+            return QString();
+
+        return info.at(Password);
     }
 
     int port(const QString& host, const QString& userName)
     {
-        return hostInfo(host, userName).at(Port).toInt();
+        QStringList info(hostInfo(host, userName));
+
+        if (info.isEmpty())
+            return 21;
+
+        return info.at(Port).toInt();
     }
 
     void addHostInfo(const QString& host, const QString& userName,
