@@ -49,19 +49,25 @@ QStringList FtpHostInfoCache::hostInfo(const QString& host,
 void FtpHostInfoCache::addHostInfo(const QString& host,
                                    const QString& userName,
                                    const QString& password,
-                                   const QString& port)
+                                   const QString& port,
+                                   const QString &transferMode,
+                                   const QString &encoding)
 {
     QString key(userName);
 
     key.append("@");
     key.append(host);
 
-    _hostMap.insert(key, QStringList() << password << port);
+    _hostMap.insert(key, QStringList() << password << port << transferMode
+                                       << encoding);
 }
 
 void FtpHostInfoCache::addHostInfo(const QString& host,
                                    const QString& userName,
-                                   const QString& password, int port)
+                                   const QString& password, int port,
+                                   const QString &transferMode,
+                                   const QString &encoding)
 {
-    addHostInfo(host, userName, password, QString::number(port));
+    addHostInfo(host, userName, password, QString::number(port), transferMode,
+                encoding);
 }

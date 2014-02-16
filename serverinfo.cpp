@@ -180,6 +180,12 @@ QString ServerInfo::locationUrl() const
 
     url.setPath(directory());
 
+    url.setQueryItems(QList<QPair<QString, QString> >()
+                      << QPair<QString, QString>
+                            ("transfermode", transferModeText(transferMode()))
+                      << QPair<QString, QString>
+                            ("encoding", encodingText(encoding())));
+
     return url.toString();
 }
 

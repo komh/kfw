@@ -97,11 +97,28 @@ void FtpFileEngine::initFromFileName(const QString& file)
 
     _port = _url.port(21);
 
+    _transferMode = _url.queryItemValue("transfermode");
+    if (_transferMode.isEmpty())
+        _transferMode = hostCache.transferMode(_url.host(), _userName);
+
+    _encoding = _url.queryItemValue("encoding");
+    if (_encoding.isEmpty())
+        _encoding = hostCache.encoding(_url.host(), _userName);
+
+    _textCodec = QTextCodec::codecForName(_encoding.toLatin1());
+
     _url.setUserName(_userName);
     _url.setPassword(_password);
     _url.setPort(_port);
 
-    hostCache.addHostInfo(_url.host(), _userName, _password, _port);
+    _url.setQueryItems(QList<QPair<QString, QString> >()
+                       << QPair<QString, QString>
+                             ("transfermode", _transferMode)
+                       << QPair<QString, QString>
+                             ("encoding", _encoding));
+
+    hostCache.addHostInfo(_url.host(), _userName, _password, _port,
+                          _transferMode, _encoding);
 
     _path = _url.path();
     if (_path.isEmpty())
@@ -229,7 +246,7 @@ void FtpFileEngine::refreshFileInfoCache()
         _entriesMap.clear();
 
         // get a file list from a parent directory
-        _ftp->cd(dir);
+        _ftp->cd(_textCodec->fromUnicode(dir));
         _ftp->list();
 
         _ftpSync.wait();
@@ -268,6 +285,9 @@ void FtpFileEngine::refreshFileInfoCache()
 
 bool FtpFileEngine::ftpConnect()
 {
+    _ftp->setTransferMode(_transferMode == "Passive" ?
+                              QFtp::Passive : QFtp::Active);
+
     _ftp->connectToHost(_url.host(), _port);
 
     // wait at most 30s
@@ -397,7 +417,7 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
         // a non-existent directory
         _ftpCache->addFileInfo(_cacheDir, QUrlInfo());
 
-        _ftp->cd(_path);
+        _ftp->cd(_textCodec->fromUnicode(_path));
         _ftp->list();
 
         ftpDisconnect();
@@ -704,7 +724,7 @@ bool FtpFileEngine::remove()
     if (!ftpConnect())
         return false;
 
-    _ftp->remove(_path);
+    _ftp->remove(_textCodec->fromUnicode(_path));
 
     bool result = _ftpSync.wait();
 
@@ -729,7 +749,8 @@ bool FtpFileEngine::rename(const QString &newName)
 
     QString newPath(QUrl(PathComp::fixUrl(newName)).path());
 
-    _ftp->rename(_path, newPath);
+    _ftp->rename(_textCodec->fromUnicode(_path),
+                 _textCodec->fromUnicode(newPath));
 
     bool result = _ftpSync.wait();
 
@@ -848,8 +869,10 @@ void FtpFileEngine::ftpListInfo(const QUrlInfo &urlInfo)
         info.setPermissions(info.permissions() |
                             QAbstractFileEngine::ReadUserPerm);
 
-    _entriesMap.insert(urlInfo.name(), info);
+    // QFtp assumes that a server side file name consists of Latin1 string
+    info.setName(_textCodec->toUnicode(info.name().toLatin1()));
 
+    _entriesMap.insert(info.name(), info);
     _ftpCache->addFileInfo(_cacheDir, info);
 }
 

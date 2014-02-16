@@ -64,9 +64,11 @@ void FtpTransferThread::run()
     ftp.connectToHost(_engine->_url.host(), _engine->_port);
     ftp.login(_engine->_userName, _engine->_password);
     if (_openMode & QIODevice::ReadOnly)
-        ftp.get(_engine->_path, &_engine->_fileBuffer);
+        ftp.get(_engine->_textCodec->fromUnicode(_engine->_path),
+                &_engine->_fileBuffer);
     else if (_openMode & QIODevice::WriteOnly)
-        ftp.put(&_engine->_fileBuffer, _engine->_path);
+        ftp.put(&_engine->_fileBuffer,
+                _engine->_textCodec->fromUnicode(_engine->_path));
 
     ftp.close();
 

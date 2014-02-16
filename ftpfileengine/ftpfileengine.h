@@ -101,6 +101,10 @@ private:
     QString _password;
     int _port;
     QString _path;
+    QString _transferMode;
+    QString _encoding;
+
+    QTextCodec* _textCodec;
 
     QString _cacheDir;
 

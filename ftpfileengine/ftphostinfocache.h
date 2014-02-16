@@ -37,7 +37,7 @@ public:
     explicit FtpHostInfoCache(QObject *parent = 0);
     ~FtpHostInfoCache();
 
-    enum { Password = 0, Port = 1 };
+    enum { Password = 0, Port = 1, TransferMode = 2, Encoding = 3 };
 
     QStringList hostInfo(const QString& host, const QString &userName);
 
@@ -61,11 +61,33 @@ public:
         return info.at(Port).toInt();
     }
 
-    void addHostInfo(const QString& host, const QString& userName,
-                     const QString& password, const QString& port);
+    QString transferMode(const QString& host, const QString& userName)
+    {
+        QStringList info(hostInfo(host, userName));
+
+        if (info.isEmpty())
+            return "Passive";
+
+        return info.at(TransferMode);
+    }
+
+    QString encoding(const QString& host, const QString& userName)
+    {
+        QStringList info(hostInfo(host, userName));
+
+        if (info.isEmpty())
+            return "System";
+
+        return info.at(Encoding);
+    }
 
     void addHostInfo(const QString& host, const QString& userName,
-                     const QString& password, int port);
+                     const QString& password, const QString& port,
+                     const QString& transferMode, const QString& encoding);
+
+    void addHostInfo(const QString& host, const QString& userName,
+                     const QString& password, int port,
+                     const QString& transferMode, const QString& encoding);
 
 private:
     static QMap<QString, QStringList> _hostMap;
