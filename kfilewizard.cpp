@@ -791,6 +791,9 @@ void KFileWizard::locationReturnPressed(bool bySignal)
         // To canonicalize a path
         setLocationText(ui->locationLine->text());
 
+        if (bySignal)
+            ui->entryTree->setFocus();
+
         // already processed ?
         if (ui->locationLine->text() == canonicalize(currentDir.path()))
             return;
@@ -803,9 +806,6 @@ void KFileWizard::locationReturnPressed(bool bySignal)
         ui->locationLine->setText(PathComp(currentDir.path()).canonicalPath());
 
         setEntryRoot();
-
-        if (bySignal)
-            ui->entryTree->setFocus();
     }
     else
     {
