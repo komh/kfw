@@ -1106,7 +1106,10 @@ void KFileWizard::connectTo()
     ConnectToDialog dialog(this);
 
     if (dialog.exec() == QDialog::Accepted)
+    {
         setLocationText(dialog.locationUrl());
+        ui->entryTree->setFocus();
+    }
 }
 
 void KFileWizard::openAddressBook()
