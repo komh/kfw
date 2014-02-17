@@ -812,6 +812,7 @@ void KFileWizard::locationReturnPressed(bool focusToEntry, bool bySignal)
         critical(tr("This is not a directory or not accessible.\n\n%1")
                     .arg(ui->locationLine->text()));
 
+        ui->locationLine->setFocus();
         ui->locationLine->selectAll();
     }
 }
