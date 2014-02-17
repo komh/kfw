@@ -69,7 +69,7 @@ private slots:
     void entryRefresh();
     void renameBegin(const QString& oldName, const QString& newName);
     void renameEnd();
-    void locationReturnPressed(bool bySignal = true);
+    void locationReturnPressed(bool focusToEntry = true, bool bySignal = true);
     void about();
     void connectTo();
     void openAddressBook();
@@ -123,7 +123,7 @@ private:
 
     bool fileWorker(AbstractFileWorker* worker,
                     QProgressDialog *progress);
-    void setLocationText(const QString& text);
+    void setLocationText(const QString& text, bool focusToEntry = false);
     QString canonicalize(const QString& path);
     QModelIndex findDirIndex(const QString& dir);
     QString getNameOfCopy(const QString& source);

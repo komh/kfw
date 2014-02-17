@@ -741,7 +741,7 @@ void KFileWizard::renameEnd()
     delete delayedMsgBox;
 }
 
-void KFileWizard::setLocationText(const QString& text)
+void KFileWizard::setLocationText(const QString& text, bool focusToEntry)
 {
     QString canonicalPath = canonicalize(text);
 
@@ -749,7 +749,7 @@ void KFileWizard::setLocationText(const QString& text)
     {
         ui->locationLine->setText(canonicalPath);
 
-        locationReturnPressed(false);
+        locationReturnPressed(focusToEntry, false);
     }
 }
 
@@ -782,17 +782,14 @@ QModelIndex KFileWizard::findDirIndex(const QString& dir)
     return QModelIndex();
 }
 
-void KFileWizard::locationReturnPressed(bool bySignal)
+void KFileWizard::locationReturnPressed(bool focusToEntry, bool bySignal)
 {
     // cdUp() from a drive root or a valid directory entry ?
     if ((!bySignal && ui->locationLine->text().isEmpty())
             || findDirIndex(ui->locationLine->text()).isValid())
     {
         // To canonicalize a path
-        setLocationText(ui->locationLine->text());
-
-        if (bySignal)
-            ui->entryTree->setFocus();
+        setLocationText(ui->locationLine->text(), focusToEntry);
 
         // already processed ?
         if (ui->locationLine->text() == canonicalize(currentDir.path()))
@@ -806,6 +803,9 @@ void KFileWizard::locationReturnPressed(bool bySignal)
         ui->locationLine->setText(PathComp(currentDir.path()).canonicalPath());
 
         setEntryRoot();
+
+        if (focusToEntry)
+            ui->entryTree->setFocus();
     }
     else
     {
@@ -1106,10 +1106,7 @@ void KFileWizard::connectTo()
     ConnectToDialog dialog(this);
 
     if (dialog.exec() == QDialog::Accepted)
-    {
-        setLocationText(dialog.locationUrl());
-        ui->entryTree->setFocus();
-    }
+        setLocationText(dialog.locationUrl(), true);
 }
 
 void KFileWizard::openAddressBook()
@@ -1117,8 +1114,5 @@ void KFileWizard::openAddressBook()
     AddressBookDialog dialog(this);
 
     if (dialog.exec() == QDialog::Accepted)
-    {
-        setLocationText(dialog.locationUrl());
-        ui->entryTree->setFocus();
-    }
+        setLocationText(dialog.locationUrl(), true);
 }
