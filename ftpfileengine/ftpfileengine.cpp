@@ -316,7 +316,7 @@ bool FtpFileEngine::ftpDisconnect()
 
     _ftpConnected = !_ftpSync.wait();
 
-    return _ftpConnected;
+    return !_ftpConnected;
 }
 
 bool FtpFileEngine::atEnd() const
