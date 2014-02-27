@@ -61,6 +61,8 @@ void FtpTransferThread::run()
     connect(this, SIGNAL(loopQuit()), &loop, SLOT(quit()),
             Qt::QueuedConnection);
 
+    ftp.setTransferMode(_engine->_transferMode == "Passive" ?
+                            QFtp::Passive : QFtp::Active);
     ftp.connectToHost(_engine->_url.host(), _engine->_port);
     ftp.login(_engine->_userName, _engine->_password);
     if (_openMode & QIODevice::ReadOnly)
