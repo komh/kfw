@@ -26,7 +26,7 @@
 #include "ftpsync.h"
 
 FtpSync::FtpSync(QObject *parent)
-    : QThread(parent)
+    : QObject(parent)
     , _ftpDone(false)
     , _ftpError(false)
     , _ftpTimedOut(false)
@@ -34,7 +34,7 @@ FtpSync::FtpSync(QObject *parent)
 }
 
 FtpSync::FtpSync(QFtp *ftp, QObject *parent)
-    : QThread(parent)
+    : QObject(parent)
     , _ftpDone(false)
     , _ftpError(false)
     , _ftpTimedOut(false)

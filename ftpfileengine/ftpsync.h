@@ -28,7 +28,7 @@
 #include <QFtp>
 #include <QEventLoop>
 
-class FtpSync : public QThread
+class FtpSync : public QObject
 {
     Q_OBJECT
 
