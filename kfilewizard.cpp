@@ -815,8 +815,11 @@ void KFileWizard::locationReturnPressed(bool focusToEntry, bool bySignal)
         critical(tr("This is not a directory or not accessible.\n\n%1")
                     .arg(ui->locationLine->text()));
 
-        ui->locationLine->setFocus();
-        ui->locationLine->selectAll();
+        // Select all only if a location line has a focus.
+        // This prevents a location line from having a focus when cd fails
+        // in an entry view
+        if (ui->locationLine->hasFocus())
+            ui->locationLine->selectAll();
     }
 }
 
@@ -1112,7 +1115,12 @@ void KFileWizard::connectTo()
     ConnectToDialog dialog(this);
 
     if (dialog.exec() == QDialog::Accepted)
+    {
+        // To select all when connection fails
+        ui->locationLine->setFocus();
+
         setLocationText(dialog.locationUrl(), true);
+    }
 }
 
 void KFileWizard::openAddressBook()
@@ -1120,5 +1128,10 @@ void KFileWizard::openAddressBook()
     AddressBookDialog dialog(this);
 
     if (dialog.exec() == QDialog::Accepted)
+    {
+        // To select all when connection fails
+        ui->locationLine->setFocus();
+
         setLocationText(dialog.locationUrl(), true);
+    }
 }
