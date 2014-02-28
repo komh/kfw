@@ -48,7 +48,10 @@ FtpSync::~FtpSync()
 
 void FtpSync::setFtp(QFtp* ftp)
 {
-    connect(ftp, SIGNAL(done(bool)), this, SLOT(ftpDone(bool)));
+    if (ftp)
+        connect(ftp, SIGNAL(done(bool)), this, SLOT(ftpDone(bool)));
+    else
+        disconnect(this, SLOT(ftpDone(bool)));
 }
 
 bool FtpSync::wait(int ms)

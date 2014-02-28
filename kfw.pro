@@ -41,7 +41,8 @@ SOURCES += main.cpp\
     serverinfo.cpp \
     addressbookdialog.cpp \
     sharedmemory.cpp \
-    simplecrypt.cpp
+    simplecrypt.cpp \
+    ftpfileengine/ftpconnectioncache.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -72,7 +73,8 @@ HEADERS  += kfilewizard.h \
     serverinfo.h \
     addressbookdialog.h \
     sharedmemory.h \
-    simplecrypt.h
+    simplecrypt.h \
+    ftpfileengine/ftpconnectioncache.h
 
 FORMS    += kfilewizard.ui \
     connecttodialog.ui \

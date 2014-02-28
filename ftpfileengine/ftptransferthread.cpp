@@ -51,6 +51,8 @@ void FtpTransferThread::run()
     // blocked as well when a main thread is blocked
     QEventLoop loop;
 
+    // Use a separate QFtp instance because copying in a same server is
+    // possible
     QFtp ftp;
 
     connect(&ftp, SIGNAL(done(bool)), &loop, SLOT(quit()),

@@ -30,6 +30,7 @@
 #include "ftpbuffer.h"
 #include "ftptransferthread.h"
 #include "ftphostinfocache.h"
+#include "ftpconnectioncache.h"
 #include "pathcomp.h"
 
 #include "ftpfileengine.h"
@@ -71,9 +72,6 @@ FtpFileEngine::~FtpFileEngine()
 #if 0
     close();
 #endif
-
-    // delete causes ASSERT to be failed on Windows debug build
-    _ftp->deleteLater();
 }
 
 void FtpFileEngine::initFromFileName(const QString& file)
@@ -132,11 +130,17 @@ void FtpFileEngine::initFromFileName(const QString& file)
 
 void FtpFileEngine::initFtp()
 {
-    _ftp = new QFtp;
-    connect(_ftp, SIGNAL(listInfo(QUrlInfo)),
-            this, SLOT(ftpListInfo(QUrlInfo)));
+    qRegisterMetaType<QUrlInfo>("QUrlInfo");
 
-    _ftpSync.setFtp(_ftp);
+    // close all the connection
+    if (_url.host().isEmpty() && _path == "/:closeall:")
+    {
+        FtpConnectionCache::getInstance()->closeAll();
+
+        _fileFlags = QAbstractFileEngine::FileType;
+
+        return;
+    }
 
     _ftpCache = FtpFileInfoCache::getInstance();
 
@@ -285,6 +289,27 @@ void FtpFileEngine::refreshFileInfoCache()
 
 bool FtpFileEngine::ftpConnect()
 {
+    FtpConnectionCache* cache(FtpConnectionCache::getInstance());
+
+    QFtp* cachedConnection = cache->findConnection(_url);
+
+    _ftp = cachedConnection ? cachedConnection : new QFtp;
+
+    if (!_ftp)
+        return false;
+
+    _ftpSync.setFtp(_ftp);
+
+    connect(_ftp, SIGNAL(listInfo(QUrlInfo)),
+            this, SLOT(ftpListInfo(QUrlInfo)));
+
+    if (cachedConnection)
+    {
+        _ftpConnected = true;
+
+        return true;
+    }
+
     _ftp->setTransferMode(_transferMode == "Passive" ?
                               QFtp::Passive : QFtp::Active);
 
@@ -304,6 +329,9 @@ bool FtpFileEngine::ftpConnect()
             ftpDisconnect();
     }
 
+    if (_ftpConnected)
+        cache->addConnection(_url, _ftp);
+
     return _ftpConnected;
 }
 
@@ -312,9 +340,14 @@ bool FtpFileEngine::ftpDisconnect()
     if (!_ftpConnected)
         return true;
 
-    _ftp->close();
+    _ftpSync.setFtp(0);
 
-    _ftpConnected = !_ftpSync.wait();
+    disconnect(_ftp, SIGNAL(listInfo(QUrlInfo)),
+               this, SLOT(ftpListInfo(QUrlInfo)));
+
+    _ftpConnected = false;
+
+    _ftp = 0;
 
     return !_ftpConnected;
 }
@@ -419,6 +452,8 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
 
         _ftp->cd(_textCodec->fromUnicode(_path));
         _ftp->list();
+
+        _ftpSync.wait();
 
         ftpDisconnect();
     }
