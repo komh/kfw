@@ -70,23 +70,17 @@ QString PathComp::toNativePath() const
     if (isFtpPath())
         return path();
 
-    QString localPath = QDir::toNativeSeparators(path());
-
-    // convert a drive letter to an upper case
-    if (localPath.length() >= 2 && localPath.at(1) == ':')
-        localPath[0] = localPath.at(0).toUpper();
-
-    return localPath;
+    return QDir::toNativeSeparators(path());
 }
 
 QString PathComp::canonicalPath() const
 {
-    QUrl url(toNativePath());
-
-    QUrl::FormattingOptions flags(QUrl::None);
-
-    if (url.scheme() == "ftp")
+    if (isFtpPath())
     {
+        QUrl url(path());
+
+        QUrl::FormattingOptions flags(QUrl::None);
+
         if (url.userName() == "anonymous")
             flags |= QUrl::RemoveUserInfo;
 
@@ -95,9 +89,12 @@ QString PathComp::canonicalPath() const
 
         flags |= QUrl::RemovePassword | QUrl::RemoveQuery |
                  QUrl::RemoveFragment | QUrl::StripTrailingSlash;
+
+        return url.toString(flags);
     }
 
-    return url.toString(flags);
+    // local path
+    return QDir::toNativeSeparators(QFileInfo(path()).canonicalFilePath());
 }
 
 QString PathComp::merge(const QString& dir, const QString& fileName)

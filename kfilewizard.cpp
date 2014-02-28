@@ -758,7 +758,7 @@ void KFileWizard::setLocationText(const QString& text, bool focusToEntry)
 
 QString KFileWizard::canonicalize(const QString& path)
 {
-    return PathComp(path).toNativePath();
+    return PathComp(path).canonicalPath();
 }
 
 QModelIndex KFileWizard::findDirIndex(const QString& dir)
