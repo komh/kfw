@@ -26,12 +26,15 @@
 
 #include <QProgressDialog>
 #include <QEventLoop>
+#include <QEvent>
 
 class DelayedMessageBox : public QObject
 {
     Q_OBJECT
 public:
     explicit DelayedMessageBox(QWidget *parent = 0);
+
+    bool eventFilter(QObject* target, QEvent *event);
 
     QString text() const { return _progress.labelText(); }
     void setText(const QString& text) { _progress.setLabelText(text);}

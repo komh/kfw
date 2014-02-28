@@ -30,8 +30,20 @@ DelayedMessageBox::DelayedMessageBox(QWidget *parent) :
   , _progress(parent)
   , _minimumDuration(500)
 {
+    _progress.installEventFilter(this);
+
     _progress.setCancelButton(0);
     _progress.setRange(0, 0);
+}
+
+bool DelayedMessageBox::eventFilter(QObject *target, QEvent *event)
+{
+    Q_UNUSED(target);
+
+    if (event->type() == QEvent::KeyPress)
+        return true;
+
+    return false;
 }
 
 void DelayedMessageBox::setQuitSignal(QObject *sender, const char *signal)
