@@ -32,6 +32,10 @@ DelayedMessageBox::DelayedMessageBox(QWidget *parent) :
 {
     _progress.installEventFilter(this);
 
+    _progress.setWindowFlags((_progress.windowFlags() |
+                              Qt::CustomizeWindowHint) &
+                             ~Qt::WindowCloseButtonHint);
+
     _progress.setCancelButton(0);
     _progress.setRange(0, 0);
 }
