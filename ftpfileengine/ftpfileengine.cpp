@@ -182,6 +182,14 @@ void FtpFileEngine::refreshFileInfoCache()
     {
         qDebug() << "refreshFileInfoCache()" << "host empty" << _path;
 
+        // accepts / only
+        if (_path != "/")
+        {
+            _fileFlags = QAbstractFileEngine::FileType;
+
+            return;
+        }
+
         QAbstractFileEngine::FileFlags permissions =
                 QAbstractFileEngine::ReadOwnerPerm |
                 QAbstractFileEngine::ReadUserPerm |
