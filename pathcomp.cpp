@@ -94,7 +94,7 @@ QString PathComp::canonicalPath() const
     }
 
     // local path
-    return QDir::toNativeSeparators(QFileInfo(path()).canonicalFilePath());
+    return QDir::toNativeSeparators(QFileInfo(path()).absoluteFilePath());
 }
 
 QString PathComp::merge(const QString& dir, const QString& fileName)
