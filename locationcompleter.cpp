@@ -33,7 +33,7 @@ LocationCompleter::LocationCompleter(QObject *parent) :
 QString LocationCompleter::pathFromIndex(const QModelIndex &index) const
 {
     // do not convert separators of FTP path to back-slash
-    return PathComp(QCompleter::pathFromIndex(index)).toNativePath();
+    return PathComp(QCompleter::pathFromIndex(index)).nativePath();
 }
 
 QStringList LocationCompleter::splitPath(const QString &path) const

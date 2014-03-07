@@ -65,7 +65,7 @@ bool PathComp::isDriveList() const
     return path().isEmpty() || (isRemotePath() && QUrl(path()).host().isEmpty());
 }
 
-QString PathComp::toNativePath() const
+QString PathComp::nativePath() const
 {
     if (isFtpPath())
         return path();
