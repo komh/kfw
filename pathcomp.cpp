@@ -70,7 +70,14 @@ QString PathComp::toNativePath() const
     if (isFtpPath())
         return path();
 
-    return QDir::toNativeSeparators(path());
+    QString nativePath(QDir::toNativeSeparators(path()));
+
+    // convert a drive letter to an upper case
+    if (nativePath.length() >= 2 && nativePath.at(0).isLetter()
+            && nativePath.at(1) == QLatin1Char(':'))
+        nativePath[0] = nativePath.at(0).toUpper();
+
+    return nativePath;
 }
 
 QString PathComp::canonicalPath() const
