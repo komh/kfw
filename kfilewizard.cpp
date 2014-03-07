@@ -473,15 +473,15 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
                          QDir(to).absoluteFilePath(
                              PathComp(source).fileName())));
 
-        QString canonicalSource(canonicalize(source));
-        QString canonicalDest(canonicalize(dest));
+        QString canonicalSource(PathComp(source).canonicalPath());
+        QString canonicalDest(PathComp(dest).canonicalPath());
 
         if (canonicalSource == canonicalDest)
         {
             if (copy)
             {
                 dest = getNameOfCopy(source);
-                canonicalDest = canonicalize(dest);
+                canonicalDest = PathComp(dest).canonicalPath();
             }
             else
             {
@@ -590,7 +590,7 @@ QMessageBox::StandardButton KFileWizard::checkOverwrite(
             critical(tr("%1\n\n"
                         "This file already exists. "
                         "Overwriting is not supported by FTP.")
-                            .arg(canonicalize(dest)),
+                            .arg(PathComp(dest).canonicalPath()),
                      QMessageBox::Ok);
 
             return QMessageBox::No;
@@ -599,7 +599,7 @@ QMessageBox::StandardButton KFileWizard::checkOverwrite(
         return  question(tr("%1\n\n"
                            "This file already exists. "
                            "Are you sure to overwrite it?")
-                            .arg(canonicalize(dest)),
+                            .arg(PathComp(dest).canonicalPath()),
                            QMessageBox::Yes | QMessageBox::No |
                             QMessageBox::Cancel);
     }
@@ -621,7 +621,7 @@ void KFileWizard::removeUrls(const QList<QUrl> &urlList)
     QString msg(urlList.size() == 1 ?
                     tr("Are you sure to delete this file?\n\n"
                        "%1")
-                       .arg(canonicalize(urlList.first().toString())) :
+                       .arg(PathComp(urlList.first().toString()).canonicalPath()) :
                     tr("Are you sure to delete these %1 entries?")
                        .arg(urlList.size()));
 
@@ -647,7 +647,7 @@ void KFileWizard::removeUrls(const QList<QUrl> &urlList)
 
         QString source(PathComp::fixUrl(url.toString()));
 
-        QString canonicalSource(canonicalize(source));
+        QString canonicalSource(PathComp(source).canonicalPath());
 
         progress.setLabelText(tr("Deleting %1 of %2\n\n"
                                  "%3\n\n")
@@ -746,19 +746,14 @@ void KFileWizard::renameEnd()
 
 void KFileWizard::setLocationText(const QString& text, bool focusToEntry)
 {
-    QString canonicalPath = canonicalize(text);
+    QString nativePath = PathComp(text).nativePath();
 
-    if (canonicalPath != ui->locationLine->text())
+    if (nativePath != ui->locationLine->text())
     {
-        ui->locationLine->setText(canonicalPath);
+        ui->locationLine->setText(nativePath);
 
         locationReturnPressed(focusToEntry, false);
     }
-}
-
-QString KFileWizard::canonicalize(const QString& path)
-{
-    return PathComp(path).canonicalPath();
 }
 
 QModelIndex KFileWizard::findDirIndex(const QString& dir)
@@ -791,11 +786,12 @@ void KFileWizard::locationReturnPressed(bool focusToEntry, bool bySignal)
     if ((!bySignal && ui->locationLine->text().isEmpty())
             || findDirIndex(ui->locationLine->text()).isValid())
     {
-        // To canonicalize a path
+        // To convert to a native path
         setLocationText(ui->locationLine->text(), focusToEntry);
 
         // already processed ?
-        if (ui->locationLine->text() == canonicalize(currentDir.path()))
+        if (ui->locationLine->text()
+                == PathComp(currentDir.path()).nativePath())
             return;
 
         currentDir.setPath(ui->locationLine->text());
@@ -832,7 +828,7 @@ void KFileWizard::setEntryRoot()
 
         msgBox.setWindowTitle(title());
         msgBox.setText(tr("Reading directory entries, please wait...\n\n%1")
-                            .arg(canonicalize(currentDir.path())));
+                            .arg(PathComp(currentDir.path()).canonicalPath()));
 
         msgBox.setQuitSignal(entryModel, SIGNAL(directoryLoaded(QString)));
         msgBox.trigger();
