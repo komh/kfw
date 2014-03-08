@@ -81,7 +81,11 @@ bool FtpBuffer::isSequential() const
     // QFtp::put() checks atEnd() when it reaches EOF, but only on
     // non-sequential device. So without this, QFtp::put() does not call
     // atEnd() and waits infinitely.
-    return !isEnd();
+    bool result = !isEnd();
+
+    qDebug() << "isSequential()" << result;
+
+    return result;
 }
 
 bool FtpBuffer::open(OpenMode mode)
@@ -139,14 +143,17 @@ bool FtpBuffer::waitForReadyRead(int msecs)
 
 qint64 FtpBuffer::readData(char *data, qint64 maxlen)
 {
-    qDebug() << "readData()" << maxlen << dataLength()
-                             << QThread::currentThreadId();
+    qDebug() << "readData()" << maxlen << QThread::currentThreadId();
 
+    qDebug() << "readData()"
+             << "dataLength =" << dataLength()
+             << "isEnd() = " << isEnd();
     while (!isEnd() && dataLength() == 0)
     {
         QMutexLocker locker(&_dataLengthMutex);
-        qDebug() << "readData() data empty";
+        qDebug() << "readData()" << "data empty" << dataLength();
         _dataLengthCond.wait(&_dataLengthMutex);
+        qDebug() << "readData()" << "waken up" << dataLength();
     }
 
     qint64 len = qMin(maxlen, dataLength());
@@ -177,6 +184,7 @@ qint64 FtpBuffer::readData(char *data, qint64 maxlen)
 
     QMutexLocker locker(&_dataLengthMutex);
 
+    qDebug() << "readData()" << "len =" << len << "_abort =" << _abort;
     return _abort ? 0 : len;
 }
 
@@ -198,6 +206,8 @@ qint64 FtpBuffer::writeData(const char *data, qint64 len)
 
     _dataLengthCond.wakeAll();
 
+    qDebug() << "writeData()" << result;
+
     return result;
 }
 
@@ -218,8 +228,9 @@ bool FtpBuffer::flush()
 
     while (!_abort && dataLength() > 0)
     {
-        qDebug() << "flush() data not empty";
+        qDebug() << "flush()" << "data not empty" << dataLength();
         _dataLengthCond.wait(&_dataLengthMutex);
+        qDebug() << "flush()" << "waken up" << dataLength();
     }
 
     qDebug() << "flush()" << "completed!!!";
