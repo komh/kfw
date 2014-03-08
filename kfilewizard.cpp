@@ -772,6 +772,8 @@ void KFileWizard::removeUrls(const QList<QUrl> &urlList)
     if (progress.wasCanceled())
         return;
 
+    progress.setRange(0, sourceListToRemove.size());
+
     ui->entryTree->setUpdatesEnabled(false);
 
     foreach(QString source, sourceListToRemove)
