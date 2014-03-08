@@ -108,6 +108,83 @@ static void storeSizeToSharedMem(SharedMemory* mem, int w, int h)
     mem->unlock();
 }
 
+// nameListToAdd: a list of entry names to add
+static QStringList entryList(const QString& dir,
+                             const QStringList& nameListToAdd,
+                             bool parentFirst, const QProgressDialog* progress)
+{
+    if (nameListToAdd.isEmpty())
+        return QStringList();
+
+    QStringList result;
+
+    QStringListIterator it(nameListToAdd);
+
+    while (!progress->wasCanceled() && it.hasNext())
+    {
+        QFileInfo info(PathComp::merge(dir, it.next()));
+
+        if (parentFirst)
+            result << PathComp::fixUrl(info.filePath());
+
+        if (info.isDir())
+        {
+
+            QDir dir(info.filePath());
+
+            result << entryList(info.filePath(),
+                                dir.entryList(QDir::AllEntries |
+                                              QDir::NoDotAndDotDot),
+                                parentFirst, progress);
+
+        }
+
+        if (!parentFirst)
+            result << PathComp::fixUrl(info.filePath());
+    }
+
+    return result;
+}
+
+// urlListToAdd : a list of fully qualified paths to add
+static QStringList entryList(const QList<QUrl>& urlListToAdd,
+                             bool parentFirst, const QProgressDialog* progress)
+{
+    if (urlListToAdd.isEmpty())
+        return QStringList();
+
+    QString dir(PathComp(urlListToAdd.first().toString()).dir());
+    QStringList nameList;
+
+    foreach (QUrl url, urlListToAdd)
+        nameList << PathComp(url.toString()).fileName();
+
+    return entryList(dir, nameList, parentFirst, progress);
+}
+
+static QStringList entryListWorker(const QList<QUrl>& urlListToAdd,
+                                   bool parentFirst,
+                                   const QProgressDialog& progress)
+{
+    QFutureWatcher<QStringList> watcher;
+    QEventLoop loop;
+
+    QObject::connect(&watcher, SIGNAL(finished()), &loop, SLOT(quit()));
+
+    QFuture<QStringList> future = QtConcurrent::run(entryList, urlListToAdd,
+                                                    parentFirst, &progress);
+
+    watcher.setFuture(future);
+
+    if (!future.isFinished())
+        loop.exec();
+
+    if (progress.wasCanceled())
+        return QStringList();
+
+    return future.result();
+}
+
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KFileWizard),
@@ -447,8 +524,6 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
     if (PathComp(to).isDriveList())
         return;
 
-    QList<QUrl> urlListToSelect;
-
     QProgressDialog progress(this);
     progress.setWindowTitle(title());
     progress.setLabelText(copy ? tr("Preparing for copying files..."):
@@ -458,20 +533,44 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
     progress.setAutoClose(false);
     progress.setAutoReset(false);
     progress.setMinimumDuration(500);
+    progress.setValue(0);
+
+    QStringList sourceListToCopy(entryListWorker(urlList, true, progress));
+
+    if (progress.wasCanceled())
+        return;
+
+    QString sourceDir(PathComp(sourceListToCopy.first()).dir());
+
+    QString dirName;
+    QString dirNameCopy;
+
+    QString skippedDir;
+
+    QList<QUrl> urlListToSelect;
 
     ui->entryTree->setUpdatesEnabled(false);
 
-    foreach(QUrl url, urlList)
+    foreach(QString source, sourceListToCopy)
     {
-        progress.setValue(0);
-
         if (progress.wasCanceled())
             break;
 
-        QString source(PathComp::fixUrl(url.toString()));
-        QString dest(PathComp::fixUrl(
-                         QDir(to).absoluteFilePath(
-                             PathComp(source).fileName())));
+        if (!skippedDir.isEmpty() && source.startsWith(skippedDir))
+            continue;
+
+        progress.setValue(0);
+
+        bool sourceIsDir = QFileInfo(source).isDir();
+        bool sourceIsInSourceDir = PathComp(source).dir() == sourceDir;
+
+        QString dest(PathComp::merge(to, source.mid(sourceDir.length())));
+
+        if (sourceIsInSourceDir && sourceIsDir)
+            dirNameCopy = dirName = dest;
+
+        if (!sourceIsDir && dirName != dirNameCopy)
+            dest.replace(dirName, dirNameCopy);
 
         QString canonicalSource(PathComp(source).canonicalPath());
         QString canonicalDest(PathComp(dest).canonicalPath());
@@ -494,6 +593,22 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
             }
         }
 
+        if (sourceIsDir && PathComp(source).isParentDirOf(dest))
+        {
+            progress.show();
+
+            critical(tr("Source is a parent directory of target.\n\n"
+                        "Source: %1\n\n"
+                        "Target: %2")
+                     .arg(canonicalSource).arg(canonicalDest));
+
+            skippedDir = source;
+            if (skippedDir.endsWith("/"))
+                skippedDir.append("/");
+
+            continue;
+        }
+
         progress.setLabelText((copy ? tr("Copying %1 of %2\n\n"
                                          "%3\n\n"
                                          "to\n\n"
@@ -502,8 +617,8 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
                                          "%3\n\n"
                                          "to\n\n"
                                          "%4"))
-                              .arg(urlList.indexOf(url) + 1)
-                              .arg(urlList.size())
+                              .arg(sourceListToCopy.indexOf(source) + 1)
+                              .arg(sourceListToCopy.size())
                               .arg(canonicalSource)
                               .arg(canonicalDest));
 
@@ -513,7 +628,16 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
             break;
 
         if (answer == QMessageBox::No)
+        {
+            if (sourceIsDir)
+            {
+                skippedDir = source;
+                if (skippedDir.endsWith("/"))
+                    skippedDir.append("/");
+            }
+
             continue;
+        }
 
         AbstractFileWorker* worker =
                 copy ? qobject_cast<AbstractFileWorker*>
@@ -536,8 +660,13 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
                      .arg(canonicalSource)
                      .arg(canonicalDest));
         }
-        else
+        else if (sourceIsInSourceDir)
+        {
             urlListToSelect.append(dest);
+
+            if (sourceIsDir)
+                dirNameCopy = dest;
+        }
     }
 
     ui->entryTree->setUpdatesEnabled(true);

@@ -104,6 +104,36 @@ QString PathComp::canonicalPath() const
     return QDir::toNativeSeparators(QFileInfo(path()).absoluteFilePath());
 }
 
+bool PathComp::isParentDirOf(const QString &dir) const
+{
+    QString parentDir(canonicalPath());
+
+    QString dirSep("/");
+
+    if (!isRemotePath(parentDir))
+        dirSep = QDir::toNativeSeparators(dirSep);
+
+    if (!parentDir.endsWith(dirSep))
+        parentDir.append(dirSep);
+
+    return PathComp(dir).canonicalPath().startsWith(parentDir);
+}
+
+bool PathComp::isSubDirOf(const QString &dir) const
+{
+    QString parentDir(PathComp(dir).canonicalPath());
+
+    QString dirSep("/");
+
+    if (!isRemotePath(parentDir))
+        dirSep = QDir::toNativeSeparators(dirSep);
+
+    if (!parentDir.endsWith(dirSep))
+        parentDir.append(dirSep);
+
+    return canonicalPath().startsWith(parentDir);
+}
+
 QString PathComp::merge(const QString& dir, const QString& fileName)
 {
     QString path(QDir::fromNativeSeparators(dir));

@@ -24,6 +24,7 @@
 #include <QtGui>
 
 #include "fileoperation.h"
+#include "pathcomp.h"
 
 #include "copyfileworker.h"
 
@@ -35,9 +36,24 @@ CopyFileWorker::CopyFileWorker(const QString &source, const QString &dest,
 
 void CopyFileWorker::performWork()
 {
-    FileOperation fileOp(source(), dest());
-
     setResult(false);
+
+    if (QFileInfo(source()).isDir())
+    {
+        PathComp destPathComp(dest());
+        QDir destParentDir(destPathComp.dir());
+
+        if (QDir(dest()).exists()
+                || destParentDir.mkdir(destPathComp.fileName()))
+        {
+            emit valueChanged(100);
+            setResult(true);
+        }
+
+        return;
+    }
+
+    FileOperation fileOp(source(), dest());
 
     if (fileOp.open())
     {

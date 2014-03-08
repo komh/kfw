@@ -47,6 +47,9 @@ public:
     QString nativePath() const;
     QString canonicalPath() const;
 
+    bool isParentDirOf(const QString& dir) const;
+    bool isSubDirOf(const QString& dir) const;
+
     static QString merge(const QString& dir, const QString& fileName);
     static QString merge(const QDir& dir, const QString& fileName);
     static QString fixUrl(const QString &url);
