@@ -176,7 +176,7 @@ static QStringList entryListWorker(const QList<QUrl>& urlListToAdd,
 
     watcher.setFuture(future);
 
-    if (!future.isFinished())
+    if (future.isRunning())
         loop.exec();
 
     if (progress.wasCanceled())
@@ -822,7 +822,8 @@ bool KFileWizard::fileWorker(AbstractFileWorker* worker,
 
     workerThread.start();
 
-    loop.exec();
+    if (workerThread.isRunning())
+        loop.exec();
 
     if (progress->wasCanceled())
     {
@@ -838,7 +839,8 @@ bool KFileWizard::fileWorker(AbstractFileWorker* worker,
 
         worker->cancel();
 
-        msgBox.exec();
+        if (workerThread.isRunning())
+            msgBox.exec();
     }
 
     workerThread.wait();
