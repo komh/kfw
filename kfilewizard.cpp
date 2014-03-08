@@ -603,8 +603,8 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
                      .arg(canonicalSource).arg(canonicalDest));
 
             skippedDir = source;
-            if (skippedDir.endsWith("/"))
-                skippedDir.append("/");
+
+            PathComp::addDirSeparator(skippedDir);
 
             continue;
         }
@@ -632,8 +632,8 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
             if (sourceIsDir)
             {
                 skippedDir = source;
-                if (skippedDir.endsWith("/"))
-                    skippedDir.append("/");
+
+                PathComp::addDirSeparator(skippedDir);
             }
 
             continue;

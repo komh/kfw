@@ -108,13 +108,7 @@ bool PathComp::isParentDirOf(const QString &dir) const
 {
     QString parentDir(canonicalPath());
 
-    QString dirSep("/");
-
-    if (!isRemotePath(parentDir))
-        dirSep = QDir::toNativeSeparators(dirSep);
-
-    if (!parentDir.endsWith(dirSep))
-        parentDir.append(dirSep);
+    addDirSeparator(parentDir);
 
     return PathComp(dir).canonicalPath().startsWith(parentDir);
 }
@@ -123,13 +117,7 @@ bool PathComp::isSubDirOf(const QString &dir) const
 {
     QString parentDir(PathComp(dir).canonicalPath());
 
-    QString dirSep("/");
-
-    if (!isRemotePath(parentDir))
-        dirSep = QDir::toNativeSeparators(dirSep);
-
-    if (!parentDir.endsWith(dirSep))
-        parentDir.append(dirSep);
+    addDirSeparator(parentDir);
 
     return canonicalPath().startsWith(parentDir);
 }
@@ -139,8 +127,7 @@ QString PathComp::merge(const QString& dir, const QString& fileName)
     QString path(QDir::fromNativeSeparators(dir));
     QString fName(QDir::fromNativeSeparators(fileName));
 
-    while (path.endsWith("/"))
-        path.chop(1);
+    removeDirSeparator(path);
 
     while (fName.startsWith("/"))
         fName.remove(0, 1);
@@ -176,4 +163,30 @@ bool PathComp::isRemotePath(const QString &path)
 bool PathComp::isFtpPath(const QString &path)
 {
     return QUrl(path).scheme() == "ftp";
+}
+
+QString& PathComp::addDirSeparator(QString& path, bool native)
+{
+    QString dirSep("/");
+
+    if (native && !isRemotePath(path))
+        dirSep = QDir::toNativeSeparators(dirSep);
+
+    if (!path.endsWith(dirSep))
+        path.append(dirSep);
+
+    return path;
+}
+
+QString& PathComp::removeDirSeparator(QString& path, bool native)
+{
+    QString dirSep("/");
+
+    if (native && !isRemotePath(path))
+        dirSep = QDir::toNativeSeparators(dirSep);
+
+    while (path.endsWith(dirSep))
+        path.chop(1);
+
+    return path;
 }

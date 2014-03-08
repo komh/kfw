@@ -57,6 +57,9 @@ public:
     static bool isRemotePath(const QString& path);
     static bool isFtpPath(const QString& path);
 
+    static QString& addDirSeparator(QString& path, bool native = false);
+    static QString& removeDirSeparator(QString& path, bool native = false);
+
 private:
     QString _path;
     QString _dir;
