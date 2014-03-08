@@ -748,7 +748,7 @@ void KFileWizard::removeUrls(const QList<QUrl> &urlList)
         return;
 
     QString msg(urlList.size() == 1 ?
-                    tr("Are you sure to delete this file?\n\n"
+                    tr("Are you sure to delete this entry?\n\n"
                        "%1")
                        .arg(PathComp(urlList.first().toString()).canonicalPath()) :
                     tr("Are you sure to delete these %1 entries?")
@@ -764,24 +764,26 @@ void KFileWizard::removeUrls(const QList<QUrl> &urlList)
     progress.setRange(0, urlList.size());
     progress.setModal(true);
     progress.setMinimumDuration(500);
+    progress.setValue(0);
+
+    QStringList sourceListToRemove(entryListWorker(urlList, false, progress));
+
+    if (progress.wasCanceled())
+        return;
 
     ui->entryTree->setUpdatesEnabled(false);
 
-    progress.setValue(0);
-
-    foreach(QUrl url, urlList)
+    foreach(QString source, sourceListToRemove)
     {
         if (progress.wasCanceled())
             break;
-
-        QString source(PathComp::fixUrl(url.toString()));
 
         QString canonicalSource(PathComp(source).canonicalPath());
 
         progress.setLabelText(tr("Deleting %1 of %2\n\n"
                                  "%3\n\n")
-                              .arg(urlList.indexOf(url) + 1)
-                              .arg(urlList.size())
+                              .arg(sourceListToRemove.indexOf(source) + 1)
+                              .arg(sourceListToRemove.size())
                               .arg(canonicalSource));
 
         if (!fileWorker(new RemoveFileWorker(source), &progress))
@@ -793,14 +795,14 @@ void KFileWizard::removeUrls(const QList<QUrl> &urlList)
                         .arg(canonicalSource));
         }
 
-        progress.setValue(urlList.indexOf(url) + 1);
+        progress.setValue(sourceListToRemove.indexOf(source) + 1);
     }
 
     ui->entryTree->setUpdatesEnabled(true);
 
     // Refresh entry only in case of FTP
     // QFileSystemModel works fine with a local remove operation
-    if (PathComp::isFtpPath(urlList.first().toString()))
+    if (1 || PathComp::isFtpPath(urlList.first().toString()))
         refreshEntry(urlList, true);
 }
 
