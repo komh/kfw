@@ -680,9 +680,22 @@ uchar* FtpFileEngine::map(qint64 offset, qint64 size,
 bool FtpFileEngine::mkdir(const QString &dirName,
                           bool createParentDirectories) const
 {
-    qDebug() << "mkdir()" << _fileName;
+    Q_UNUSED(createParentDirectories);
 
-    return QAbstractFileEngine::mkdir(dirName, createParentDirectories);
+    qDebug() << "mkdir()" << _fileName << dirName;
+
+    FtpFileEngine* This(const_cast<FtpFileEngine*>(this));
+    if (!This->ftpConnect())
+        return false;
+
+    _ftp->mkdir(_textCodec->fromUnicode(
+                    QUrl(PathComp::fixUrl(dirName)).path()));
+
+    bool result = This->_ftpSync.wait();
+
+    This->ftpDisconnect();
+
+    return result;
 }
 
 bool FtpFileEngine::open(QIODevice::OpenMode openMode)
@@ -811,9 +824,32 @@ bool FtpFileEngine::rename(const QString &newName)
 bool FtpFileEngine::rmdir(const QString &dirName,
                           bool recurseParentDirectories) const
 {
-    qDebug() << "rmdir()" << _fileName;
+    Q_UNUSED(recurseParentDirectories);
 
-    return QAbstractFileEngine::rmdir(dirName, recurseParentDirectories);
+    qDebug() << "rmdir()" << _fileName << dirName;
+
+    FtpFileEngine* This(const_cast<FtpFileEngine*>(this));
+
+    if (!This->ftpConnect())
+        return false;
+
+    QUrl url(PathComp::fixUrl(dirName));
+
+    _ftp->rmdir(_textCodec->fromUnicode(url.path()));
+
+    bool result = This->_ftpSync.wait();
+
+    This->ftpDisconnect();
+
+    if (result)
+    {
+        // remove cache entry
+        This->_ftpCache->removeFileInfo(This->getCachePath(url.path()));
+        if (_path == url.path())
+            This->_fileFlags = QAbstractFileEngine::FileType;
+    }
+
+    return result;
 }
 
 bool FtpFileEngine::seek(qint64 pos)

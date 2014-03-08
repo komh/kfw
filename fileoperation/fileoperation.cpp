@@ -125,5 +125,5 @@ bool FileOperation::mkdir()
 
 bool FileOperation::rmdir()
 {
-    return QDir().rmdir(source());
+    return QDir(source()).rmdir(source());
 }
