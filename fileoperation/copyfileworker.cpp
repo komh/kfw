@@ -40,11 +40,9 @@ void CopyFileWorker::performWork()
 
     if (QFileInfo(source()).isDir())
     {
-        PathComp destPathComp(dest());
-        QDir destParentDir(destPathComp.dir());
+        FileOperation fileOp(dest());
 
-        if (QDir(dest()).exists()
-                || destParentDir.mkdir(destPathComp.fileName()))
+        if (QDir(dest()).exists() || fileOp.mkdir())
         {
             emit valueChanged(100);
             setResult(true);

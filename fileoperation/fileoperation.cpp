@@ -115,3 +115,15 @@ bool FileOperation::rename(const QString &newName)
 
     return false;
 }
+
+bool FileOperation::mkdir()
+{
+    PathComp sourcePathComp(source());
+
+    return QDir(sourcePathComp.dir()).mkdir(sourcePathComp.fileName());
+}
+
+bool FileOperation::rmdir()
+{
+    return QDir().rmdir(source());
+}

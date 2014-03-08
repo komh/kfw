@@ -22,7 +22,6 @@
 ****************************************************************************/
 
 #include <QFileInfo>
-#include <QDir>
 
 #include "fileoperation.h"
 
@@ -35,14 +34,8 @@ RemoveFileWorker::RemoveFileWorker(const QString& source, QObject *parent) :
 
 void RemoveFileWorker::performWork()
 {
-    if (QFileInfo(source()).isDir())
-    {
-        setResult(QDir().rmdir(source()));
-
-        return;
-    }
-
     FileOperation fileOp(source());
 
-    setResult(fileOp.open() && fileOp.remove());
+    setResult(QFileInfo(source()).isDir() ?
+                  fileOp.rmdir() : (fileOp.open() && fileOp.remove()));
 }

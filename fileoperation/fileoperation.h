@@ -55,6 +55,8 @@ public:
     qint64 copy(qint64 chunkSize = DefaultChunkSize);
     bool remove();
     bool rename(const QString& newName);
+    bool mkdir();
+    bool rmdir();
 
 private:
     QString _source;
