@@ -680,31 +680,32 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
 
 QString KFileWizard::getNameOfCopy(const QString& source)
 {
-    QString result;
+    QUrl result(source);
 
-    int lastDot = source.lastIndexOf(".");
+    int lastDot = result.path().lastIndexOf(".");
 
     if (lastDot == -1)
-        lastDot = source.length();
+        lastDot = result.path().length();
 
-    QString pathBaseName(source.mid(0, lastDot));
-    QString suffix(source.mid(lastDot + 1 ));
+    QString pathBaseName(result.path().mid(0, lastDot));
+    QString suffix(result.path().mid(lastDot + 1 ));
 
     for (int i = 1;; ++i)
     {
-        result = pathBaseName;
-        result.append(tr(" - Copy"));
+        QString path(pathBaseName);
+        path.append(tr(" - Copy"));
         if (i > 1)
-            result.append(QString(" (%1)").arg(i));
+            path.append(QString(" (%1)").arg(i));
         if (!suffix.isEmpty())
-            result.append(".");
-        result.append(suffix);
+            path.append(".");
+        path.append(suffix);
 
-        if (!QFile(result).exists())
+        result.setPath(path);
+        if (!QFile(result.toString()).exists())
             break;
     }
 
-    return result;
+    return result.toString();
 }
 
 QMessageBox::StandardButton KFileWizard::checkOverwrite(
