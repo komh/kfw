@@ -148,12 +148,17 @@ qint64 FtpBuffer::readData(char *data, qint64 maxlen)
     qDebug() << "readData()"
              << "dataLength =" << dataLength()
              << "isEnd() = " << isEnd();
+
     while (!isEnd() && dataLength() == 0)
     {
         QMutexLocker locker(&_dataLengthMutex);
-        qDebug() << "readData()" << "data empty" << dataLength();
-        _dataLengthCond.wait(&_dataLengthMutex);
-        qDebug() << "readData()" << "waken up" << dataLength();
+
+        if (!_abort && dataLength() == 0)
+        {
+            qDebug() << "readData()" << "data empty" << dataLength();
+            _dataLengthCond.wait(&_dataLengthMutex);
+            qDebug() << "readData()" << "waken up" << dataLength();
+        }
     }
 
     qint64 len = qMin(maxlen, dataLength());
