@@ -984,6 +984,9 @@ void KFileWizard::setEntryRoot()
 
     ui->entryTree->scrollToTop();
 
+    dirModel->setRootPath("");
+    dirModel->setRootPath(currentDir.path());
+
     // select a corresponding entry of dir tree
     QModelIndex current =
             dirProxyModel->mapFromSource(dirModel->index(currentDir.path()));
@@ -991,6 +994,7 @@ void KFileWizard::setEntryRoot()
     ui->dirTree->setCurrentIndex(current);
     ui->dirTree->scrollTo(current);
 
+    locationCompleterModel->setRootPath("");
     locationCompleterModel->setRootPath(currentDir.path());
 }
 
