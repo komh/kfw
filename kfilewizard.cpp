@@ -1068,11 +1068,13 @@ void KFileWizard::refreshEntryModel(bool isUrlDifferentDir,
         QFile(PathComp::merge(currentDir, ":refresh:")).exists();
     }
 
+#if 0
     // a different directory from a current directory was modified ?
     // then refresh it as well. the case of drag and drop from a entry view to
     // a dir view
     if (isUrlDifferentDir && PathComp::isFtpPath(urlDir))
         QFile(PathComp::merge(urlDir, ":refresh:")).exists();
+#endif
 
     initEntryModel();
 
