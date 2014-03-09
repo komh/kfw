@@ -119,6 +119,7 @@ private:
     void initFromFileName(const QString& file = QString());
     void initFtp();
     void refreshFileInfoCache();
+    void refreshFileInfoCache(const QString& path);
     bool ftpConnect();
     bool ftpDisconnect();
     QString getCachePath(const QString& path, bool key = false);

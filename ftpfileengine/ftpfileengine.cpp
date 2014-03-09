@@ -295,6 +295,39 @@ void FtpFileEngine::refreshFileInfoCache()
     ftpDisconnect();
 }
 
+void FtpFileEngine::refreshFileInfoCache(const QString& path)
+{
+    if (_path == path)
+    {
+        refreshFileInfoCache();
+
+        return;
+    }
+
+    // failed to connect or to login ?
+    if (!ftpConnect())
+        return;
+
+    PathComp pathComp(path);
+
+    QString dir(pathComp.dir());
+    QString name(pathComp.fileName());
+
+    _cacheDir = getCachePath(dir, true);
+
+    _ftpCache->removeDirInfo(getCachePath(dir));
+
+    _entriesMap.clear();
+
+    // get a file list from a parent directory
+    _ftp->cd(_textCodec->fromUnicode(dir));
+    _ftp->list();
+
+    _ftpSync.wait();
+
+    ftpDisconnect();
+}
+
 bool FtpFileEngine::ftpConnect()
 {
     FtpConnectionCache* cache(FtpConnectionCache::getInstance());
@@ -499,6 +532,8 @@ bool FtpFileEngine::close()
 
     _fileBuffer.close();
 
+    refreshFileInfoCache();
+
     return true;
 }
 
@@ -688,12 +723,16 @@ bool FtpFileEngine::mkdir(const QString &dirName,
     if (!This->ftpConnect())
         return false;
 
-    _ftp->mkdir(_textCodec->fromUnicode(
-                    QUrl(PathComp::fixUrl(dirName)).path()));
+    QUrl url(PathComp::fixUrl(dirName));
+
+    _ftp->mkdir(_textCodec->fromUnicode(url.path()));
 
     bool result = This->_ftpSync.wait();
 
     This->ftpDisconnect();
+
+    if (result)
+        This->refreshFileInfoCache(url.path());
 
     return result;
 }
