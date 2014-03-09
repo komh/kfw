@@ -444,8 +444,8 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
         {
             QUrlInfo urlInfo = it.next();
 
-            // exclude an empty entry inserted by us
-            if (urlInfo.isValid())
+            // exclude an empty entry inserted by us and a non-existent entry
+            if (urlInfo.isValid() && urlInfo.permissions())
                 _entriesMap.insert(urlInfo.name(), urlInfo);
         }
     }
