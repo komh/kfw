@@ -52,7 +52,7 @@ public:
     void abort();
     bool  flush();
     qint64 readPos() const;
-    void setSize(qint64 size) { _size = size; }
+    void setSize(qint64 size) { _size = size; _dataLengthCond.wakeAll();}
 
 protected:
     virtual qint64 readData(char *data, qint64 maxlen);

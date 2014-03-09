@@ -265,7 +265,7 @@ bool FtpBuffer::isEnd() const
 {
     QMutexLocker locker(&_dataLengthMutex);
 
-    return _abort || readPos() >= totalSize();
+    return _abort || (_size != -1 && readPos() >= totalSize());
 }
 
 qint64 FtpBuffer::totalSize() const
