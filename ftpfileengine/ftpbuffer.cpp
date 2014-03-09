@@ -188,12 +188,21 @@ qint64 FtpBuffer::readData(char *data, qint64 maxlen)
     return _abort ? 0 : len;
 }
 
+static const qint64 MAX_BUFFER_SIZE = 32 * 1024;
+
 qint64 FtpBuffer::writeData(const char *data, qint64 len)
 {
     qDebug() << "writeData()" << len << _buffer.size()
                               << QThread::currentThreadId();
 
     QMutexLocker locker(&_dataLengthMutex);
+
+    while (!_abort && _buffer.size() > MAX_BUFFER_SIZE)
+    {
+        qDebug() << "writeData()" << "buffer too large" << _buffer.size();
+        _dataLengthCond.wait(&_dataLengthMutex);
+        qDebug() << "writeData()" << "waken up" << _buffer.size();
+    }
 
     if (_abort)
         return 0;
