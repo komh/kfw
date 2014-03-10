@@ -859,7 +859,7 @@ bool KFileWizard::fileWorker(AbstractFileWorker* worker,
 
 void KFileWizard::entryRefresh()
 {
-    refreshEntry(QList<QUrl>(), false);
+    refreshEntry(QList<QUrl>(), false, true);
 }
 
 void KFileWizard::renameBegin(const QString& oldName, const QString& newName)
@@ -1043,7 +1043,8 @@ QString KFileWizard::newPathForRemove(const QList<QUrl>& urlList)
 }
 
 void KFileWizard::refreshEntryModel(bool isUrlDifferentDir,
-                                    const QString& urlDir)
+                                    const QString& urlDir,
+                                    bool force)
 {
     QByteArray headerState(ui->entryTree->header()->saveState());
 
@@ -1061,20 +1062,23 @@ void KFileWizard::refreshEntryModel(bool isUrlDifferentDir,
     msgBox.setQuitSignal(entryModel, SIGNAL(directoryLoaded(QString)));
     msgBox.trigger();
 
-    // signal to FtpFileEngine to refresh entries
-    if (PathComp::isFtpPath(currentDir.path()))
+    if (force)
     {
-        // QDir::filePath() does not work with ":refresh:"
-        QFile(PathComp::merge(currentDir, ":refresh:")).exists();
-    }
+        // signal to FtpFileEngine to refresh entries
+        if (PathComp::isFtpPath(currentDir.path()))
+        {
+            // QDir::filePath() does not work with ":refresh:"
+            QFile(PathComp::merge(currentDir, ":refresh:")).exists();
+        }
 
 #if 0
-    // a different directory from a current directory was modified ?
-    // then refresh it as well. the case of drag and drop from a entry view to
-    // a dir view
-    if (isUrlDifferentDir && PathComp::isFtpPath(urlDir))
-        QFile(PathComp::merge(urlDir, ":refresh:")).exists();
+        // a different directory from a current directory was modified ?
+        // then refresh it as well. the case of drag and drop from a entry view to
+        // a dir view
+        if (isUrlDifferentDir && PathComp::isFtpPath(urlDir))
+            QFile(PathComp::merge(urlDir, ":refresh:")).exists();
 #endif
+    }
 
     initEntryModel();
 
@@ -1134,7 +1138,8 @@ void KFileWizard::selectEntries(const QList<QUrl>& urlListToSelect, bool remove)
     ui->entryTree->scrollTo(newCurrent);
 }
 
-void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
+void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove,
+                               bool force)
 {
     // do not refresh on a drive list
     if (PathComp(currentDir.path()).isDriveList())
@@ -1168,7 +1173,7 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove)
         urlListToSelect.append(newPathForRemove(urlList));
     }
 
-    refreshEntryModel(isUrlDifferentDir, urlDir);
+    refreshEntryModel(isUrlDifferentDir, urlDir, force);
 
     selectEntries(urlListToSelect, remove);
 

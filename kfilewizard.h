@@ -131,9 +131,11 @@ private:
                                                const QString& dest);
     void setEntryRoot();
     QString newPathForRemove(const QList<QUrl> &urlList);
-    void refreshEntryModel(bool isUrlDifferentDir, const QString &urlDir);
+    void refreshEntryModel(bool isUrlDifferentDir, const QString &urlDir,
+                           bool force);
     void selectEntries(const QList<QUrl> &urlListToSelect, bool remove);
-    void refreshEntry(const QList<QUrl>& urlList, bool remove = false);
+    void refreshEntry(const QList<QUrl>& urlList, bool remove = false,
+                      bool force = false);
 
     QString organization() const { return tr("KO Myung-Hun"); }
     QString title() const { return tr("K File Wizard"); }
