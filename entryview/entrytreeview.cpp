@@ -95,7 +95,7 @@ void EntryTreeView::dropEvent(QDropEvent *event)
 
 void EntryTreeView::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton)
+    if (event->button())
         startPos = event->pos();
 
     QTreeView::mousePressEvent(event);
@@ -105,7 +105,7 @@ void EntryTreeView::mouseMoveEvent(QMouseEvent *event)
 {
     int distance = (event->pos() - startPos).manhattanLength();
 
-    if ((event->buttons() & Qt::LeftButton)
+    if ((event->buttons())
             && distance >= QApplication::startDragDistance())
         perfromDrag();
 
