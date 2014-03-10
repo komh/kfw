@@ -261,12 +261,6 @@ void EntryTreeView::perfromDrag()
 
     Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction,
                                            Qt::MoveAction);
-
-    if (dropAction == Qt::MoveAction)
-    {
-        if (PathComp::isRemotePath(urlList.first().toString()))
-            emit refresh();
-    }
 }
 
 Qt::DropAction EntryTreeView::determineDropAction(
