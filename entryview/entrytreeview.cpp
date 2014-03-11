@@ -76,7 +76,7 @@ void EntryTreeView::dropEvent(QDropEvent *event)
                 qobject_cast<EntryListModel*>(proxyModel->sourceModel());
 
         QModelIndex index = proxyModel->mapToSource(indexAt(event->pos()));
-        if (!entryModel->isDir(index))
+        if (!index.isValid() || !entryModel->isDir(index))
             index = proxyModel->mapToSource(rootIndex());
 
         QString to(entryModel->filePath(index));
