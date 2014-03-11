@@ -547,6 +547,8 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
 
     QString skippedDir;
 
+    QStringList dirListToRemove;
+
     QList<QUrl> urlListToSelect;
 
     ui->entryTree->setUpdatesEnabled(false);
@@ -625,7 +627,10 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
         QMessageBox::StandardButton answer = checkOverwrite(&progress, dest);
 
         if (answer == QMessageBox::Cancel)
+        {
+            progress.cancel();
             break;
+        }
 
         if (answer == QMessageBox::No)
         {
@@ -640,10 +645,11 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
         }
 
         AbstractFileWorker* worker =
-                copy ? qobject_cast<AbstractFileWorker*>
-                            (new CopyFileWorker(source, dest)) :
-                       qobject_cast<AbstractFileWorker*>
-                            (new MoveFileWorker(source, dest));
+                copy || sourceIsDir ?
+                    qobject_cast<AbstractFileWorker*>
+                        (new CopyFileWorker(source, dest)) :
+                    qobject_cast<AbstractFileWorker*>
+                        (new MoveFileWorker(source, dest));
 
         if (!fileWorker(worker, &progress))
         {
@@ -660,12 +666,39 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
                      .arg(canonicalSource)
                      .arg(canonicalDest));
         }
-        else if (sourceIsInSourceDir)
+        else
         {
-            urlListToSelect.append(dest);
+            if (!copy && sourceIsDir)
+                dirListToRemove.append(source);
 
-            if (sourceIsDir)
-                dirNameCopy = dest;
+            if (sourceIsInSourceDir)
+            {
+                urlListToSelect.append(dest);
+
+                if (sourceIsDir)
+                    dirNameCopy = dest;
+            }
+        }
+    }
+
+    if (!progress.wasCanceled())
+    {
+        // remove directories not moved
+        QStringListIterator it(dirListToRemove);
+
+        it.toBack();
+        while (it.hasPrevious())
+        {
+            QString dir(it.previous());
+
+            if (!fileWorker(new RemoveFileWorker(dir), &progress))
+            {
+                progress.show();
+
+                critical(tr("Failed to delete\n\n"
+                            "%1")
+                         .arg(PathComp(dir).canonicalPath()));
+            }
         }
     }
 
