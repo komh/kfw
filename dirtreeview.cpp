@@ -273,20 +273,10 @@ Qt::DropAction DirTreeView::determineDropAction(
 
 void DirTreeView::performDrag()
 {
-    QModelIndexList indexList(selectedIndexes());
+    QList<QUrl> urlList(selectedUrlList());
 
-    if (indexList.isEmpty())
+    if (urlList.isEmpty())
         return;
-
-    FileSystemSortFilterProxyModel* proxyModel =
-            qobject_cast<FileSystemSortFilterProxyModel*>(model());
-    QFileSystemModel* dirModel =
-            qobject_cast<QFileSystemModel*>(proxyModel->sourceModel());
-
-    QList<QUrl> urlList;
-
-    foreach (QModelIndex index, indexList)
-        urlList << dirModel->filePath(proxyModel->mapToSource(index));
 
     UrlListMimeData* mimeData = new UrlListMimeData;
     mimeData->setList(urlList);
