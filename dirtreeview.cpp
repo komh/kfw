@@ -284,6 +284,5 @@ void DirTreeView::performDrag()
     QDrag* drag = new QDrag(this);
     drag->setMimeData(mimeData);
 
-    Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction,
-                                           Qt::MoveAction);
+    drag->exec(Qt::CopyAction | Qt::MoveAction, Qt::MoveAction);
 }
