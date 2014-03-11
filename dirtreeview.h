@@ -32,7 +32,11 @@ class DirTreeView : public QTreeView
 public:
     explicit DirTreeView(QWidget *parent = 0);
 
+    QList<QUrl> selectedUrlList();
+
 signals:
+    void paste(const QList<QUrl>&, bool copy = true);
+    void remove(const QList<QUrl>&);
     void dropped(const QList<QUrl>& urlList, const QString& to, bool copy);
 
 public slots:
@@ -45,8 +49,14 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
 
+    void keyPressEvent(QKeyEvent *event);
+
 private:
     QPoint startPos;
+
+    void copyToClipboard(bool copy = true);
+    void pasteFromClipboard();
+    void deletePressed();
 
     Qt::DropAction determineDropAction(const QPoint& pos,
                                        const Qt::KeyboardModifiers &modifiers,

@@ -27,6 +27,7 @@
 #include <QFileSystemModel>
 #include <QApplication>
 #include <QDebug>
+#include <QClipboard>
 
 #include "filesystemsortfilterproxymodel.h"
 #include "urllistmimedata.h"
@@ -116,6 +117,123 @@ void DirTreeView::mouseMoveEvent(QMouseEvent *event)
 
     // Do not call QTreeView::mouseMoveEvent().
     // Calling it causes selection to be changed
+}
+
+void DirTreeView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->matches(QKeySequence::Copy))
+    {
+        copyToClipboard();
+
+        return;
+    }
+
+    if (event->matches(QKeySequence::Cut))
+    {
+        copyToClipboard(false);
+
+        return;
+    }
+
+    if (event->matches(QKeySequence::Paste))
+    {
+        pasteFromClipboard();
+
+        return;
+    }
+
+    if (event->matches(QKeySequence::Delete))
+    {
+        deletePressed();
+
+        return;
+    }
+
+    QTreeView::keyPressEvent(event);
+}
+
+void DirTreeView::copyToClipboard(bool copy)
+{
+    qDebug() << "copyToClipboard()";
+
+    QList<QUrl> urlList(selectedUrlList());
+
+    if (urlList.size() == 0)
+        return;
+
+    UrlListMimeData* mime =
+            new UrlListMimeData(copy ? UrlListMimeData::CopyAction :
+                                       UrlListMimeData::CutAction);
+    mime->setList(urlList);
+
+    QClipboard* clipboard = QApplication::clipboard();
+    clipboard->setMimeData(mime);
+}
+
+void DirTreeView::pasteFromClipboard()
+{
+    qDebug() << "pasteFromClipboard()";
+
+    QClipboard* clipboard = QApplication::clipboard();
+    const QMimeData* mime = clipboard->mimeData();
+    if (mime->hasFormat(UrlListMimeData::format(UrlListMimeData::CopyAction)))
+    {
+        qDebug() << "pasteFromClipboard()"
+                 << "Copy list" << UrlListMimeData::listFrom(mime);
+
+        emit paste(UrlListMimeData::listFrom(mime));
+    }
+    else
+    if (mime->hasFormat(UrlListMimeData::format(UrlListMimeData::CutAction)))
+    {
+        qDebug() << "pasteFromClipboard()"
+                 << "Cut list"
+                 << UrlListMimeData::listFrom(mime,
+                                              UrlListMimeData::CutAction);
+
+        emit paste(UrlListMimeData::listFrom(mime,
+                                             UrlListMimeData::CutAction),
+                   false);
+
+        clipboard->clear();
+    }
+}
+
+void DirTreeView::deletePressed()
+{
+    qDebug() << "deletePressed()";
+
+    QList<QUrl> urlList(selectedUrlList());
+
+    if (urlList.size() == 0)
+        return;
+
+    emit remove(urlList);
+}
+
+QList<QUrl> DirTreeView::selectedUrlList()
+{
+    qDebug() << "selectedUrlList()";
+
+    QList<QUrl> urlList;
+
+    QModelIndexList selected(selectedIndexes());
+
+    FileSystemSortFilterProxyModel* proxyModel =
+            qobject_cast<FileSystemSortFilterProxyModel*>(model());
+    QFileSystemModel* sourceModel =
+            qobject_cast<QFileSystemModel*>(proxyModel->sourceModel());
+
+    foreach (QModelIndex proxyIndex, selected)
+    {
+        QModelIndex index = proxyModel->mapToSource(proxyIndex);
+
+        urlList.append(PathComp::fixUrl(sourceModel->filePath(index)));
+    }
+
+    qDebug() << "\t" << urlList;
+
+    return urlList;
 }
 
 Qt::DropAction DirTreeView::determineDropAction(

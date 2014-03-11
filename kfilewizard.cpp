@@ -395,6 +395,12 @@ void KFileWizard::initDirTree()
     connect(ui->dirTree, SIGNAL(dropped(QList<QUrl>,QString,bool)),
             this, SLOT(dirDropped(QList<QUrl>,QString,bool)));
 
+    connect(ui->dirTree, SIGNAL(paste(QList<QUrl>, bool)),
+            this, SLOT(entryPaste(QList<QUrl>, bool)));
+
+    connect(ui->dirTree, SIGNAL(remove(QList<QUrl>)),
+            this, SLOT(entryRemove(QList<QUrl>)));
+
     ui->dirTree->setSortingEnabled(true);
     ui->dirTree->sortByColumn(0, Qt::AscendingOrder);
     ui->dirTree->setHeaderHidden(true);
