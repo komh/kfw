@@ -42,10 +42,17 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event);
     void dropEvent(QDropEvent *event);
 
+    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+
 private:
+    QPoint startPos;
+
     Qt::DropAction determineDropAction(const QPoint& pos,
                                        const Qt::KeyboardModifiers &modifiers,
                                        const QMimeData *mimeData);
+
+    void performDrag();
 };
 
 #endif // DIRTREEVIEW_H

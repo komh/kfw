@@ -98,6 +98,26 @@ void DirTreeView::dropEvent(QDropEvent *event)
     event->ignore();
 }
 
+void DirTreeView::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button())
+        startPos = event->pos();
+
+    QTreeView::mousePressEvent(event);
+}
+
+void DirTreeView::mouseMoveEvent(QMouseEvent *event)
+{
+    int distance = (event->pos() - startPos).manhattanLength();
+
+    if ((event->buttons())
+            && distance >= QApplication::startDragDistance())
+        performDrag();
+
+    // Do not call QTreeView::mouseMoveEvent().
+    // Calling it causes selection to be changed
+}
+
 Qt::DropAction DirTreeView::determineDropAction(
         const QPoint &pos, const Qt::KeyboardModifiers& modifiers,
         const QMimeData *mimeData)
@@ -131,4 +151,31 @@ Qt::DropAction DirTreeView::determineDropAction(
         return Qt::MoveAction;
 
     return Qt::CopyAction;
+}
+
+void DirTreeView::performDrag()
+{
+    QModelIndexList indexList(selectedIndexes());
+
+    if (indexList.isEmpty())
+        return;
+
+    FileSystemSortFilterProxyModel* proxyModel =
+            qobject_cast<FileSystemSortFilterProxyModel*>(model());
+    QFileSystemModel* dirModel =
+            qobject_cast<QFileSystemModel*>(proxyModel->sourceModel());
+
+    QList<QUrl> urlList;
+
+    foreach (QModelIndex index, indexList)
+        urlList << dirModel->filePath(proxyModel->mapToSource(index));
+
+    UrlListMimeData* mimeData = new UrlListMimeData;
+    mimeData->setList(urlList);
+
+    QDrag* drag = new QDrag(this);
+    drag->setMimeData(mimeData);
+
+    Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction,
+                                           Qt::MoveAction);
 }
