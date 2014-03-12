@@ -64,6 +64,9 @@ private:
     QEventLoop _loop;
 
     int _minimumDuration;
+
+private slots:
+    void open();
 };
 
 #endif // DELAYEDMESSAGEBOX_H

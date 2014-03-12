@@ -22,6 +22,7 @@
 ****************************************************************************/
 
 #include <QTimer>
+#include <QApplication>
 
 #include "delayedmessagebox.h"
 
@@ -60,10 +61,18 @@ void DelayedMessageBox::trigger()
     if (minimumDuration() == 0)
         _progress.open();
     else
-        QTimer::singleShot(_minimumDuration, &_progress, SLOT(open()));
+        QTimer::singleShot(_minimumDuration, this, SLOT(open()));
 }
 
 void DelayedMessageBox::exec()
 {
     _loop.exec();
+}
+
+void DelayedMessageBox::open()
+{
+    QWidget* parentWidget = qobject_cast<QWidget*>(parent());
+
+    if (QApplication::activeWindow() == parentWidget)
+        _progress.open();
 }
