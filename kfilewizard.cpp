@@ -374,13 +374,16 @@ void KFileWizard::initSplitter()
 
 void KFileWizard::initDirTree()
 {
-    dirModel = new QFileSystemModel;
+    dirModel = new EntryListModel(false);
     dirModel->setIconProvider(new FileIconProvider);
     dirModel->setRootPath(currentDir.path());
     dirModel->setFilter(QDir::AllDirs | QDir::Drives | QDir::NoDotAndDotDot);
 
     connect(dirModel, SIGNAL(directoryLoaded(QString)),
             this, SLOT(dirLoaded(QString)));
+    connect(dirModel, SIGNAL(renameBegin(QString,QString)),
+            this, SLOT(renameBegin(QString,QString)));
+    connect(dirModel, SIGNAL(renameEnd(bool)), this, SLOT(renameEnd(bool)));
 
     dirProxyModel = new FileSystemSortFilterProxyModel;
     dirProxyModel->setSourceModel(dirModel);
@@ -457,7 +460,7 @@ void KFileWizard::initEntryModel()
     connect(entryModel, SIGNAL(renameBegin(QString,QString)),
             this, SLOT(renameBegin(QString,QString)));
 
-    connect(entryModel, SIGNAL(renameEnd()), this, SLOT(renameEnd()));
+    connect(entryModel, SIGNAL(renameEnd(bool)), this, SLOT(renameEnd(bool)));
 }
 
 void KFileWizard::appFocusChanged(QWidget* old, QWidget* now)
@@ -903,6 +906,13 @@ void KFileWizard::entryRefresh()
 
 void KFileWizard::renameBegin(const QString& oldName, const QString& newName)
 {
+    if (sender() == dirModel)
+    {
+        dirModel->setRootPath("");
+        entryModel->setRootPath("");
+        locationCompleterModel->setRootPath("");
+    }
+
     delayedMsgBox = new DelayedMessageBox(this);
 
     delayedMsgBox->setWindowTitle(title());
@@ -914,9 +924,19 @@ void KFileWizard::renameBegin(const QString& oldName, const QString& newName)
     delayedMsgBox->trigger();
 }
 
-void KFileWizard::renameEnd()
+void KFileWizard::renameEnd(bool success)
 {
     delete delayedMsgBox;
+
+    if (success)
+    {
+        if (sender() == dirModel)
+        {
+            QMetaObject::invokeMethod(this, "dirActivated", Qt::QueuedConnection,
+                                      Q_ARG(QModelIndex,
+                                            ui->dirTree->currentIndex()));
+        }
+    }
 }
 
 void KFileWizard::setLocationText(const QString& text, bool focusToEntry)

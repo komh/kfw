@@ -68,7 +68,7 @@ private slots:
     void entryRemove(const QList<QUrl>& urlList);
     void entryRefresh();
     void renameBegin(const QString& oldName, const QString& newName);
-    void renameEnd();
+    void renameEnd(bool success);
     void locationReturnPressed(bool focusToEntry = true, bool bySignal = true);
     void about();
     void connectTo();

@@ -23,8 +23,9 @@
 
 #include "entrylistmodel.h"
 
-EntryListModel::EntryListModel(QObject *parent) :
+EntryListModel::EntryListModel(bool entryView, QObject *parent) :
     QFileSystemModel(parent)
+  , _entryView(entryView)
 {
 }
 
@@ -34,7 +35,7 @@ bool EntryListModel::setData(const QModelIndex &index, const QVariant &value, in
 
     bool result = QFileSystemModel::setData(index, value, role);
 
-    emit renameEnd();
+    emit renameEnd(result);
 
     return result;
 }

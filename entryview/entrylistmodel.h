@@ -33,17 +33,23 @@ class EntryListModel : public QFileSystemModel
 {
     Q_OBJECT
 public:
-    explicit EntryListModel(QObject* parent = 0);
+    explicit EntryListModel(bool entryView = true, QObject* parent = 0);
 
     bool hasChildren(const QModelIndex &parent) const
     {
-        return QFileSystemModel::hasChildren(parent) && parent == _rootIndex;
+        return QFileSystemModel::hasChildren(parent)
+                && (!_entryView || parent == _rootIndex);
     }
 
     Qt::ItemFlags flags(const QModelIndex &index) const
     {
         Qt::ItemFlags itemFlags = QFileSystemModel::flags(index);
 
+        PathComp pathComp(filePath(index));
+
+        if (pathComp.isDriveList() || pathComp.isRoot())
+            itemFlags &= ~Qt::ItemIsEditable;
+        else
         if (headerData(index.column(), Qt::Horizontal).toString()
                 == QtTr::name())
             itemFlags |= Qt::ItemIsEditable;
@@ -70,10 +76,11 @@ public:
 
 signals:
     void renameBegin(const QString& oldName, const QString& newName);
-    void renameEnd();
+    void renameEnd(bool result);
 
 private:
     QModelIndex _rootIndex;
+    bool _entryView;
 };
 
 #endif // ENTRYLISTMODEL_H
