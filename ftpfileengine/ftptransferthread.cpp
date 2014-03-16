@@ -48,6 +48,12 @@ void FtpTransferThread::abort()
 
 void FtpTransferThread::run()
 {
+#ifdef USE_FTP_CONNECTION_CACHE
+    FtpConnectionCache* cache = FtpConnectionCache::getInstance();
+
+    cache->closeConnection(_engine->_url);
+#endif
+
     // Use a local event loop. The event loop of the thread itself seems to be
     // blocked as well when a main thread is blocked
     QEventLoop loop;

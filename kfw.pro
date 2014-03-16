@@ -81,3 +81,5 @@ FORMS    += kfilewizard.ui \
     addressbookdialog.ui
 
 TRANSLATIONS = translations/kfw_ko.ts
+
+DEFINES += USE_FTP_CONNECTION_CACHE

@@ -247,8 +247,10 @@ KFileWizard::KFileWizard(QWidget *parent) :
 
 KFileWizard::~KFileWizard()
 {
+#ifdef USE_FTP_CONNECTION_CACHE
     // close all the FTP connections
     QFile("ftp:///:closeall:").exists();
+#endif
 
     delete ui;
 }
