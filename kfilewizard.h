@@ -131,8 +131,7 @@ private:
                                                const QString& dest);
     void setEntryRoot();
     QString newPathForRemove(const QList<QUrl> &urlList);
-    void refreshEntryModel(bool isUrlDifferentDir, const QString &urlDir,
-                           bool force);
+    void refreshEntryModel(bool force);
     void selectEntries(const QList<QUrl> &urlListToSelect, bool remove);
     void refreshEntry(const QList<QUrl>& urlList, bool remove = false,
                       bool force = false);

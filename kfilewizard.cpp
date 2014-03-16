@@ -185,6 +185,28 @@ static QStringList entryListWorker(const QList<QUrl>& urlListToAdd,
     return future.result();
 }
 
+static void refreshFtpDir(const QStringList& ftpDirList)
+{
+    QStringListIterator it(ftpDirList);
+
+    while (it.hasNext())
+    {
+        QString dir(it.next());
+
+        // signal to FtpFileEngine to refresh entries
+        if (PathComp::isFtpPath(dir))
+        {
+            // QDir::filePath() does not work with ":refresh:"
+            QFile(PathComp::merge(dir, ":refresh:")).exists();
+        }
+    }
+}
+
+static void refreshFtpDir(const QString& ftpDir)
+{
+    refreshFtpDir(QStringList() << ftpDir);
+}
+
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KFileWizard),
@@ -557,6 +579,7 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
     QString skippedDir;
 
     QStringList dirListToRemove;
+    QStringList dirListToRefresh;
 
     QList<QUrl> urlListToSelect;
 
@@ -702,6 +725,14 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
                 if (sourceIsDir)
                     dirNameCopy = dest;
             }
+
+            if (PathComp::isFtpPath(dest))
+            {
+                QString destDir(PathComp(dest).dir());
+
+                if (!dirListToRefresh.contains(destDir))
+                    dirListToRefresh << destDir;
+            }
         }
     }
 
@@ -725,6 +756,8 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
             }
         }
     }
+
+    refreshFtpDir(dirListToRefresh);
 
     ui->entryTree->setUpdatesEnabled(true);
 
@@ -1116,9 +1149,7 @@ QString KFileWizard::newPathForRemove(const QList<QUrl>& urlList)
                                     entryProxyModel->index(row, 0, parent)));
 }
 
-void KFileWizard::refreshEntryModel(bool isUrlDifferentDir,
-                                    const QString& urlDir,
-                                    bool force)
+void KFileWizard::refreshEntryModel(bool force)
 {
     QByteArray headerState(ui->entryTree->header()->saveState());
 
@@ -1137,22 +1168,7 @@ void KFileWizard::refreshEntryModel(bool isUrlDifferentDir,
     msgBox.trigger();
 
     if (force)
-    {
-        // signal to FtpFileEngine to refresh entries
-        if (PathComp::isFtpPath(currentDir.path()))
-        {
-            // QDir::filePath() does not work with ":refresh:"
-            QFile(PathComp::merge(currentDir, ":refresh:")).exists();
-        }
-
-#if 0
-        // a different directory from a current directory was modified ?
-        // then refresh it as well. the case of drag and drop from a entry view to
-        // a dir view
-        if (isUrlDifferentDir && PathComp::isFtpPath(urlDir))
-            QFile(PathComp::merge(urlDir, ":refresh:")).exists();
-#endif
-    }
+        refreshFtpDir(currentDir.path());
 
     initEntryModel();
 
@@ -1247,7 +1263,7 @@ void KFileWizard::refreshEntry(const QList<QUrl>& urlList, bool remove,
         urlListToSelect.append(newPathForRemove(urlList));
     }
 
-    refreshEntryModel(isUrlDifferentDir, urlDir, force);
+    refreshEntryModel(force);
 
     selectEntries(urlListToSelect, remove);
 

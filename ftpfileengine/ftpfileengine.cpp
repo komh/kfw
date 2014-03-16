@@ -522,8 +522,6 @@ bool FtpFileEngine::close()
 
     _fileBuffer.close();
 
-    refreshFileInfoCache();
-
     return true;
 }
 
