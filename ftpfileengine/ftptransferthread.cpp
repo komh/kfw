@@ -83,6 +83,15 @@ void FtpTransferThread::run()
 
     ftp.close();
     loop.exec();
+
+    if (ftp.state() != QFtp::Unconnected)
+    {
+        // wait at most 10s
+        QTimer::singleShot(10 * 1000, &loop, SLOT(quit()));
+
+        ftp.close();
+        loop.exec();
+    }
 }
 
 void FtpTransferThread::ftpCommandFinished(int id, bool error)
