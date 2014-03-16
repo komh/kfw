@@ -187,18 +187,26 @@ static QStringList entryListWorker(const QList<QUrl>& urlListToAdd,
 
 static void refreshFtpDir(const QStringList& ftpDirList)
 {
+    int count = 2;
+
     QStringListIterator it(ftpDirList);
 
     while (it.hasNext())
     {
         QString dir(it.next());
 
-        // signal to FtpFileEngine to refresh entries
-        if (PathComp::isFtpPath(dir))
+        // workaround to list a copying aborted entry
+        for (int i = 0; i < count; ++i)
         {
-            // QDir::filePath() does not work with ":refresh:"
-            QFile(PathComp::merge(dir, ":refresh:")).exists();
+            // signal to FtpFileEngine to refresh entries
+            if (PathComp::isFtpPath(dir))
+            {
+                // QDir::filePath() does not work with ":refresh:"
+                QFile(PathComp::merge(dir, ":refresh:")).exists();
+            }
         }
+
+        count = 1;
     }
 }
 
