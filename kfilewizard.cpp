@@ -600,6 +600,14 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
                 critical(tr("The target filename is "
                             "the same as the source filename.\n\n"
                             "%1").arg(canonicalDest));
+
+                if (sourceIsDir)
+                {
+                    skippedDir = source;
+
+                    PathComp::addDirSeparator(skippedDir);
+                }
+
                 continue;
             }
         }
@@ -674,6 +682,13 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
                                 "%2"))
                      .arg(canonicalSource)
                      .arg(canonicalDest));
+
+            if (sourceIsDir)
+            {
+                skippedDir = source;
+
+                PathComp::addDirSeparator(skippedDir);
+            }
         }
         else
         {
