@@ -35,6 +35,7 @@ public:
 
     QFtp* findConnection(const QUrl& url) const;
     void addConnection(const QUrl& url, QFtp* ftp);
+    void closeConnection(const QUrl& url);
     void closeAll();
 
 private:

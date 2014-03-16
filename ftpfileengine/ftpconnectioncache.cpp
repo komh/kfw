@@ -64,6 +64,25 @@ void FtpConnectionCache::addConnection(const QUrl &url, QFtp *ftp)
     _connectionMap.insert(key, ftp);
 }
 
+void FtpConnectionCache::closeConnection(const QUrl &url)
+{
+    QString key(getKey(url));
+
+    if (_connectionMap.contains(key))
+    {
+        QFtp* ftp = findConnection(url);
+
+        FtpSync ftpSync(ftp);
+
+        ftp->close();
+        ftpSync.wait();
+
+        ftp->deleteLater();
+
+        _connectionMap.remove(key);
+    }
+}
+
 void FtpConnectionCache::closeAll()
 {
     QMapIterator<QString, QFtp*> it(_connectionMap);
