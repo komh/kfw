@@ -185,9 +185,10 @@ static QStringList entryListWorker(const QList<QUrl>& urlListToAdd,
     return future.result();
 }
 
-static void refreshFtpDir(const QStringList& ftpDirList)
+static void refreshFtpDir(const QStringList& ftpDirList,
+                          bool workaround = false)
 {
-    int count = 2;
+    int count = workaround ? 2 : 1;
 
     QStringListIterator it(ftpDirList);
 
@@ -210,9 +211,9 @@ static void refreshFtpDir(const QStringList& ftpDirList)
     }
 }
 
-static void refreshFtpDir(const QString& ftpDir)
+static void refreshFtpDir(const QString& ftpDir, bool workaround = false)
 {
-    refreshFtpDir(QStringList() << ftpDir);
+    refreshFtpDir(QStringList() << ftpDir, workaround);
 }
 
 KFileWizard::KFileWizard(QWidget *parent) :
@@ -767,7 +768,9 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
         }
     }
 
-    refreshFtpDir(dirListToRefresh);
+    refreshFtpDir(dirListToRefresh,
+                  PathComp::isFtpPath(to) &&
+                  urlList.first().host() == QUrl(to).host());
 
     ui->entryTree->setUpdatesEnabled(true);
 
