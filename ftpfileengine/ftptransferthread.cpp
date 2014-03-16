@@ -25,6 +25,7 @@
 #include <QDebug>
 
 #include "ftpfileengine.h"
+#include "ftpconnectioncache.h"
 
 #include "ftptransferthread.h"
 
@@ -51,50 +52,37 @@ void FtpTransferThread::run()
     // blocked as well when a main thread is blocked
     QEventLoop loop;
 
-    // Use a separate QFtp instance only for writing because copying in a same
-    // server is possible. Too many instances causes a transfer to fail.
-    QFtp* ftp;
+    // Use a separate QFtp instance because copying in a same server is
+    // possible
+    QFtp ftp;
 
-    if (_openMode & QIODevice::ReadOnly)
-    {
-        _engine->ftpConnect();
-        ftp = _engine->_ftp;
-    }
-    else
-        ftp = new QFtp;
-
-    connect(ftp, SIGNAL(done(bool)), &loop, SLOT(quit()),
+    connect(&ftp, SIGNAL(done(bool)), &loop, SLOT(quit()),
             Qt::QueuedConnection);
-    connect(ftp, SIGNAL(commandFinished(int,bool)),
-            this, SLOT(ftpCommandFinished(int,bool)));
-    connect(this, SIGNAL(ftpAbort()), ftp, SLOT(abort()));
+    connect(&ftp, SIGNAL(commandFinished(int,bool)),
+            this, SLOT(ftpCommandFinished(int,bool)), Qt::QueuedConnection);
+    connect(this, SIGNAL(ftpAbort()), &ftp, SLOT(abort()),
+            Qt::QueuedConnection);
     connect(this, SIGNAL(loopQuit()), &loop, SLOT(quit()),
             Qt::QueuedConnection);
 
+    ftp.setTransferMode(_engine->_transferMode == "Passive" ?
+                             QFtp::Passive : QFtp::Active);
+    ftp.connectToHost(_engine->_url.host(), _engine->_port);
+    ftp.login(_engine->_userName, _engine->_password);
+
     if (_openMode & QIODevice::ReadOnly)
     {
-        ftp->get(_engine->_textCodec->fromUnicode(_engine->_path),
-                 &_engine->_fileBuffer);
+        ftp.get(_engine->_textCodec->fromUnicode(_engine->_path),
+                &_engine->_fileBuffer);
     }
     else if (_openMode & QIODevice::WriteOnly)
     {
-        ftp->setTransferMode(_engine->_transferMode == "Passive" ?
-                                 QFtp::Passive : QFtp::Active);
-        ftp->connectToHost(_engine->_url.host(), _engine->_port);
-        ftp->login(_engine->_userName, _engine->_password);
-
-        ftp->put(&_engine->_fileBuffer,
-                 _engine->_textCodec->fromUnicode(_engine->_path));
-
-        ftp->close();
+        ftp.put(&_engine->_fileBuffer,
+                _engine->_textCodec->fromUnicode(_engine->_path));
     }
 
+    ftp.close();
     loop.exec();
-
-    if (_openMode & QIODevice::ReadOnly)
-        _engine->ftpDisconnect();
-    else
-        delete ftp;
 }
 
 void FtpTransferThread::ftpCommandFinished(int id, bool error)

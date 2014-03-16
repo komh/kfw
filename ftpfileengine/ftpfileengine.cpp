@@ -330,11 +330,7 @@ void FtpFileEngine::refreshFileInfoCache(const QString& path)
 
 bool FtpFileEngine::ftpConnect()
 {
-    FtpConnectionCache* cache(FtpConnectionCache::getInstance());
-
-    QFtp* cachedConnection = cache->findConnection(_url);
-
-    _ftp = cachedConnection ? cachedConnection : new QFtp;
+    _ftp = new QFtp;
 
     if (!_ftp)
         return false;
@@ -343,13 +339,6 @@ bool FtpFileEngine::ftpConnect()
 
     connect(_ftp, SIGNAL(listInfo(QUrlInfo)),
             this, SLOT(ftpListInfo(QUrlInfo)));
-
-    if (cachedConnection)
-    {
-        _ftpConnected = true;
-
-        return true;
-    }
 
     _ftp->setTransferMode(_transferMode == "Passive" ?
                               QFtp::Passive : QFtp::Active);
@@ -370,9 +359,6 @@ bool FtpFileEngine::ftpConnect()
             ftpDisconnect();
     }
 
-    if (_ftpConnected)
-        cache->addConnection(_url, _ftp);
-
     return _ftpConnected;
 }
 
@@ -381,6 +367,9 @@ bool FtpFileEngine::ftpDisconnect()
     if (!_ftpConnected)
         return true;
 
+    _ftp->close();
+    _ftpSync.wait();
+
     _ftpSync.setFtp(0);
 
     disconnect(_ftp, SIGNAL(listInfo(QUrlInfo)),
@@ -388,6 +377,7 @@ bool FtpFileEngine::ftpDisconnect()
 
     _ftpConnected = false;
 
+    delete _ftp;
     _ftp = 0;
 
     return !_ftpConnected;
