@@ -37,6 +37,8 @@ public:
                   const QString& dest = QString(),
                   QObject* parent = 0);
 
+    ~FileOperation();
+
     const QString& source() const { return _source; }
     const QString& dest() const { return _dest; }
 

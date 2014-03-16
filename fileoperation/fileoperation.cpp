@@ -35,6 +35,11 @@ FileOperation::FileOperation(const QString &source, const QString &dest,
 {
 }
 
+FileOperation::~FileOperation()
+{
+    close();
+}
+
 bool FileOperation::open()
 {
     close();
