@@ -30,6 +30,7 @@ DelayedMessageBox::DelayedMessageBox(QWidget *parent) :
     QObject(parent)
   , _progress(parent)
   , _minimumDuration(500)
+  , _closed(true)
 {
     _progress.installEventFilter(this);
 
@@ -58,6 +59,8 @@ void DelayedMessageBox::setQuitSignal(QObject *sender, const char *signal)
 
 void DelayedMessageBox::trigger()
 {
+    _closed = false;
+
     if (minimumDuration() == 0)
         _progress.open();
     else
@@ -69,10 +72,17 @@ void DelayedMessageBox::exec()
     _loop.exec();
 }
 
+void DelayedMessageBox::close()
+{
+    _closed = true;
+
+    _progress.close();
+}
+
 void DelayedMessageBox::open()
 {
     QWidget* parentWidget = qobject_cast<QWidget*>(parent());
 
-    if (QApplication::activeWindow() == parentWidget)
+    if (!_closed && QApplication::activeWindow() == parentWidget)
         _progress.open();
 }

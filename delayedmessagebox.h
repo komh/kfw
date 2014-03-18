@@ -55,6 +55,8 @@ public:
 
     void exec();
 
+    void close();
+
 signals:
 
 public slots:
@@ -64,6 +66,7 @@ private:
     QEventLoop _loop;
 
     int _minimumDuration;
+    bool _closed;
 
 private slots:
     void open();

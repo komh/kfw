@@ -211,7 +211,7 @@ KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KFileWizard),
     dirModel(0), dirProxyModel(0), entryModel(0), entryProxyModel(0),
-    delayedMsgBox(0), sharedMem(title())
+    delayedMsgBox(this), sharedMem(title())
 {
     ui->setupUi(this);
 
@@ -974,20 +974,18 @@ void KFileWizard::renameBegin(const QString& oldName, const QString& newName)
         locationCompleterModel->setRootPath("");
     }
 
-    delayedMsgBox = new DelayedMessageBox(this);
-
-    delayedMsgBox->setWindowTitle(title());
-    delayedMsgBox->setText(tr("Renaming\n\n"
-                              "%1\n\n"
-                              "to\n\n"
-                              "%2")
-                              .arg(PathComp(oldName).fileName()).arg(newName));
-    delayedMsgBox->trigger();
+    delayedMsgBox.setWindowTitle(title());
+    delayedMsgBox.setText(tr("Renaming\n\n"
+                             "%1\n\n"
+                             "to\n\n"
+                             "%2")
+                          .arg(PathComp(oldName).fileName()).arg(newName));
+    delayedMsgBox.trigger();
 }
 
 void KFileWizard::renameEnd(bool success)
 {
-    delete delayedMsgBox;
+    delayedMsgBox.close();
 
     if (success)
     {

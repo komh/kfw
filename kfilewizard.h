@@ -87,7 +87,7 @@ private:
 
     QFileSystemModel* locationCompleterModel;
 
-    DelayedMessageBox* delayedMsgBox;
+    DelayedMessageBox delayedMsgBox;
 
     SharedMemory sharedMem;
     QPoint initialPos;
