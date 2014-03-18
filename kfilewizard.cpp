@@ -605,7 +605,7 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
         if (sourceIsInSourceDir && sourceIsDir)
             dirNameCopy = dirName = dest;
 
-        if (!sourceIsDir && dirName != dirNameCopy)
+        if (dirName != dirNameCopy)
             dest.replace(dirName, dirNameCopy);
 
         QString canonicalSource(PathComp(source).canonicalPath());
