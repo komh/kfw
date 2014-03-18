@@ -995,6 +995,8 @@ void KFileWizard::renameEnd(bool success)
                                       Q_ARG(QModelIndex,
                                             ui->dirTree->currentIndex()));
         }
+
+        QMetaObject::invokeMethod(this, "entryRefresh", Qt::QueuedConnection);
     }
 }
 
