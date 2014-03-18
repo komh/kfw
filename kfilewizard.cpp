@@ -185,35 +185,26 @@ static QStringList entryListWorker(const QList<QUrl>& urlListToAdd,
     return future.result();
 }
 
-static void refreshFtpDir(const QStringList& ftpDirList,
-                          bool workaround = false)
+static void refreshFtpDirList(const QStringList& ftpDirList)
 {
-    int count = workaround ? 2 : 1;
-
     QStringListIterator it(ftpDirList);
 
     while (it.hasNext())
     {
         QString dir(it.next());
 
-        // workaround to list a copying aborted entry
-        for (int i = 0; i < count; ++i)
+        // signal to FtpFileEngine to refresh entries
+        if (PathComp::isFtpPath(dir))
         {
-            // signal to FtpFileEngine to refresh entries
-            if (PathComp::isFtpPath(dir))
-            {
-                // QDir::filePath() does not work with ":refresh:"
-                QFile(PathComp::merge(dir, ":refresh:")).exists();
-            }
+            // QDir::filePath() does not work with ":refresh:"
+            QFile(PathComp::merge(dir, ":refresh:")).exists();
         }
-
-        count = 1;
     }
 }
 
-static void refreshFtpDir(const QString& ftpDir, bool workaround = false)
+static void refreshFtpDir(const QString& ftpDir)
 {
-    refreshFtpDir(QStringList() << ftpDir, workaround);
+    refreshFtpDirList(QStringList() << ftpDir);
 }
 
 KFileWizard::KFileWizard(QWidget *parent) :
@@ -768,13 +759,22 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
         }
     }
 
-    refreshFtpDir(dirListToRefresh,
-                  PathComp::isFtpPath(to) &&
-                  urlList.first().host() == QUrl(to).host());
-
     ui->entryTree->setUpdatesEnabled(true);
 
     progress.close();
+
+    if (!dirListToRefresh.isEmpty())
+    {
+        DelayedMessageBox msgBox(this);
+
+        msgBox.setWindowTitle(title());
+        msgBox.setText(tr("Please wait while finalizing..."));
+
+        msgBox.setMinimumDuration(0);
+        msgBox.trigger();
+
+        refreshFtpDirList(dirListToRefresh);
+    }
 
     // QFileSystemModel is not refreshed if only a size is changed,
     // so there is need to force it to refresh.

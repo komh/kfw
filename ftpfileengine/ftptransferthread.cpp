@@ -90,13 +90,23 @@ void FtpTransferThread::run()
     ftp.close();
     loop.exec();
 
+    // aborted ?
     if (ftp.state() != QFtp::Unconnected)
     {
         // wait at most 10s
-        QTimer::singleShot(10 * 1000, &loop, SLOT(quit()));
+        static const int MAX_WAIT = 10 * 1000;
+        FtpSync ftpSync(&ftp);
 
         ftp.close();
-        loop.exec();
+        ftpSync.wait(MAX_WAIT);
+
+        // workaround to avoid the failure of first connecting after
+        // abort if copying/moving in a same server
+        ftp.connectToHost(_engine->_url.host(), _engine->_port);
+        ftpSync.wait(MAX_WAIT);
+
+        ftp.close();
+        ftpSync.wait(MAX_WAIT);
     }
 }
 
