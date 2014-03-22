@@ -50,8 +50,9 @@ public:
         if (pathComp.isDriveList() || pathComp.isRoot())
             itemFlags &= ~Qt::ItemIsEditable;
         else
-        if (headerData(index.column(), Qt::Horizontal).toString()
-                == QtTr::name())
+        if (_entryView
+                && headerData(index.column(), Qt::Horizontal).toString()
+                    == QtTr::name())
             itemFlags |= Qt::ItemIsEditable;
 
         return itemFlags;
