@@ -190,3 +190,36 @@ QString& PathComp::removeDirSeparator(QString& path, bool native)
 
     return path;
 }
+
+QString PathComp::uniquePath(const QString &path, const QString &deco)
+{
+    QUrl result(path);
+
+    int lastDot = result.path().lastIndexOf(".");
+
+    if (lastDot == -1)
+        lastDot = result.path().length();
+
+    QString pathBaseName(result.path().mid(0, lastDot));
+    QString suffix(result.path().mid(lastDot + 1 ));
+
+    for (int i = 1;; ++i)
+    {
+        QString path(pathBaseName);
+        if (!deco.isEmpty())
+            path.append(deco);
+        if (i > 1)
+            path.append(QString(" (%1)").arg(i));
+        if (!suffix.isEmpty())
+        {
+            path.append(".");
+            path.append(suffix);
+        }
+
+        result.setPath(path);
+        if (!QFile(result.toString()).exists())
+            break;
+    }
+
+    return result.toString();
+}

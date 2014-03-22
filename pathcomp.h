@@ -60,6 +60,9 @@ public:
     static QString& addDirSeparator(QString& path, bool native = false);
     static QString& removeDirSeparator(QString& path, bool native = false);
 
+    static QString uniquePath(const QString& path,
+                              const QString& deco = QString());
+
 private:
     QString _path;
     QString _dir;
