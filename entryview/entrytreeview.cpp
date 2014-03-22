@@ -32,6 +32,7 @@
 
 EntryTreeView::EntryTreeView(QWidget *parent) :
     QTreeView(parent)
+  , popupMenu(this)
 {
     setAcceptDrops(true);
 }
@@ -111,6 +112,39 @@ void EntryTreeView::mouseMoveEvent(QMouseEvent *event)
 
     // Do not call QTreeView::mouseMoveEvent().
     // Calling it causes selection to be changed
+}
+
+void EntryTreeView::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton)
+    {
+        popupMenu.clear();
+        popupMenu.addAction(tr("Copy"), this, SLOT(copy()),
+                            QKeySequence(QKeySequence::Copy));
+        popupMenu.addAction(tr("Cut"), this, SLOT(cut()),
+                            QKeySequence(QKeySequence::Cut));
+
+        QClipboard* clipboard = QApplication::clipboard();
+        const QMimeData* mime = clipboard->mimeData();
+        if (mime->hasFormat(
+                    UrlListMimeData::format(UrlListMimeData::CopyAction))
+            || mime->hasFormat(
+                    UrlListMimeData::format(UrlListMimeData::CutAction)))
+            popupMenu.addAction(tr("Paste"), this, SLOT(paste()),
+                                QKeySequence(QKeySequence::Paste));
+        popupMenu.addSeparator();
+
+        popupMenu.addAction(tr("Delete"), this, SLOT(remove()),
+                            QKeySequence(QKeySequence::Delete));
+        popupMenu.addSeparator();
+
+        popupMenu.addAction(tr("Refresh"), this, SIGNAL(refresh()),
+                            QKeySequence(QKeySequence::Refresh));
+
+        popupMenu.popup(event->globalPos());
+    }
+
+    QTreeView::mouseReleaseEvent(event);
 }
 
 void EntryTreeView::keyPressEvent(QKeyEvent *event)
@@ -300,4 +334,24 @@ Qt::DropAction EntryTreeView::determineDropAction(
         return Qt::MoveAction;
 
     return Qt::CopyAction;
+}
+
+void EntryTreeView::copy()
+{
+    copyToClipboard();
+}
+
+void EntryTreeView::cut()
+{
+    copyToClipboard(false);
+}
+
+void EntryTreeView::paste()
+{
+    pasteFromClipboard();
+}
+
+void EntryTreeView::remove()
+{
+    deletePressed();
 }

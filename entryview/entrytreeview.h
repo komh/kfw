@@ -52,11 +52,13 @@ protected:
 
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 
     void keyPressEvent(QKeyEvent *event);
 
 private:
     QPoint startPos;
+    QMenu  popupMenu;
 
     void copyToClipboard(bool copy = true);
     void pasteFromClipboard();
@@ -66,6 +68,12 @@ private:
     Qt::DropAction determineDropAction(const QPoint &pos,
                                        const Qt::KeyboardModifiers &modifier,
                                        const QMimeData *mimeData);
+
+private slots:
+    void copy();
+    void cut();
+    void paste();
+    void remove();
 };
 
 #endif // ENTRYTREEVIEW_H

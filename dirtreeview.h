@@ -26,6 +26,8 @@
 
 #include <QTreeView>
 
+#include <QMenu>
+
 class DirTreeView : public QTreeView
 {
     Q_OBJECT
@@ -48,11 +50,13 @@ protected:
 
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 
     void keyPressEvent(QKeyEvent *event);
 
 private:
     QPoint startPos;
+    QMenu  popupMenu;
 
     void copyToClipboard(bool copy = true);
     void pasteFromClipboard();
@@ -63,6 +67,12 @@ private:
                                        const QMimeData *mimeData);
 
     void performDrag();
+
+private slots:
+    void copy();
+    void cut();
+    void paste();
+    void remove();
 };
 
 #endif // DIRTREEVIEW_H

@@ -35,6 +35,7 @@
 
 DirTreeView::DirTreeView(QWidget *parent) :
     QTreeView(parent)
+  , popupMenu(this)
 {
     setAcceptDrops(true);
     setAutoScroll(true);
@@ -117,6 +118,36 @@ void DirTreeView::mouseMoveEvent(QMouseEvent *event)
 
     // Do not call QTreeView::mouseMoveEvent().
     // Calling it causes selection to be changed
+}
+
+void DirTreeView::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton)
+    {
+        popupMenu.clear();
+        popupMenu.addAction(tr("Copy"), this, SLOT(copy()),
+                            QKeySequence(QKeySequence::Copy));
+        popupMenu.addAction(tr("Cut"), this, SLOT(cut()),
+                            QKeySequence(QKeySequence::Cut));
+
+        QClipboard* clipboard = QApplication::clipboard();
+        const QMimeData* mime = clipboard->mimeData();
+        if (mime->hasFormat(
+                    UrlListMimeData::format(UrlListMimeData::CopyAction))
+            || mime->hasFormat(
+                    UrlListMimeData::format(UrlListMimeData::CutAction)))
+            popupMenu.addAction(tr("Paste"), this, SLOT(paste()),
+                                QKeySequence(QKeySequence::Paste));
+        popupMenu.addSeparator();
+
+        popupMenu.addAction(tr("Delete"), this, SLOT(remove()),
+                            QKeySequence(QKeySequence::Delete));
+
+        popupMenu.popup(event->globalPos());
+    }
+
+    QTreeView::mouseReleaseEvent(event);
+
 }
 
 void DirTreeView::keyPressEvent(QKeyEvent *event)
@@ -285,4 +316,24 @@ void DirTreeView::performDrag()
     drag->setMimeData(mimeData);
 
     drag->exec(Qt::CopyAction | Qt::MoveAction, Qt::MoveAction);
+}
+
+void DirTreeView::copy()
+{
+    copyToClipboard();
+}
+
+void DirTreeView::cut()
+{
+    copyToClipboard(false);
+}
+
+void DirTreeView::paste()
+{
+    pasteFromClipboard();
+}
+
+void DirTreeView::remove()
+{
+    deletePressed();
 }
