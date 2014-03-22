@@ -136,6 +136,7 @@ void EntryTreeView::mouseReleaseEvent(QMouseEvent *event)
 
         popupMenu.addAction(tr("Delete"), this, SLOT(remove()),
                             QKeySequence(QKeySequence::Delete));
+        popupMenu.addAction(tr("Rename"), this, SLOT(rename()));
         popupMenu.addSeparator();
 
         popupMenu.addAction(tr("Refresh"), this, SIGNAL(refresh()),
@@ -354,4 +355,11 @@ void EntryTreeView::paste()
 void EntryTreeView::remove()
 {
     deletePressed();
+}
+
+void EntryTreeView::rename()
+{
+    QModelIndex index = currentIndex();
+
+    edit(index);
 }

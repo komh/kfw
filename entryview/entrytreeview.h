@@ -74,6 +74,7 @@ private slots:
     void cut();
     void paste();
     void remove();
+    void rename();
 };
 
 #endif // ENTRYTREEVIEW_H
