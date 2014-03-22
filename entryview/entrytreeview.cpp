@@ -138,6 +138,7 @@ void EntryTreeView::mouseReleaseEvent(QMouseEvent *event)
                             QKeySequence(QKeySequence::Delete));
         popupMenu.addAction(tr("Rename"), this, SLOT(rename()),
                             QKeySequence(Qt::Key_F2));
+        popupMenu.addAction(tr("Create a directory"), this, SLOT(mkdir()));
         popupMenu.addSeparator();
 
         popupMenu.addAction(tr("Refresh"), this, SIGNAL(refresh()),
@@ -370,4 +371,23 @@ void EntryTreeView::rename()
     QModelIndex index = currentIndex();
 
     edit(index);
+}
+
+void EntryTreeView::mkdir()
+{
+    FileSystemSortFilterProxyModel* proxyModel =
+            qobject_cast<FileSystemSortFilterProxyModel*>(model());
+    EntryListModel* entryModel =
+            qobject_cast<EntryListModel*>(proxyModel->sourceModel());
+
+    QModelIndex index(entryModel->mkdir(proxyModel->mapToSource(rootIndex()),
+                                        tr("New Dir")));
+
+    if (!index.isValid())
+        return;
+
+    index = proxyModel->mapFromSource(index);
+    edit(index);
+
+    setCurrentIndex(index);
 }

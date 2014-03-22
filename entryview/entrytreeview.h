@@ -75,6 +75,7 @@ private slots:
     void paste();
     void remove();
     void rename();
+    void mkdir();
 };
 
 #endif // ENTRYTREEVIEW_H
