@@ -900,6 +900,9 @@ void KFileWizard::removeUrls(const QList<QUrl> &urlList)
                         "%1")
                         .arg(canonicalSource));
         }
+        else if (canonicalSource
+                    == PathComp(currentDir.path()).canonicalPath())
+            currentDir.cdUp();
 
         progress.setValue(sourceListToRemove.indexOf(source) + 1);
     }
@@ -1115,6 +1118,9 @@ void KFileWizard::setEntryRoot()
 
     locationCompleterModel->setRootPath("");
     locationCompleterModel->setRootPath(currentDir.path());
+
+    // make sure to set locationText  to currentDir.path()
+    setLocationText(currentDir.path());
 }
 
 QString KFileWizard::newPathForRemove(const QList<QUrl>& urlList)
