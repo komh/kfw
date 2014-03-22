@@ -136,7 +136,8 @@ void EntryTreeView::mouseReleaseEvent(QMouseEvent *event)
 
         popupMenu.addAction(tr("Delete"), this, SLOT(remove()),
                             QKeySequence(QKeySequence::Delete));
-        popupMenu.addAction(tr("Rename"), this, SLOT(rename()));
+        popupMenu.addAction(tr("Rename"), this, SLOT(rename()),
+                            QKeySequence(Qt::Key_F2));
         popupMenu.addSeparator();
 
         popupMenu.addAction(tr("Refresh"), this, SIGNAL(refresh()),
@@ -181,6 +182,13 @@ void EntryTreeView::keyPressEvent(QKeyEvent *event)
     if (event->matches(QKeySequence::Delete))
     {
         deletePressed();
+
+        return;
+    }
+
+    if (event->key() == Qt::Key_F2)
+    {
+        rename();
 
         return;
     }
