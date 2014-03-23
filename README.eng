@@ -1,5 +1,5 @@
-                             K File Wizard beta
-                            --------------------
+                             K File Wizard v1.0.0
+                            ----------------------
                             
 1. Introduction
 ---------------
@@ -46,7 +46,8 @@ eComStation 2.1.
 5. Installation
 ---------------
 
-  Put kfw.exe into any directory.
+  Put kfw.exe into any directory. If you need translations, put translations 
+directory into the directory where kfe.exe exists, as its sub-directory.
   
 6. Usage
 --------
@@ -54,12 +55,22 @@ eComStation 2.1.
 6.1 Menu
 --------
 
-6.1.1 File - Exit
+6.1.1 File - Connect to...
+--------------------------
+
+  Connect to FTP server.
+  
+6.1.2 File - Open an address book...
+------------------------------------
+
+  Open an address book for FTP servers.
+  
+6.1.3 File - Exit
 -----------------
 
   K File Wizard exit.
   
-6.1.2 Help - About K File Wizard...
+6.1.4 Help - About K File Wizard...
 -----------------------------------
 
   Show informations about K File Wizard.
@@ -87,10 +98,20 @@ eComStation 2.1.
 
   Delete selected files.
   
-6.2.5 Backspace
----------------
+6.2.5 Backspace( Entry View )
+---------------------------
 
   Change a directory to a parent directory.
+
+6.2.6 F2( Entry View )
+-----------------------
+
+  Rename an entry.
+  
+6.2.7 F5( Entry View )
+-----------------------
+
+  Refresh a current directory.
   
 6.3 Mouse
 ---------
@@ -99,6 +120,24 @@ eComStation 2.1.
 -------------------------------
 
   Rename the selected entry.
+
+6.3.2 Drag and drop
+-------------------
+
+6.3.2.1 Same drive
+------------------
+
+  Move entries.
+  
+6.3.2.2 Different drive or FTP
+------------------------------
+
+  Copy entries.
+  
+6.3.2.3 with Ctrl key
+---------------------
+
+  Copy entries.
   
 6.4 URL
 -------
@@ -128,16 +167,21 @@ eComStation 2.1.
 8. TODOs...
 -----------
 
-  - Support directory operations
-  
-  - Support drag & drop
-  
   - Support SFTP
   
   - For more details, see https://github.com/komh/kfw/issues
   
 9. History
 ----------
+
+  - v1.0.0 ( 2014/03/23 )
+    .Support directory operation
+    .Support drag and drop
+    .Support address book
+    .Improve FTP browsing performance
+    .For deatils see the following.
+    
+https://github.com/komh/kfw/issues?direction=desc&milestone=3&page=1&sort=updated&state=closed
 
   - beta ( 2014/02/03 )
     .Added manual refresh
@@ -204,6 +248,7 @@ build it using Ctrl-B.
 -----------
 
   kfw.exe : The executable of K File Wizard
+  translations/*.am : The translation files of K File Wizard
 
 12. How to contribute
 ---------------------
