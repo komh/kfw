@@ -1076,6 +1076,8 @@ void KFileWizard::setEntryRoot()
     }
 
     QModelIndex rootIndex = entryModel->index(currentDir.path());
+    entryModel->setRootIndex(rootIndex);
+
     rootIndex = entryProxyModel->mapFromSource(rootIndex);
     ui->entryTree->setRootIndex(rootIndex);
 
