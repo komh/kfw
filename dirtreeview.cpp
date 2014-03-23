@@ -205,6 +205,13 @@ void DirTreeView::pasteFromClipboard()
 {
     qDebug() << "pasteFromClipboard()";
 
+    FileSystemSortFilterProxyModel* proxyModel =
+            qobject_cast<FileSystemSortFilterProxyModel*>(model());
+    QFileSystemModel* dirModel =
+            qobject_cast<QFileSystemModel*>(proxyModel->sourceModel());
+
+    QString to(dirModel->filePath(proxyModel->mapToSource(currentIndex())));
+
     QClipboard* clipboard = QApplication::clipboard();
     const QMimeData* mime = clipboard->mimeData();
     if (mime->hasFormat(UrlListMimeData::format(UrlListMimeData::CopyAction)))
@@ -212,7 +219,7 @@ void DirTreeView::pasteFromClipboard()
         qDebug() << "pasteFromClipboard()"
                  << "Copy list" << UrlListMimeData::listFrom(mime);
 
-        emit paste(UrlListMimeData::listFrom(mime));
+        emit paste(UrlListMimeData::listFrom(mime), to);
     }
     else
     if (mime->hasFormat(UrlListMimeData::format(UrlListMimeData::CutAction)))
@@ -224,7 +231,7 @@ void DirTreeView::pasteFromClipboard()
 
         emit paste(UrlListMimeData::listFrom(mime,
                                              UrlListMimeData::CutAction),
-                   false);
+                   to, false);
 
         clipboard->clear();
     }

@@ -38,7 +38,7 @@ public:
 
 signals:
     void cdUp(const QModelIndex& index);
-    void paste(const QList<QUrl>&, bool copy = true);
+    void paste(const QList<QUrl>&, const QString&, bool copy = true);
     void remove(const QList<QUrl>&);
     void refresh();
     void dropped(const QList<QUrl>& urlList, const QString& to, bool copy);

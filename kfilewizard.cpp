@@ -422,8 +422,8 @@ void KFileWizard::initDirTree()
     connect(ui->dirTree, SIGNAL(dropped(QList<QUrl>,QString,bool)),
             this, SLOT(dirDropped(QList<QUrl>,QString,bool)));
 
-    connect(ui->dirTree, SIGNAL(paste(QList<QUrl>, bool)),
-            this, SLOT(entryPaste(QList<QUrl>, bool)));
+    connect(ui->dirTree, SIGNAL(paste(QList<QUrl>, QString, bool)),
+            this, SLOT(entryPaste(QList<QUrl>, QString, bool)));
 
     connect(ui->dirTree, SIGNAL(remove(QList<QUrl>)),
             this, SLOT(entryRemove(QList<QUrl>)));
@@ -464,8 +464,8 @@ void KFileWizard::initEntryTree()
 
     connect(ui->entryTree, SIGNAL(cdUp(QModelIndex)),
             this, SLOT(entryCdUp(QModelIndex)));
-    connect(ui->entryTree, SIGNAL(paste(QList<QUrl>, bool)),
-            this, SLOT(entryPaste(QList<QUrl>, bool)));
+    connect(ui->entryTree, SIGNAL(paste(QList<QUrl>, QString, bool)),
+            this, SLOT(entryPaste(QList<QUrl>, QString, bool)));
     connect(ui->entryTree, SIGNAL(remove(QList<QUrl>)),
             this, SLOT(entryRemove(QList<QUrl>)));
     connect(ui->entryTree, SIGNAL(refresh()), this, SLOT(entryRefresh()));
@@ -545,9 +545,10 @@ void KFileWizard::entryCdUp(const QModelIndex& index)
         setLocationText(parentPath);
 }
 
-void KFileWizard::entryPaste(const QList<QUrl>& urlList, bool copy)
+void KFileWizard::entryPaste(const QList<QUrl>& urlList, const QString &to,
+                             bool copy)
 {
-    copyUrlsTo(urlList, currentDir.path(), copy);
+    copyUrlsTo(urlList, to.isEmpty() ? currentDir.path() : to, copy);
 }
 
 void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,

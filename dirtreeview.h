@@ -37,7 +37,7 @@ public:
     QList<QUrl> selectedUrlList();
 
 signals:
-    void paste(const QList<QUrl>&, bool copy = true);
+    void paste(const QList<QUrl>&, const QString&, bool copy = true);
     void remove(const QList<QUrl>&);
     void dropped(const QList<QUrl>& urlList, const QString& to, bool copy);
 

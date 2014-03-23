@@ -64,7 +64,7 @@ private slots:
     void dirDropped(const QList<QUrl>& urlList, const QString& to, bool copy);
     void entryActivated(const QModelIndex& index);
     void entryCdUp(const QModelIndex &index);
-    void entryPaste(const QList<QUrl>& urlList, bool copy);
+    void entryPaste(const QList<QUrl>& urlList, const QString& to, bool copy);
     void entryRemove(const QList<QUrl>& urlList);
     void entryRefresh();
     void renameBegin(const QString& oldName, const QString& newName);

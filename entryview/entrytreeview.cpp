@@ -233,7 +233,7 @@ void EntryTreeView::pasteFromClipboard()
         qDebug() << "pasteFromClipboard()"
                  << "Copy list" << UrlListMimeData::listFrom(mime);
 
-        emit paste(UrlListMimeData::listFrom(mime));
+        emit paste(UrlListMimeData::listFrom(mime), QString());
     }
     else
     if (mime->hasFormat(UrlListMimeData::format(UrlListMimeData::CutAction)))
@@ -245,7 +245,7 @@ void EntryTreeView::pasteFromClipboard()
 
         emit paste(UrlListMimeData::listFrom(mime,
                                              UrlListMimeData::CutAction),
-                   false);
+                   QString(), false);
 
         clipboard->clear();
     }
