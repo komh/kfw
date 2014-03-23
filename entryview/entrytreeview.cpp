@@ -380,8 +380,11 @@ void EntryTreeView::mkdir()
     EntryListModel* entryModel =
             qobject_cast<EntryListModel*>(proxyModel->sourceModel());
 
-    QModelIndex index(entryModel->mkdir(proxyModel->mapToSource(rootIndex()),
+    QString newDir(PathComp::uniqueName(entryModel->rootPath(),
                                         tr("New Dir")));
+
+    QModelIndex index(entryModel->mkdir(proxyModel->mapToSource(rootIndex()),
+                                        newDir));
 
     if (!index.isValid())
         return;

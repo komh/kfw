@@ -62,6 +62,8 @@ public:
 
     static QString uniquePath(const QString& path,
                               const QString& deco = QString());
+    static QString uniqueName(const QString& dir, const QString& name,
+                              const QString &deco = QString());
 
 private:
     QString _path;

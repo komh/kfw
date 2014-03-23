@@ -223,3 +223,9 @@ QString PathComp::uniquePath(const QString &path, const QString &deco)
 
     return result.toString();
 }
+
+QString PathComp::uniqueName(const QString &dir, const QString &name,
+                             const QString& deco)
+{
+    return PathComp(uniquePath(PathComp::merge(dir, name), deco)).fileName();
+}
