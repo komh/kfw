@@ -192,7 +192,7 @@ QString ServerInfo::locationUrl() const
 QString ServerInfo::protocolText(Protocol protocol)
 {
     if (protocol == Ftp)
-        return QObject::tr("FTP");
+        return "FTP";
 
     return QString();
 }
@@ -209,9 +209,9 @@ QStringList ServerInfo::protocolList()
 QString ServerInfo::transferModeText(TransferMode mode)
 {
     if (mode == Passive)
-        return QObject::tr("Passive");
+        return "Passive";
     else if (mode == Active)
-        return QObject::tr("Active");
+        return "Active";
 
     return QString();
 }
@@ -229,9 +229,9 @@ QStringList ServerInfo::transferModeList()
 QString ServerInfo::encodingText(Encoding encoding)
 {
     if (encoding == System)
-        return QObject::tr("System");
+        return "System";
     else if (encoding == Utf8)
-        return QObject::tr("UTF-8");
+        return "UTF-8";
 
     return QString();
 }
