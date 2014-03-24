@@ -537,12 +537,14 @@ void KFileWizard::entryActivated(const QModelIndex &index)
 
 void KFileWizard::entryCdUp(const QModelIndex& index)
 {
+    if (!index.isValid())
+        return;
+
     QModelIndex parentIndex(entryModel->parent(
                                 entryProxyModel->mapToSource(index)));
     QString parentPath(entryModel->filePath(parentIndex));
 
-    if (index.isValid())
-        setLocationText(parentPath);
+    setLocationText(parentPath);
 }
 
 void KFileWizard::entryPaste(const QList<QUrl>& urlList, const QString &to,
