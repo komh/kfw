@@ -67,9 +67,11 @@ private:
 
     int _minimumDuration;
     bool _closed;
+    bool _quitSignaled;
 
 private slots:
     void open();
+    void quit();
 };
 
 #endif // DELAYEDMESSAGEBOX_H
