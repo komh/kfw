@@ -26,6 +26,9 @@
 #include "sftpfileengine.h"
 #include "pathcomp.h"
 
+//register SFtpFileEngineHandler
+static SFtpFileEngineHandler sftpHandler;
+
 QAbstractFileEngine*
 SFtpFileEngineHandler::create(const QString &fileName) const
 {

@@ -28,6 +28,9 @@
 
 #include "ftpfileenginehandler.h"
 
+// register FtpFileEngineHandler
+static FtpFileEngineHandler ftpHandler;
+
 QAbstractFileEngine*
 FtpFileEngineHandler::create(const QString &fileName) const
 {
