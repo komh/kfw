@@ -118,6 +118,7 @@ private:
 
     void initFromFileName(const QString& file = QString());
     void initFtp();
+    void readDir(const QString &dir);
     void refreshFileInfoCache();
     void refreshFileInfoCache(const QString& path);
     bool ftpConnect();

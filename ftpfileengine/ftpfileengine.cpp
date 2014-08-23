@@ -175,6 +175,21 @@ void FtpFileEngine::initFtp()
     refreshFileInfoCache();
 }
 
+void FtpFileEngine::readDir(const QString &dir)
+{
+    _cacheDir = getCachePath(dir, true);
+
+    _ftpCache->removeDirInfo(dir);
+
+    _entriesMap.clear();
+
+    // get a file list from a parent directory
+    _ftp->cd(_textCodec->fromUnicode(dir));
+    _ftp->list();
+
+    _ftpSync.wait();
+}
+
 void FtpFileEngine::refreshFileInfoCache()
 {
     // ftp: case ?
@@ -251,17 +266,7 @@ void FtpFileEngine::refreshFileInfoCache()
         QString dir(PathComp(_path).dir());
         QString name(PathComp(_path).fileName());
 
-        _cacheDir = getCachePath(dir, true);
-
-        _ftpCache->removeDirInfo(getCachePath(dir));
-
-        _entriesMap.clear();
-
-        // get a file list from a parent directory
-        _ftp->cd(_textCodec->fromUnicode(dir));
-        _ftp->list();
-
-        _ftpSync.wait();
+        readDir(dir);
 
         _urlInfo = _entriesMap.value(name);
 
@@ -308,22 +313,7 @@ void FtpFileEngine::refreshFileInfoCache(const QString& path)
     if (!ftpConnect())
         return;
 
-    PathComp pathComp(path);
-
-    QString dir(pathComp.dir());
-    QString name(pathComp.fileName());
-
-    _cacheDir = getCachePath(dir, true);
-
-    _ftpCache->removeDirInfo(getCachePath(dir));
-
-    _entriesMap.clear();
-
-    // get a file list from a parent directory
-    _ftp->cd(_textCodec->fromUnicode(dir));
-    _ftp->list();
-
-    _ftpSync.wait();
+    readDir(PathComp(path).dir());
 
     ftpDisconnect();
 }
@@ -503,16 +493,7 @@ FtpFileEngine::beginEntryList(QDir::Filters filters,
     else if ((_fileFlags & QAbstractFileEngine::DirectoryType)
                 && ftpConnect())
     {
-        _cacheDir = getCachePath(_path, true);
-
-        // add an empty entry to distinguish a empty directory from
-        // a non-existent directory
-        _ftpCache->addFileInfo(_cacheDir, QUrlInfo());
-
-        _ftp->cd(_textCodec->fromUnicode(_path));
-        _ftp->list();
-
-        _ftpSync.wait();
+        readDir(_path);
 
         ftpDisconnect();
     }
