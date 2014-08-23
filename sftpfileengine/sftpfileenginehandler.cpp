@@ -1,11 +1,11 @@
 /****************************************************************************
 **
-** FileIconProvider, a class to provider a file icon
+** SFtpFileEngineHandler, class to register SFtpFileEngine
 ** Copyright (C) 2014 by KO Myung-Hun
 ** All rights reserved.
 ** Contact: KO Myung-Hun (komh@chollian.net)
 **
-** This file is part of K File Wizard
+** This file is part of K File Wizard.
 **
 ** $BEGIN_LICENSE$
 **
@@ -21,23 +21,13 @@
 **
 ****************************************************************************/
 
-#include "fileiconprovider.h"
+#include "sftpfileenginehandler.h"
 
+#include "sftpfileengine.h"
 #include "pathcomp.h"
 
-FileIconProvider::FileIconProvider() : QFileIconProvider()
+QAbstractFileEngine*
+SFtpFileEngineHandler::create(const QString &fileName) const
 {
-}
-
-QIcon FileIconProvider::icon(const QFileInfo &info) const
-{
-#ifdef Q_WS_PM
-    // File type icon is returned for the not accessible files by APIs on OS/2
-    // So correct its behavior here
-    if (PathComp::isRemotePath(info.filePath()) && !info.isRoot()
-            && info.isDir())
-        return QFileIconProvider::icon(QFileIconProvider::Folder);
-#endif
-
-    return QFileIconProvider::icon(info);
+    return PathComp::isSFtpPath(fileName) ? new SFtpFileEngine(fileName) : 0;
 }

@@ -40,6 +40,7 @@ public:
 
     bool isRemotePath() const;
     bool isFtpPath() const;
+    bool isSFtpPath() const;
 
     bool isRoot() const;
     bool isDriveList() const;
@@ -56,6 +57,7 @@ public:
 
     static bool isRemotePath(const QString& path);
     static bool isFtpPath(const QString& path);
+    static bool isSFtpPath(const QString& path);
 
     static QString& addDirSeparator(QString& path, bool native = false);
     static QString& removeDirSeparator(QString& path, bool native = false);

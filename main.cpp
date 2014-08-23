@@ -26,6 +26,7 @@
 #include <QApplication>
 
 #include "ftpfileengine/ftpfileenginehandler.h"
+#include "sftpfileengine/sftpfileenginehandler.h"
 
 static QString kfwDir()
 {
@@ -66,6 +67,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     FtpFileEngineHandler ftpHandler;
+    SFtpFileEngineHandler sftpHandler;
 
     initT();
 

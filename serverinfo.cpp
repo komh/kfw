@@ -167,7 +167,7 @@ QString ServerInfo::locationUrl() const
     url.setScheme(protocolText(protocol()).toLower());
     url.setHost(host());
 
-    if (!isAnonymous() && userName() != "anonymous")
+    if (protocol() != Ftp || (!isAnonymous() && userName() != "anonymous"))
     {
         url.setUserName(userName());
 
@@ -175,16 +175,22 @@ QString ServerInfo::locationUrl() const
             url.setPassword(password());
     }
 
-    if (port() != 21)
+    if ((protocol() == Ftp && port() != 21) ||
+            (protocol() == SFtp && port() != 22))
         url.setPort(port());
 
     url.setPath(directory());
 
-    url.setQueryItems(QList<QPair<QString, QString> >()
-                      << QPair<QString, QString>
-                            ("transfermode", transferModeText(transferMode()))
-                      << QPair<QString, QString>
-                            ("encoding", encodingText(encoding())));
+    QList<QPair<QString, QString> > queryItems;
+
+    if (protocol() == Ftp)
+        queryItems << QPair<QString, QString>
+                        ("transfermode", transferModeText(transferMode()));
+
+    queryItems << QPair<QString, QString>
+                    ("encoding", encodingText(encoding()));
+
+    url.setQueryItems(queryItems);
 
     return url.toString();
 }
@@ -194,6 +200,9 @@ QString ServerInfo::protocolText(Protocol protocol)
     if (protocol == Ftp)
         return "FTP";
 
+    if (protocol == SFtp)
+        return "SFTP";
+
     return QString();
 }
 
@@ -202,6 +211,7 @@ QStringList ServerInfo::protocolList()
     QStringList list;
 
     list << protocolText(Ftp);
+    list << protocolText(SFtp);
 
     return list;
 }

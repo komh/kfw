@@ -42,7 +42,10 @@ SOURCES += main.cpp\
     addressbookdialog.cpp \
     sharedmemory.cpp \
     simplecrypt.cpp \
-    ftpfileengine/ftpconnectioncache.cpp
+    ftpfileengine/ftpconnectioncache.cpp \
+    sftpfileengine/sftpfileengine.cpp \
+    sftpfileengine/sftpfileenginehandler.cpp \
+    sftpfileengine/sftpconnectioncache.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -74,7 +77,10 @@ HEADERS  += kfilewizard.h \
     addressbookdialog.h \
     sharedmemory.h \
     simplecrypt.h \
-    ftpfileengine/ftpconnectioncache.h
+    ftpfileengine/ftpconnectioncache.h \
+    sftpfileengine/sftpfileengine.h \
+    sftpfileengine/sftpfileenginehandler.h \
+    sftpfileengine/sftpconnectioncache.h
 
 FORMS    += kfilewizard.ui \
     connecttodialog.ui \
@@ -83,3 +89,9 @@ FORMS    += kfilewizard.ui \
 TRANSLATIONS = translations/kfw_ko.ts
 
 DEFINES += USE_FTP_CONNECTION_CACHE
+
+os2 {
+    LIBS += -lssh2 -lcrypto -lssl -lz
+} win32 {
+    LIBS += -lssh2 -lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
+}

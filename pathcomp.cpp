@@ -53,6 +53,11 @@ bool PathComp::isFtpPath() const
     return PathComp::isFtpPath(path());
 }
 
+bool PathComp::isSFtpPath() const
+{
+    return PathComp::isSFtpPath(path());
+}
+
 bool PathComp::isRoot() const
 {
     QString pathOfUrl(QUrl(path()).path());
@@ -67,7 +72,7 @@ bool PathComp::isDriveList() const
 
 QString PathComp::nativePath() const
 {
-    if (isFtpPath())
+    if (isRemotePath())
         return path();
 
     QString nativePath(QDir::toNativeSeparators(path()));
@@ -82,16 +87,17 @@ QString PathComp::nativePath() const
 
 QString PathComp::canonicalPath() const
 {
-    if (isFtpPath())
+    if (isRemotePath())
     {
         QUrl url(path());
 
         QUrl::FormattingOptions flags(QUrl::None);
 
-        if (url.userName() == "anonymous")
+        if (isFtpPath() && url.userName() == "anonymous")
             flags |= QUrl::RemoveUserInfo;
 
-        if (url.port() == 21)
+        if ((isFtpPath() && url.port() == 21)
+                || (isSFtpPath() && url.port() == 22))
             flags |= QUrl::RemovePort;
 
         flags |= QUrl::RemovePassword | QUrl::RemoveQuery |
@@ -157,12 +163,17 @@ QString PathComp::fixUrl(const QString &url)
 
 bool PathComp::isRemotePath(const QString &path)
 {
-    return isFtpPath(path);
+    return isFtpPath(path) || isSFtpPath(path);
 }
 
 bool PathComp::isFtpPath(const QString &path)
 {
     return QUrl(path).scheme() == "ftp";
+}
+
+bool PathComp::isSFtpPath(const QString &path)
+{
+    return QUrl(path).scheme() == "sftp";
 }
 
 QString& PathComp::addDirSeparator(QString& path, bool native)

@@ -30,7 +30,7 @@
 class ServerInfo
 {
 public:
-    enum Protocol {Ftp = 0};
+    enum Protocol {Ftp = 0, SFtp = 1};
     enum TransferMode {Passive = 0, Active = 1};
     enum Encoding {System = 0, Utf8 = 1};
 

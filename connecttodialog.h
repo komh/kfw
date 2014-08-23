@@ -55,6 +55,7 @@ private:
 
 private slots:
     void anonymousStateChanged(int state);
+    void on_protocolCombo_currentIndexChanged(const QString &protocol);
 };
 
 #endif // CONNECTTODIALOG_H

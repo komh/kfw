@@ -194,7 +194,7 @@ static void refreshFtpDirList(const QStringList& ftpDirList)
         QString dir(it.next());
 
         // signal to FtpFileEngine to refresh entries
-        if (PathComp::isFtpPath(dir))
+        if (PathComp::isRemotePath(dir))
         {
             // QDir::filePath() does not work with ":refresh:"
             QFile(PathComp::merge(dir, ":refresh:")).exists();
@@ -731,7 +731,7 @@ void KFileWizard::copyUrlsTo(const QList<QUrl> &urlList, const QString &to,
                     dirNameCopy = dest;
             }
 
-            if (PathComp::isFtpPath(dest))
+            if (PathComp::isRemotePath(dest))
             {
                 QString destDir(PathComp(dest).dir());
 
@@ -796,7 +796,7 @@ QMessageBox::StandardButton KFileWizard::checkOverwrite(
     {
         progress->show();
 
-        if (PathComp::isFtpPath(dest))
+        if (PathComp::isRemotePath(dest))
         {
             critical(tr("%1\n\n"
                         "This file already exists. "
@@ -889,7 +889,7 @@ void KFileWizard::removeUrls(const QList<QUrl> &urlList)
 
     // Refresh entry only in case of FTP
     // QFileSystemModel works fine with a local remove operation
-    if (1 || PathComp::isFtpPath(urlList.first().toString()))
+    if (1 || PathComp::isRemotePath(urlList.first().toString()))
         refreshEntry(urlList, true);
 }
 

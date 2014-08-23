@@ -132,8 +132,43 @@ void ConnectToDialog::anonymousStateChanged(int state)
 {
     bool disabled = state == Qt::Checked;
 
-    ui->userNameLabel->setDisabled(disabled);
-    ui->userNameLine->setDisabled(disabled);
-    ui->passwordLabel->setDisabled(disabled);
-    ui->passwordLine->setDisabled(disabled);
+    if (ui->protocolCombo->currentText() == "FTP")
+    {
+        ui->userNameLabel->setDisabled(disabled);
+        ui->userNameLine->setDisabled(disabled);
+        ui->passwordLabel->setDisabled(disabled);
+        ui->passwordLine->setDisabled(disabled);
+    }
+    else if (ui->protocolCombo->currentText() == "SFTP")
+    {
+        ui->userNameLabel->setEnabled(true);
+        ui->userNameLine->setEnabled(true);
+        ui->passwordLabel->setEnabled(true);
+        ui->passwordLine->setEnabled(true);
+    }
+}
+
+void ConnectToDialog::on_protocolCombo_currentIndexChanged(
+        const QString &protocol)
+{
+    if (protocol == "FTP")
+    {
+        ui->transferModeLabel->setEnabled(true);
+        ui->transferModeCombo->setEnabled(true);
+
+        ui->anonymousCheck->setEnabled(true);
+
+        ui->portSpin->setValue(21);
+    }
+    else if (protocol == "SFTP")
+    {
+        ui->transferModeLabel->setDisabled(true);
+        ui->transferModeCombo->setDisabled(true);
+
+        ui->anonymousCheck->setDisabled(true);
+
+        ui->portSpin->setValue(22);
+    }
+
+    anonymousStateChanged(ui->anonymousCheck->checkState());
 }
