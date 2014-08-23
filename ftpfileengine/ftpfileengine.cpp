@@ -858,7 +858,8 @@ bool FtpFileEngine::rename(const QString &newName)
     if (!ftpConnect())
         return false;
 
-    QString newPath(QUrl(PathComp::fixUrl(newName)).path());
+    PathComp fixedNewName(newName);
+    QString newPath(QUrl(fixedNewName.path()).path());
 
     _ftp->rename(_textCodec->fromUnicode(_path),
                  _textCodec->fromUnicode(newPath));
@@ -869,8 +870,8 @@ bool FtpFileEngine::rename(const QString &newName)
 
     if (result)
     {
-        _ftpCache->renameFileInfo(getCachePath(_path), newName);
-        _urlInfo.setName(PathComp(newPath).fileName());
+        _ftpCache->renameFileInfo(getCachePath(_path), getCachePath(newPath));
+        _urlInfo.setName(fixedNewName.fileName());
     }
 
     return result;
