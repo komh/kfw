@@ -1,4 +1,4 @@
-                             K File Wizard v1.0.0
+                             K File Wizard v1.1.0
                             ----------------------
                             
 1. 소개
@@ -8,8 +8,8 @@
   
   다음과 같은 기능들이 있습니다.
   
-    - FTP 를 지원합니다
-  
+    - FTP/SFTP 를 지원합니다
+
     - 한 FTP 서버 에서 다른 FTP 서버로 파일을 직접 전송할 수 있습니다.
   
     - 여러개의 K File Wizard 프로세스 사이에서도 파일 관리 기능이 지원됩니다.
@@ -19,8 +19,8 @@
   
   - 한국어판 OS/2 Warp v4 with FixPak #15
   
-  - GCC v4.7.3
-  
+  - GCC v4.9.1
+
   - OS/2 ToolKit v4.5
   
   - GNU Make v3.81r3
@@ -160,6 +160,19 @@ translations 디렉토리를 kfw.exe 가 있는 디렉토리의 하위 디렉토리로 복사하시기
   
     ftp://hobbes.nmsu.edu/pub/incoming
 
+6.4.2 SFTP
+----------
+
+  다음과 같은 형태로 SFTP 에 접속할 수 있습니다.
+
+    sftp://사용자이름:사용자암호@호스트이름[:포트번호][/디렉토리]
+
+  단, [] 는 생략가능합니다. 생략시 포트번호는 22 입니다.
+
+  예를 들면,
+
+    sftp://os2user:os2userpassword@sftp.os2.com/home/os2user
+
 7. 제한 사항 또는 알려진 벌레
 -----------------------------
 
@@ -168,12 +181,13 @@ translations 디렉토리를 kfw.exe 가 있는 디렉토리의 하위 디렉토리로 복사하시기
 8. 할 것들...
 -------------
 
-  - SFTP 지원
-  
   - 보다 자세한 것은 https://github.com/komh/kfw/issues 를 보십시오
   
 9. 판번호 보기
 --------------
+
+  - v1.1.0 ( 2014/08/24 )
+    .SFTP 지원
 
   - v1.0.0 ( 2014/03/23 )
     .디렉토리 지원
@@ -202,8 +216,8 @@ https://github.com/komh/kfw/issues?direction=desc&milestone=3&page=1&sort=update
 10.1 필요한 것들...
 -------------------
 
-  - gcc v4.7.3
-  
+  - gcc v4.9.1
+
   - OS/2 ToolKit v4.5
   
   - GNU Make v3.81r3

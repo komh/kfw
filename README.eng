@@ -1,4 +1,4 @@
-                             K File Wizard v1.0.0
+                             K File Wizard v1.1.0
                             ----------------------
                             
 1. Introduction
@@ -9,8 +9,8 @@ both for the local files and for the remote files.
 
   This programs has the following features.
   
-    - Support FTP
-    
+    - Support FTP/SFTP
+
     - Support to transfer files from a FTP server to another directly
     
     - Support file operations among separated K File Wizard processes
@@ -20,8 +20,8 @@ both for the local files and for the remote files.
   
   - OS/2 Warp v4 for Korean with FixPak #15
   
-  - GCC v4.7.3
-  
+  - GCC v4.9.1
+
   - OS/2 ToolKit v4.5
   
   - GNU Make v3.81r3
@@ -158,7 +158,20 @@ directory into the directory where kfe.exe exists, as its sub-directory.
   If you want to connect to incoming of hobbes,
   
     ftp://hobbes.nmsu.edu/pub/incoming
-    
+
+6.4.2 SFTP
+----------
+
+  You can connect to SFTP using the following URL syntax.
+
+    sftp://username:password@host[:port][/directory]
+
+  You can omit []. When ommitted, port is 22.
+
+  For examples,
+
+    sftp://os2user:os2userpassword@sftp.os2.com/home/os2user
+
 7. Limitations/Known bugs
 -----------------------------
 
@@ -167,12 +180,13 @@ directory into the directory where kfe.exe exists, as its sub-directory.
 8. TODOs...
 -----------
 
-  - Support SFTP
-  
   - For more details, see https://github.com/komh/kfw/issues
   
 9. History
 ----------
+
+  - v1.1.0 ( 2014/08/24 )
+    .Support SFTP
 
   - v1.0.0 ( 2014/03/23 )
     .Support directory operation
@@ -201,8 +215,8 @@ https://github.com/komh/kfw/issues?direction=desc&milestone=3&page=1&sort=update
 10.1 Requirements...
 --------------------
 
-  - gcc v4.7.3
-  
+  - gcc v4.9.1
+
   - OS/2 ToolKit v4.5
   
   - GNU Make v3.81r3
