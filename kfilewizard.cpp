@@ -1086,6 +1086,10 @@ void KFileWizard::setEntryRoot()
 
     ui->entryTree->scrollToTop();
 
+    // to scroll to a current dir
+    connect(dirModel, SIGNAL(directoryLoaded(QString)),
+            this, SLOT(dirLoaded(QString)));
+
     dirModel->setRootPath("");
     dirModel->setRootPath(currentDir.path());
 
