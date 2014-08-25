@@ -179,7 +179,7 @@ void FtpFileEngine::readDir(const QString &dir)
 {
     _cacheDir = getCachePath(dir, true);
 
-    _ftpCache->removeDirInfo(dir);
+    _ftpCache->removeDirInfo(_cacheDir);
 
     _entriesMap.clear();
 
