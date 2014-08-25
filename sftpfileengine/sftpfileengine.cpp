@@ -233,7 +233,7 @@ void SFtpFileEngine::readDir(const QString &dir)
 {
     QString cacheDir(getCachePath(dir, true));
 
-    _fileInfoCache->removeDirInfo(dir);
+    _fileInfoCache->removeDirInfo(cacheDir);
 
     // add an empty entry to distinguish a empty directory from
     // a non-existent directory
