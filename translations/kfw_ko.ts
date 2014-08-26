@@ -224,7 +224,7 @@
         <translation>다시 읽기</translation>
     </message>
     <message>
-        <location filename="../entryview/entrytreeview.cpp" line="384"/>
+        <location filename="../entryview/entrytreeview.cpp" line="388"/>
         <source>New Dir</source>
         <translation>새 디렉토리</translation>
     </message>
@@ -288,17 +288,17 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="563"/>
+        <location filename="../kfilewizard.cpp" line="572"/>
         <source>Preparing for copying files...</source>
         <translation>파일 복사를 준비하고 있습니다...</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="564"/>
+        <location filename="../kfilewizard.cpp" line="573"/>
         <source>Preparing for moving files...</source>
         <translation>파일 옮기기를 준비하고 있습니다...</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="626"/>
+        <location filename="../kfilewizard.cpp" line="635"/>
         <source>The target filename is the same as the source filename.
 
 %1</source>
@@ -307,7 +307,7 @@
 %1</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="645"/>
+        <location filename="../kfilewizard.cpp" line="654"/>
         <source>Source is a parent directory of target.
 
 Source: %1
@@ -320,7 +320,7 @@ Target: %2</source>
 대상: %2</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="657"/>
+        <location filename="../kfilewizard.cpp" line="666"/>
         <source>Copying %1 of %2
 
 %3
@@ -337,7 +337,7 @@ to
 %4</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="661"/>
+        <location filename="../kfilewizard.cpp" line="670"/>
         <source>Moving %1 of %2
 
 %3
@@ -354,7 +354,7 @@ to
 %4</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="701"/>
+        <location filename="../kfilewizard.cpp" line="710"/>
         <source>Failed to copy
 
 %1
@@ -371,7 +371,7 @@ to
 %2</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="705"/>
+        <location filename="../kfilewizard.cpp" line="714"/>
         <source>Failed to move
 
 %1
@@ -388,17 +388,17 @@ to
 %2</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="772"/>
+        <location filename="../kfilewizard.cpp" line="781"/>
         <source>Please wait while finalizing...</source>
         <translation>마무리하는 동안 잠시만 기다려주십시오...</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="787"/>
+        <location filename="../kfilewizard.cpp" line="796"/>
         <source> - Copy</source>
         <translation>- 복사본</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="799"/>
+        <location filename="../kfilewizard.cpp" line="808"/>
         <source>%1
 
 This file already exists. Overwriting is not supported by FTP.</source>
@@ -407,7 +407,7 @@ This file already exists. Overwriting is not supported by FTP.</source>
 같은 이름의 파일이 이미 있습니다. 덮어쓰기는 FTP 에서 지원되지 않습니다.</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="808"/>
+        <location filename="../kfilewizard.cpp" line="817"/>
         <source>%1
 
 This file already exists. Are you sure to overwrite it?</source>
@@ -424,17 +424,17 @@ This file already exists. Are you sure to overwrite it?</source>
 %1</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="834"/>
+        <location filename="../kfilewizard.cpp" line="843"/>
         <source>Are you sure to delete these %1 entries?</source>
         <translation>이 %1 개의 항목들을 정말 지우시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="843"/>
+        <location filename="../kfilewizard.cpp" line="852"/>
         <source>Preparing for deleting files...</source>
         <translation>파일 지우기를 준비하고 있습니다...</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="865"/>
+        <location filename="../kfilewizard.cpp" line="874"/>
         <source>Deleting %1 of %2
 
 %3
@@ -447,8 +447,8 @@ This file already exists. Are you sure to overwrite it?</source>
 </translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="756"/>
-        <location filename="../kfilewizard.cpp" line="875"/>
+        <location filename="../kfilewizard.cpp" line="765"/>
+        <location filename="../kfilewizard.cpp" line="884"/>
         <source>Failed to delete
 
 %1</source>
@@ -457,7 +457,7 @@ This file already exists. Are you sure to overwrite it?</source>
 %1</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="831"/>
+        <location filename="../kfilewizard.cpp" line="840"/>
         <source>Are you sure to delete this entry?
 
 %1</source>
@@ -466,12 +466,12 @@ This file already exists. Are you sure to overwrite it?</source>
 %1</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="922"/>
+        <location filename="../kfilewizard.cpp" line="931"/>
         <source>Canceling file operations, please wait...</source>
         <translation>파일 작업을 취소하고 있습니다, 잠시만 기다려 주십시오...</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="957"/>
+        <location filename="../kfilewizard.cpp" line="966"/>
         <source>Renaming
 
 %1
@@ -488,7 +488,7 @@ to
 %2</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="998"/>
+        <location filename="../kfilewizard.cpp" line="1007"/>
         <source>Checking the accessability, please wait...
 
 %1</source>
@@ -497,7 +497,7 @@ to
 %1</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="1046"/>
+        <location filename="../kfilewizard.cpp" line="1055"/>
         <source>This is not a directory or not accessible.
 
 %1</source>
@@ -506,7 +506,7 @@ to
 %1</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="1065"/>
+        <location filename="../kfilewizard.cpp" line="1074"/>
         <source>Reading directory entries, please wait...
 
 %1</source>
@@ -515,7 +515,7 @@ to
 %1</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="1160"/>
+        <location filename="../kfilewizard.cpp" line="1173"/>
         <source>Refreshing directory entries, please wait...
 
 %1</source>
@@ -524,12 +524,12 @@ to
 %1</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="1325"/>
+        <location filename="../kfilewizard.cpp" line="1338"/>
         <source>About K File Wizard</source>
         <translation>K File Wizard 정보</translation>
     </message>
     <message>
-        <location filename="../kfilewizard.cpp" line="1325"/>
+        <location filename="../kfilewizard.cpp" line="1338"/>
         <source>&lt;h2&gt;K File Wizard %1&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2014 by KO Myung-Hun &lt;a href=mailto:komh@chollian.net&gt;&amp;lt;komh@chollian.net&amp;gt;&lt;/a&gt;&lt;p&gt;K File Wizard is a program to provide the integreated file management both for the local files and for the remote files.&lt;p&gt;If you want to promote to develop this program, then donate at the below web page, please.&lt;p align=center&gt;&lt;a href=http://www.ecomstation.co.kr/komh/donate.html&gt;http://www.ecomstation.co.kr/komh/donate.html&lt;/a&gt;&lt;p&gt;This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. See &lt;a href=http://www.gnu.org/licenses/gpl.html&gt;the GPL v3 license&lt;/a&gt; for details.</source>
         <translation>&lt;h2&gt;K File Wizard %1&lt;/h2&gt;&lt;p&gt;저작권 &amp;copy; 2014 고명훈 &lt;a href=mailto:komh@chollian.net&gt;&amp;lt;komh@chollian.net&amp;gt;&lt;/a&gt;&lt;p&gt;K File Wizard 는 로컬 파일들과 원격지 파일들을 통합 관리하는 프로그램입니다.&lt;p&gt;이 프로그램의 개발을 후원하고 싶으시면, 아래 웹 페이지에서 기부해 주시면 고맙겠습니다.&lt;p align=center&gt;&lt;a href=http://www.ecomstation.co.kr/komh/donate.html&gt;http://www.ecomstation.co.kr/komh/donate.html&lt;/a&gt;&lt;p&gt;이 프로그램은 품질을 보증하지 않습니다. 이것은 자유 소프트웨어이며, 당신은 특정한 조건 하에 얼마든지 이것을 재배포할 수 있습니다. 자세한 것은 &lt;a href=http://www.gnu.org/licenses/gpl.html&gt;GPL v3 라이센스&lt;/a&gt;를 보십시오.</translation>
     </message>
@@ -540,7 +540,7 @@ to
     </message>
     <message>
         <location filename="../kfilewizard.h" line="141"/>
-        <source>1.0.0</source>
+        <source>1.1.0</source>
         <translation></translation>
     </message>
     <message>
