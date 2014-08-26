@@ -45,11 +45,6 @@
 #include "sftpconnectioncache.h"
 #include "pathcomp.h"
 
-static inline const char *cStr(const QString &str)
-{
-    return str.toLatin1().constData();
-}
-
 static
 void attr2urlinfo(QUrlInfo *urlInfo, const QString &name,
                   LIBSSH2_SFTP_ATTRIBUTES *sftp_attr)
@@ -171,7 +166,7 @@ void SFtpFileEngine::initFromFileName(const QString& file)
     if (_encoding.isEmpty())
         _encoding = hostInfoCache.encoding(_url.host(), _userName);
 
-    _textCodec = QTextCodec::codecForName(_encoding.toLatin1());
+    _textCodec = QTextCodec::codecForName(_encoding.toLocal8Bit());
 
     _url.setUserName(_userName);
     _url.setPassword(_password);
@@ -182,7 +177,7 @@ void SFtpFileEngine::initFromFileName(const QString& file)
                              ("encoding", _encoding));
 
     hostInfoCache.addHostInfo(_url.host(), _userName, _password, _port,
-                              QString(), _encoding);
+                              "", _encoding);
 
     _path = _url.path();
     if (_path.isEmpty())
@@ -414,7 +409,7 @@ bool SFtpFileEngine::sftpConnect()
 
     struct hostent *host;
 
-    host = gethostbyname(cStr(_url.host()));
+    host = gethostbyname(_url.host().toLocal8Bit().constData());
     if (!host)
         return false;
 
