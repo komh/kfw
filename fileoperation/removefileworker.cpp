@@ -37,5 +37,5 @@ void RemoveFileWorker::performWork()
     FileOperation fileOp(source());
 
     setResult(QFileInfo(source()).isDir() ?
-                  fileOp.rmdir() : (fileOp.open() && fileOp.remove()));
+                  fileOp.rmdir() : fileOp.remove());
 }

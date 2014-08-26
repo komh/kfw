@@ -40,20 +40,15 @@ void MoveFileWorker::performWork()
     // try rename first
     FileOperation fileOp(source());
 
-    if (fileOp.open())
+    if (fileOp.rename(dest()))
     {
-        if (fileOp.rename(dest()))
-        {
-            qDebug() << "MoveFileWorker: Rename succeeded";
+        qDebug() << "MoveFileWorker: Rename succeeded";
 
-            emit valueChanged(100);
+        emit valueChanged(100);
 
-            setResult(true);
+        setResult(true);
 
-            return;
-        }
-
-        fileOp.close();
+        return;
     }
 
     qDebug() << "MoveFileWorker: Rename failed, try copy and remove";
@@ -82,6 +77,8 @@ void MoveFileWorker::performWork()
 
         if (!wasCanceled())
         {
+            fileOp.close();
+
             if (!fileOp.remove())
                 return;
 

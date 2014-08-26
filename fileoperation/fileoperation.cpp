@@ -32,6 +32,8 @@ FileOperation::FileOperation(const QString &source, const QString &dest,
     : QObject(parent)
     , _source(source)
     , _dest(dest)
+    , _sourceFile(source),
+      _destFile(dest)
 {
 }
 
