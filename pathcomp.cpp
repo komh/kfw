@@ -41,6 +41,9 @@ void PathComp::setPath(const QString& path)
                 (_path.left(lastSlashIndex == 0 ? 1 : lastSlashIndex));
 
     _fileName = _path.mid(lastSlashIndex + 1);
+    // remove url queries
+    if (PathComp::isRemotePath(_path))
+        _fileName.remove(QRegExp("\\?.*$"));
 }
 
 bool PathComp::isRemotePath() const

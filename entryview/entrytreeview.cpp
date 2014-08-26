@@ -282,7 +282,11 @@ QList<QUrl> EntryTreeView::selectedUrlList()
 
         if (sourceModel->headerData(index.column(), Qt::Horizontal)
                 == QtTr::name())
-            urlList.append(PathComp::fixUrl(sourceModel->filePath(index)));
+        {
+            // use canonicalFilePath() to include URL queries
+            urlList.append(QFileInfo(sourceModel->filePath(index))
+                            .canonicalFilePath());
+        }
     }
 
     qDebug() << "\t" << urlList;

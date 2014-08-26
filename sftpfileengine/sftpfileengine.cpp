@@ -669,7 +669,21 @@ QString SFtpFileEngine::fileName(FileName file) const
     result.append("://");
 
     if (!_userName.isEmpty())
-        result.append(_userName).append("@");
+    {
+        result.append(_userName);
+
+        if (file == QAbstractFileEngine::CanonicalName
+                || file == QAbstractFileEngine::CanonicalPathName)
+        {
+            if (!_password.isEmpty())
+            {
+                result.append(":");
+                result.append(_password);
+            }
+        }
+
+        result.append("@");
+    }
 
     result.append(_url.host());
 
@@ -707,6 +721,12 @@ QString SFtpFileEngine::fileName(FileName file) const
     case QAbstractFileEngine::BundleName:
     default:
         break;
+    }
+
+    if (file == QAbstractFileEngine::CanonicalName
+            || file == QAbstractFileEngine::CanonicalPathName)
+    {
+        result.append("?encoding=").append(_encoding);
     }
 
     qDebug() << "\t" << result;

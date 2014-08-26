@@ -600,7 +600,21 @@ QString FtpFileEngine::fileName(FileName file) const
 
     // remove default infomations
     if (_userName != "anonymous")
-        result.append(_userName).append("@");
+    {
+        result.append(_userName);
+
+        if (file == QAbstractFileEngine::CanonicalName
+                || file == QAbstractFileEngine::CanonicalPathName)
+        {
+            if (!_password.isEmpty())
+            {
+                result.append(":");
+                result.append(_password);
+            }
+        }
+
+        result.append("@");
+    }
 
     result.append(_url.host());
 
@@ -638,6 +652,13 @@ QString FtpFileEngine::fileName(FileName file) const
     case QAbstractFileEngine::BundleName:
     default:
         break;
+    }
+
+    if (file == QAbstractFileEngine::CanonicalName
+            || file == QAbstractFileEngine::CanonicalPathName)
+    {
+        result.append("?transfermode=").append(_transferMode)
+                .append("&encoding=").append(_encoding);
     }
 
     qDebug() << "\t" << result;

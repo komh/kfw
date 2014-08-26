@@ -266,7 +266,9 @@ QList<QUrl> DirTreeView::selectedUrlList()
     {
         QModelIndex index = proxyModel->mapToSource(proxyIndex);
 
-        urlList.append(PathComp::fixUrl(sourceModel->filePath(index)));
+        // use canonicalFilePath() to include URL queries
+        urlList.append(QFileInfo(
+                           sourceModel->filePath(index)).canonicalFilePath());
     }
 
     qDebug() << "\t" << urlList;

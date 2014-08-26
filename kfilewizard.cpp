@@ -109,6 +109,7 @@ static void storeSizeToSharedMem(SharedMemory* mem, int w, int h)
 }
 
 // nameListToAdd: a list of entry names to add
+// dir and nameListToAdd should not include queries at all
 static QStringList entryList(const QString& dir,
                              const QStringList& nameListToAdd,
                              bool parentFirst, const QProgressDialog* progress)
@@ -153,7 +154,13 @@ static QStringList entryList(const QList<QUrl>& urlListToAdd,
     if (urlListToAdd.isEmpty())
         return QStringList();
 
-    QString dir(PathComp(urlListToAdd.first().toString()).dir());
+    QString urlString(urlListToAdd.first().toString());
+
+    // make sure the connection with queries
+    if (PathComp::isRemotePath(urlString))
+        QFile(urlString).exists();
+
+    QString dir(PathComp(urlString).dir());
     QStringList nameList;
 
     foreach (QUrl url, urlListToAdd)
