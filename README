@@ -30,11 +30,13 @@
   - Qt Creator v2.2.1
   
   - git v1.7.3.2 
+  
+  - OpenSSL v0.9.8r OS2-KNIX
       
 3. 실행에 필요한 환경
 ---------------------
 
-  - 런타임 : kLIBC v0.6.5, Qt v4.7.3GA2
+  - 런타임 : kLIBC v0.6.5, Qt v4.7.3GA2, OpenSSL v0.9.8r OS2-KNIX
 
 4. 시험 환경
 ------------
@@ -227,6 +229,8 @@ https://github.com/komh/kfw/issues?direction=desc&milestone=3&page=1&sort=update
   - Qt Creator v2.2.1
   
   - git v1.7.3.2
+  
+  - OpenSSL v0.9.8r OS2-KNIX
   
 10.2 소스 받기
 --------------

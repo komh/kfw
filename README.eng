@@ -31,11 +31,13 @@ both for the local files and for the remote files.
   - Qt Creator v2.2.1
   
   - git v1.7.3.2 
+  
+  - OpenSSL v0.9.8r OS2-KNIX
       
 3. Requirements
 ---------------
 
-  - Runtime : kLIBC v0.6.5, Qt v4.7.3GA2
+  - Runtime : kLIBC v0.6.5, Qt v4.7.3GA2, OpenSSL v0.9.8r OS2-KNIX
 
 4. Test Environment
 --------------------
@@ -226,6 +228,8 @@ https://github.com/komh/kfw/issues?direction=desc&milestone=3&page=1&sort=update
   - Qt Creator v2.2.1
   
   - git v1.7.3.2
+  
+  - OpenSSL v0.9.8r OS2-KNIX
   
 10.2 How to  Download the sources
 ---------------------------------
