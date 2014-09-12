@@ -231,6 +231,8 @@ https://github.com/komh/kfw/issues?direction=desc&milestone=3&page=1&sort=update
   
   - OpenSSL v0.9.8r OS2-KNIX
   
+  - libssh2 v1.4.0
+  
 10.2 How to  Download the sources
 ---------------------------------
 
