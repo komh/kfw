@@ -502,8 +502,6 @@ void KFileWizard::appFocusChanged(QWidget* old, QWidget* now)
 
 void KFileWizard::dirLoaded(const QString& dir)
 {
-    Q_UNUSED(dir);
-
     QModelIndex current =
             dirProxyModel->mapFromSource(dirModel->index(currentDir.path()));
 
