@@ -217,6 +217,7 @@ static void refreshFtpDir(const QString& ftpDir)
 KFileWizard::KFileWizard(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KFileWizard),
+    currentDir(QDir::current()),
     dirModel(0), dirProxyModel(0), entryModel(0), entryProxyModel(0),
     delayedMsgBox(this), sharedMem(title())
 {
@@ -234,8 +235,6 @@ KFileWizard::KFileWizard(QWidget *parent) :
     initLocationLine();
 
     initSplitter();
-
-    currentDir = QDir::current();
 
     initDirTree();
 
