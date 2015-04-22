@@ -518,7 +518,7 @@ void KFileWizard::dirLoaded(const QString& dir)
     // 4. x:/path/to
     // so disconnect directoryLoaded() signal if dir is the parent of
     // currentDir
-    if (dir == PathComp(currentDir.absolutePath()).dir())
+    if (PathComp::fixUrl(dir) == PathComp(currentDir.absolutePath()).dir())
         disconnect(dirModel, SIGNAL(directoryLoaded(QString)), this, 0);
 }
 
