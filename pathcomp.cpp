@@ -161,6 +161,11 @@ QString PathComp::fixUrl(const QString &url)
                         || fixedUrl.at(index + colonSlashLength) != '/'))
         fixedUrl.replace(index, colonSlashLength, "://");
 
+    // Qt4 for OS/2 present a drive root as X:. Append /.
+    if (fixedUrl.length() == 2 &&
+            fixedUrl.at(0).isLetter() && fixedUrl.at(1) == ':')
+        fixedUrl.append('/');
+
     return fixedUrl;
 }
 

@@ -513,7 +513,7 @@ void KFileWizard::dirLoaded(const QString& dir)
     // direcoryLoaded() signals occurs in this order if rootPath is
     // x:/path/to/dir
     // 1. x:/path/to/dir
-    // 2. x:/
+    // 2. x:/ on Win32 but x: on OS/2
     // 3. x:/path
     // 4. x:/path/to
     // so disconnect directoryLoaded() signal if dir is the parent of
