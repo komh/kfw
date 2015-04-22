@@ -36,9 +36,16 @@ void PathComp::setPath(const QString& path)
 
     int lastSlashIndex = _path.lastIndexOf("/");
 
+    // Directory part of a root is the root
     _dir = (lastSlashIndex == -1) ?
                 "." :
-                (_path.left(lastSlashIndex == 0 ? 1 : lastSlashIndex));
+                _path.left(lastSlashIndex == 0 ?
+                               1 :  // '/', a root
+                               (_path.length() == 3
+                                && _path.at(0).isLetter()
+                                && _path.at(1) == ':') ?
+                                   3 : // 'x:/', a drive root
+                                   lastSlashIndex);
 
     _fileName = _path.mid(lastSlashIndex + 1);
     // remove url queries
