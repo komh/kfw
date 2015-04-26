@@ -88,6 +88,15 @@ FORMS    += kfilewizard.ui \
 
 TRANSLATIONS = translations/kfw_ko.ts
 
+TRANSLATIONS_ALL = $${TRANSLATIONS} \
+    translations/qt_ko.ts
+
+lrelease.input = TRANSLATIONS_ALL
+lrelease.output = ${OBJECTS_DIR}/${QMAKE_FILE_BASE}.qm
+lrelease.commands = lrelease ${QMAKE_FILE_IN} -qm ${QMAKE_FILE_OUT}
+lrelease.CONFIG += no_link target_predeps
+QMAKE_EXTRA_COMPILERS += lrelease
+
 DEFINES += USE_FTP_CONNECTION_CACHE
 
 os2 {
