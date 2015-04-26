@@ -25,38 +25,42 @@
 
 #include <QApplication>
 
-static QString kfwDir()
+static void loadT(QTranslator *translator, const QString &base,
+                  bool searchQtTranslationsDirFirst = false)
 {
-    QStringList pathList;
+    QString localeName(QLocale::system().name());
 
-    pathList << "../kfw"        // for Qt Creator
-             << "../kfw.git"    // for Qt Creator
-             << ".";            // for release
+    QStringList qmDirList;
 
-    foreach(QString path, pathList)
+    if (searchQtTranslationsDirFirst)
+        qmDirList << QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+
+    qmDirList << "."
+              << "debug"
+              << "release";
+
+    QString qmName(base + "_" + localeName);
+
+    foreach(QString qmDir, qmDirList)
     {
-        if (QDir(path).exists())
-            return path;
+        if (translator->load(qmName, qmDir) ||
+                translator->load(qmName, qmDir + "/translations"))
+        {
+            QApplication::installTranslator(translator);
+            break;
+        }
     }
-
-    return QString();
 }
 
 static void initT()
 {
-    QString qmPath(kfwDir() + "/translations");
+    // Load translations for K File Wizard
+    static QTranslator kfwTrans;
+    loadT(&kfwTrans, "kfw");
 
-    QString localeName(QLocale::system().name());
-
-    static QTranslator kfwT;    // for K File Wizard
-
-    kfwT.load("kfw_" + localeName, qmPath);
-    QApplication::installTranslator(&kfwT);
-
-    static QTranslator qtT;     // for Qt
-
-    qtT.load("qt_" + localeName, qmPath);
-    QApplication::installTranslator(&qtT);
+    // Load translations for Qt. Search in Qt translations directory first.
+    static QTranslator qtTrans;
+    loadT(&qtTrans, "qt", true);
 }
 
 int main(int argc, char *argv[])
