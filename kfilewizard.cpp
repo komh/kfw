@@ -1031,8 +1031,8 @@ void KFileWizard::locationReturnPressed(bool focusToEntry, bool bySignal)
         setLocationText(ui->locationLine->text(), focusToEntry);
 
         // already processed ?
-        if (ui->locationLine->text()
-                == PathComp(currentDir.path()).nativePath())
+        if (PathComp(ui->locationLine->text()).canonicalPath()
+                == PathComp(currentDir.path()).canonicalPath())
             return;
 
         currentDir.setPath(ui->locationLine->text());
