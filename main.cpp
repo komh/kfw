@@ -35,9 +35,7 @@ static void loadT(QTranslator *translator, const QString &base,
     if (searchQtTranslationsDirFirst)
         qmDirList << QLibraryInfo::location(QLibraryInfo::TranslationsPath);
 
-    qmDirList << QCoreApplication::applicationDirPath() + "/."
-              << QCoreApplication::applicationDirPath() + "/debug"
-              << QCoreApplication::applicationDirPath() + "/release";
+    qmDirList << QCoreApplication::applicationDirPath();
 
     QString qmName(base + "_" + localeName);
 
