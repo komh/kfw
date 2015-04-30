@@ -997,6 +997,11 @@ void KFileWizard::setLocationText(const QString& text, bool focusToEntry)
     }
 }
 
+static bool checkDir(const QString &dir)
+{
+    return QDir(dir).isReadable();
+}
+
 QModelIndex KFileWizard::findDirIndex(const QString& dir)
 {
     DelayedMessageBox msgBox(this);
@@ -1006,16 +1011,17 @@ QModelIndex KFileWizard::findDirIndex(const QString& dir)
     // just trigger a single shot timer without setting quit signal
     msgBox.trigger();
 
-    QFuture<bool> future = QtConcurrent::run(QDir(dir), &QDir::isReadable);
+    QFutureWatcher<bool> watcher;
+    connect(&watcher, SIGNAL(finished()), &msgBox, SLOT(quit()));
+    watcher.setFuture(QtConcurrent::run(checkDir, dir));
 
-    // don't enter into our event loop started by msgBox.exec()
-    // It causes unpredictable problems. I don't know why. Just
-    // guess QtConcurrent::run() conflics with a local event loop.
-    // In addition, the strange is that GUI thread is not freezed
-    // in spite of QFuture::result() blocking it. Magic ? ^^
+    // Calling exec() before a main window is shown at startup, may lead to
+    // an unexpected crash. Check a visibility of a main window as well as
+    // running status of a thread.
+    if (isVisible() && watcher.isRunning())
+        msgBox.exec();
 
-    // QFuture::result() blocks until a result is ready
-    if (future.result())
+    if (watcher.result())
         return dirProxyModel->mapFromSource(dirModel->index(dir));
 
     return QModelIndex();
