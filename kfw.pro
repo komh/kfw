@@ -45,7 +45,8 @@ SOURCES += main.cpp\
     ftpfileengine/ftpconnectioncache.cpp \
     sftpfileengine/sftpfileengine.cpp \
     sftpfileengine/sftpfileenginehandler.cpp \
-    sftpfileengine/sftpconnectioncache.cpp
+    sftpfileengine/sftpconnectioncache.cpp \
+    ftpfileengine/ftppool.cpp
 
 HEADERS  += kfilewizard.h \
     filesystemsortfilterproxymodel.h \
@@ -80,7 +81,8 @@ HEADERS  += kfilewizard.h \
     ftpfileengine/ftpconnectioncache.h \
     sftpfileengine/sftpfileengine.h \
     sftpfileengine/sftpfileenginehandler.h \
-    sftpfileengine/sftpconnectioncache.h
+    sftpfileengine/sftpconnectioncache.h \
+    ftpfileengine/ftppool.h
 
 FORMS    += kfilewizard.ui \
     connecttodialog.ui \

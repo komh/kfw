@@ -31,6 +31,7 @@
 #include "ftptransferthread.h"
 #include "ftphostinfocache.h"
 #include "ftpconnectioncache.h"
+#include "ftppool.h"
 #include "pathcomp.h"
 
 #include "ftpfileengine.h"
@@ -136,6 +137,7 @@ void FtpFileEngine::initFtp()
     if (_url.host().isEmpty() && _path == "/:closeall:")
     {
         FtpConnectionCache::getInstance()->closeAll();
+        FtpPool::getInstance()->destroyFtpPool();
 
         _fileFlags = QAbstractFileEngine::FileType;
 
@@ -329,7 +331,7 @@ bool FtpFileEngine::ftpConnect()
         _ftp = cachedFtp;
     else
 #endif
-    _ftp = new QFtp;
+    _ftp = FtpPool::getInstance()->createFtp();
 
     if (!_ftp)
         return false;
@@ -393,7 +395,7 @@ bool FtpFileEngine::ftpDisconnect()
     _ftpConnected = false;
 
 #ifndef USE_FTP_CONNECTION_CACHE
-    delete _ftp;
+    FtpPool::getInstance()->destroyFtp(_ftp);
 #endif
 
     _ftp = 0;

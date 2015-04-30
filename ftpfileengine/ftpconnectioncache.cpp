@@ -28,6 +28,8 @@
 
 #include "ftpsync.h"
 
+#include "ftppool.h"
+
 FtpConnectionCache::FtpConnectionCache()
 {
 }
@@ -77,7 +79,7 @@ void FtpConnectionCache::closeConnection(const QUrl &url)
         ftp->close();
         ftpSync.wait();
 
-        ftp->deleteLater();
+        FtpPool::getInstance()->destroyFtp(ftp);
 
         _connectionMap.remove(key);
     }
@@ -100,7 +102,7 @@ void FtpConnectionCache::closeAll()
         qDebug() << "closeAll()" << it.key() <<
         ftpSync.wait();
 
-        delete ftp;
+        FtpPool::getInstance()->destroyFtp(ftp);
     }
 
     _connectionMap.clear();
