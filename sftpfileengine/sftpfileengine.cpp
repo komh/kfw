@@ -489,7 +489,8 @@ bool SFtpFileEngine::atEnd() const
 {
     qDebug() << "atEnd()" << _fileName;
 
-    return _urlInfo.size() >= libssh2_sftp_tell64(_sftp_handle);
+    return _urlInfo.size()
+                >= static_cast<qint64>(libssh2_sftp_tell64(_sftp_handle));
 }
 
 static QStringList filterEntries(QDir::Filters filters,
