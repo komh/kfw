@@ -88,7 +88,8 @@ FORMS    += kfilewizard.ui \
     connecttodialog.ui \
     addressbookdialog.ui
 
-TRANSLATIONS = translations/kfw_ko.ts
+TRANSLATIONS = translations/kfw_ko.ts \
+               translations/kfw_nl.ts
 
 TRANSLATIONS_ALL = $${TRANSLATIONS} \
     translations/qt_ko.ts
